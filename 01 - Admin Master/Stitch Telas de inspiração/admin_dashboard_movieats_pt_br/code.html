@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MOVIEATS | Admin Console</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-fixed-dim": "#ffb693",
+                        "tertiary-fixed": "#d0e4ff",
+                        "secondary-container": "#7b3409",
+                        "on-background": "#e5e2e1",
+                        "surface-variant": "#353534",
+                        "on-secondary-fixed": "#351000",
+                        "surface": "#131313",
+                        "on-surface-variant": "#e2bfb0",
+                        "surface-bright": "#3a3939",
+                        "secondary-fixed": "#ffdbcc",
+                        "error-container": "#93000a",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-tint": "#ffb693",
+                        "secondary": "#ffb693",
+                        "primary-fixed": "#ffdbcc",
+                        "on-primary-container": "#572000",
+                        "on-error": "#690005",
+                        "surface-container-low": "#1c1b1b",
+                        "on-tertiary-container": "#003357",
+                        "on-secondary": "#561f00",
+                        "on-tertiary": "#003257",
+                        "on-primary": "#561f00",
+                        "inverse-primary": "#a04100",
+                        "on-secondary-container": "#ffa173",
+                        "surface-container": "#201f1f",
+                        "tertiary-fixed-dim": "#9ccaff",
+                        "primary": "#ffb693",
+                        "surface-dim": "#131313",
+                        "tertiary": "#9ccaff",
+                        "secondary-fixed-dim": "#ffb693",
+                        "error": "#ffb4ab",
+                        "outline": "#a98a7d",
+                        "on-tertiary-fixed": "#001d35",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-highest": "#353534",
+                        "on-primary-fixed-variant": "#7a3000",
+                        "surface-container-high": "#2a2a2a",
+                        "primary-container": "#ff6b00",
+                        "on-tertiary-fixed-variant": "#00497b",
+                        "on-surface": "#e5e2e1",
+                        "on-primary-fixed": "#351000",
+                        "tertiary-container": "#059eff",
+                        "background": "#131313",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#783207",
+                        "inverse-on-surface": "#313030",
+                        "outline-variant": "#5a4136"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased flex">
+<!-- SideNavBar (Execution from JSON & Design System) -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest flex flex-col z-40">
+<div class="px-6 py-8">
+<div class="flex items-center gap-3 mb-1">
+<span class="material-symbols-outlined text-primary-container text-2xl" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="text-xl font-bold tracking-tighter text-primary-container">MOVIEATS</span>
+</div>
+<p class="text-[10px] font-bold text-outline uppercase tracking-widest pl-[35px]">Admin Console</p>
+</div>
+<nav class="flex-1 flex flex-col gap-1 px-2">
+<!-- Active State Logic: Dashboard is currently active -->
+<a class="flex items-center gap-3 px-4 py-3 bg-[#201f1f] text-[#ffb693] font-bold border-r-4 border-[#ff6b00] transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label text-sm uppercase tracking-wide">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-surface-container-high hover:text-gray-300 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label text-sm uppercase tracking-wide">Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-surface-container-high hover:text-gray-300 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label text-sm uppercase tracking-wide">Planos</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-surface-container-high hover:text-gray-300 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-label text-sm uppercase tracking-wide">Financeiro</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-surface-container-high hover:text-gray-300 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="manage_accounts">manage_accounts</span>
+<span class="font-label text-sm uppercase tracking-wide">Usuários</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-surface-container-high hover:text-gray-300 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+<span class="font-label text-sm uppercase tracking-wide">Leads</span>
+</a>
+</nav>
+<div class="p-4 mt-auto">
+<button class="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-surface-container-high border border-outline-variant/20 text-on-surface hover:bg-surface-container-highest transition-all duration-200 text-sm font-medium">
+<span class="material-symbols-outlined text-sm">support_agent</span>
+                Suporte
+            </button>
+</div>
+<div class="border-t border-outline-variant/10 p-4">
+<div class="flex items-center gap-3 px-4 py-2 hover:bg-surface-container-high rounded-lg cursor-pointer transition-all duration-200">
+<img alt="Admin" class="w-8 h-8 rounded-full border border-primary-container/20" data-alt="professional headshot of a middle-aged male administrator in dark clothing with neutral expression and studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5OcscLuqyHHmVEm6qgzxVRKEk-RmrkLz6YoHyjcAHXrATPp1OUDSSnDxTV0FTKxr0D1Wxv4kOSd67jG3PA4mhDU2pTWsESPycCCZ6faMzTDaE9Cee4VYTxLxC-WR1jl0x5X2mfs910HEF7hrEXgg9vKe2cdeGX-CEQ4fPXc6zz_Hi3YZB5VMzAQyhB6oF2MUNW4iWpj4Ewvn2a6Hbyc23eJJmLPJ_EIw-fbqGGjc0Mog3AbUhudJ5K0EQ3TXpNc8WaxlKI472rEye"/>
+<div class="flex flex-col">
+<span class="text-xs font-bold text-on-surface">Perfil</span>
+<span class="text-[10px] text-outline">Admin Principal</span>
+</div>
+<span class="material-symbols-outlined ml-auto text-gray-500 text-sm">logout</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 w-[calc(100%-256px)] min-h-screen">
+<!-- TopNavBar (Execution from JSON & Design System) -->
+<header class="fixed top-0 right-0 w-[calc(100%-256px)] h-16 bg-[#131313]/80 backdrop-blur-md flex justify-between items-center px-8 z-30 shadow-sm shadow-[#ffb693]/5">
+<div class="flex items-center gap-2">
+<h1 class="text-xl font-headline font-extrabold text-on-surface uppercase tracking-tight">Dashboard</h1>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative">
+<span class="material-symbols-outlined text-gray-400 hover:text-white cursor-pointer transition-colors" data-icon="notifications">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-primary-container rounded-full border border-surface"></span>
+</div>
+<span class="material-symbols-outlined text-gray-400 hover:text-white cursor-pointer transition-colors" data-icon="settings">settings</span>
+<span class="material-symbols-outlined text-gray-400 hover:text-white cursor-pointer transition-colors">help</span>
+<div class="h-8 w-8 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant/20">
+<img alt="Avatar" data-alt="close up headshot of a male professional smiling slightly with blurred office background and soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNOYaF5kM4ekg5nwBpRAvo9GURC5LlR2ZDSLbXjlI417a5Da8KU2148AKHmHD5S7Xrnt2OAUlSRabF1ZF-0SSaOAJg1gOCKrRGgqfdCwtASl9uO2n3lipj3qH2OChkWuVJ2lT9MxWzIXzh6WE9LJiPxrELW-F1cXcGi_JORAmB56_oPUzXVJU9PiJPLtsj9EPkcscPeRu_PklsQ4-amSYttehagZmNYSvpNt5FEWuSQNvDvocCxsdQabRjuC6SCQTiF9xARh1wpaS0"/>
+</div>
+</div>
+</header>
+<!-- Canvas Content -->
+<div class="pt-24 pb-12 px-8">
+<!-- Welcome Header -->
+<div class="mb-8">
+<h2 class="text-3xl font-headline font-bold text-on-surface">Bom dia, Admin 👋</h2>
+<p class="text-on-surface-variant font-body">Aqui está o que está acontecendo na <span class="text-primary-container font-bold">MOVIEATS</span> hoje.</p>
+</div>
+<!-- Row 1: Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="bg-surface-container border border-outline-variant/20 rounded-xl p-6 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5">
+<div class="flex justify-between items-start mb-4">
+<p class="text-xs font-bold text-outline uppercase tracking-wider">Lojistas Ativos</p>
+<span class="material-symbols-outlined text-primary-fixed-dim">storefront</span>
+</div>
+<h3 class="text-3xl font-headline font-bold mb-1">142</h3>
+<p class="text-xs text-green-500 font-medium">+8 esse mês</p>
+</div>
+<div class="bg-primary-container border-none rounded-xl p-6 shadow-xl shadow-primary-container/20 transition-all duration-300 transform hover:scale-[1.02]">
+<div class="flex justify-between items-start mb-4">
+<p class="text-xs font-bold text-on-primary-container uppercase tracking-wider">Pedidos Hoje</p>
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
+</div>
+<h3 class="text-3xl font-headline font-bold mb-1 text-on-primary-container">1.840</h3>
+<p class="text-xs text-on-primary-container/80 font-bold">+23% vs ontem</p>
+</div>
+<div class="bg-surface-container border border-outline-variant/20 rounded-xl p-6 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5">
+<div class="flex justify-between items-start mb-4">
+<p class="text-xs font-bold text-outline uppercase tracking-wider">Faturamento Hoje</p>
+<span class="material-symbols-outlined text-primary-fixed-dim">payments</span>
+</div>
+<h3 class="text-3xl font-headline font-bold mb-1">R$ 48.200</h3>
+<p class="text-xs text-green-500 font-medium">+18%</p>
+</div>
+<div class="bg-surface-container border border-outline-variant/20 rounded-xl p-6 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5">
+<div class="flex justify-between items-start mb-4">
+<p class="text-xs font-bold text-outline uppercase tracking-wider">Leads Novos</p>
+<span class="material-symbols-outlined text-primary-fixed-dim">person_add</span>
+</div>
+<h3 class="text-3xl font-headline font-bold mb-1">27</h3>
+<p class="text-xs text-green-500 font-medium">+5 hoje</p>
+</div>
+</div>
+<!-- Row 2: Charts -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+<div class="lg:col-span-2 bg-surface-container border border-outline-variant/20 rounded-xl p-6">
+<div class="flex justify-between items-center mb-8">
+<h4 class="font-headline font-bold text-on-surface">Pedidos por Dia essa Semana</h4>
+<span class="text-xs text-outline font-medium px-2 py-1 bg-surface-container-high rounded border border-outline-variant/10">Esta Semana</span>
+</div>
+<div class="h-64 flex items-end justify-between gap-4 px-4">
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container-highest rounded-t-lg transition-all duration-500" style="height: 45%;"></div>
+<span class="text-[10px] font-bold text-outline uppercase">Seg</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container-highest rounded-t-lg" style="height: 60%;"></div>
+<span class="text-[10px] font-bold text-outline uppercase">Ter</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container-highest rounded-t-lg" style="height: 55%;"></div>
+<span class="text-[10px] font-bold text-outline uppercase">Qua</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container-highest rounded-t-lg" style="height: 80%;"></div>
+<span class="text-[10px] font-bold text-outline uppercase">Qui</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary-container rounded-t-lg shadow-lg shadow-primary-container/10" style="height: 95%;"></div>
+<span class="text-[10px] font-bold text-primary-container uppercase">Sex</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container-highest rounded-t-lg" style="height: 70%;"></div>
+<span class="text-[10px] font-bold text-outline uppercase">Sab</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container-highest rounded-t-lg" style="height: 40%;"></div>
+<span class="text-[10px] font-bold text-outline uppercase">Dom</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container border border-outline-variant/20 rounded-xl p-6">
+<h4 class="font-headline font-bold text-on-surface mb-8">Lojistas por Plano</h4>
+<div class="relative h-64 flex items-center justify-center">
+<!-- Simulated Donut Chart using multiple circles -->
+<div class="absolute w-44 h-44 rounded-full border-[18px] border-surface-container-highest"></div>
+<div class="absolute w-44 h-44 rounded-full border-[18px] border-primary-container border-r-transparent border-b-transparent rotate-45"></div>
+<div class="absolute w-44 h-44 rounded-full border-[18px] border-secondary-container border-t-transparent border-r-transparent border-l-transparent -rotate-12"></div>
+<div class="flex flex-col items-center">
+<span class="text-3xl font-headline font-bold">142</span>
+<span class="text-[10px] font-bold text-outline uppercase">Total</span>
+</div>
+</div>
+<div class="mt-6 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="text-sm font-medium text-on-surface-variant">Enterprise</span>
+</div>
+<span class="text-sm font-bold">42%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span class="text-sm font-medium text-on-surface-variant">Pro</span>
+</div>
+<span class="text-sm font-bold">35%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-surface-container-highest"></span>
+<span class="text-sm font-medium text-on-surface-variant">Básico</span>
+</div>
+<span class="text-sm font-bold">23%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Row 3: Table & Leads -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+<div class="lg:col-span-2 bg-surface-container border border-outline-variant/20 rounded-xl p-6">
+<div class="flex justify-between items-center mb-6">
+<h4 class="font-headline font-bold text-on-surface">Últimos Lojistas Cadastrados</h4>
+<button class="text-xs font-bold text-primary-container hover:underline uppercase tracking-tight">Ver todos</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="text-[10px] font-bold text-outline uppercase tracking-wider border-b border-outline-variant/10">
+<th class="pb-4 font-bold">Lojista</th>
+<th class="pb-4 font-bold">Cidade</th>
+<th class="pb-4 font-bold">Plano</th>
+<th class="pb-4 font-bold">Status</th>
+</tr>
+</thead>
+<tbody class="text-sm">
+<tr class="border-b border-outline-variant/10 hover:bg-surface-container-high transition-colors group">
+<td class="py-4 font-bold text-on-surface flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-[10px] font-black text-primary-container">DG</div>
+                                        Pizzaria Del Grano
+                                    </td>
+<td class="py-4 text-on-surface-variant">São Paulo (SP)</td>
+<td class="py-4">
+<span class="px-2 py-1 rounded-full bg-primary-container/10 text-primary-container text-[10px] font-bold uppercase">Enterprise</span>
+</td>
+<td class="py-4">
+<span class="flex items-center gap-1.5 text-green-500 font-bold text-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                            Ativo
+                                        </span>
+</td>
+</tr>
+<tr class="border-b border-outline-variant/10 hover:bg-surface-container-high transition-colors group">
+<td class="py-4 font-bold text-on-surface flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-[10px] font-black text-secondary">BK</div>
+                                        Burger King Dom
+                                    </td>
+<td class="py-4 text-on-surface-variant">Rio de Janeiro (RJ)</td>
+<td class="py-4">
+<span class="px-2 py-1 rounded-full bg-secondary-container/20 text-on-secondary-container text-[10px] font-bold uppercase">Pro</span>
+</td>
+<td class="py-4">
+<span class="flex items-center gap-1.5 text-green-500 font-bold text-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                            Ativo
+                                        </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-high transition-colors group">
+<td class="py-4 font-bold text-on-surface flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-[10px] font-black text-outline">SR</div>
+                                        Sushi Roll Express
+                                    </td>
+<td class="py-4 text-on-surface-variant">Curitiba (PR)</td>
+<td class="py-4">
+<span class="px-2 py-1 rounded-full bg-surface-container-highest text-outline text-[10px] font-bold uppercase">Básico</span>
+</td>
+<td class="py-4">
+<span class="flex items-center gap-1.5 text-yellow-500 font-bold text-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></span>
+                                            Pendente
+                                        </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="bg-surface-container border border-outline-variant/20 rounded-xl p-6">
+<div class="flex justify-between items-center mb-6">
+<h4 class="font-headline font-bold text-on-surface">Últimos Leads</h4>
+</div>
+<div class="flex flex-col gap-6">
+<div class="flex items-start gap-4">
+<img alt="Lead" class="w-10 h-10 rounded-full grayscale hover:grayscale-0 transition-all cursor-pointer" data-alt="headshot of professional smiling woman in blazer with neutral background and bright lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdEOBXYykJmGR7gS-cXek1L-W-RGbzYwG0uXNDDQr378NT1HKwV0DGBTAbYrrNrXQu6VFhjEXMYtbRSre18-aDZw0jLgmVvR2cMX5kh9ogB8swQEugzX7OjY8S7gWFgB0Tm2pwRh0z5Vg3ZEDId2uEZ9aLiy3SQqzIp3Rrepr5ugB8_HLDWKVAwhx5y7epwGtNthKl5nLWtfVnCNtXq2FAh8t-8TXgTJEApbfZi5a7GmpyuFsj3M2fhC8L5FYG926fC_0Tam30irQw"/>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<p class="text-sm font-bold text-on-surface truncate">Ana Paula Mendes</p>
+<span class="text-[10px] text-outline font-medium">10:45</span>
+</div>
+<p class="text-xs text-on-surface-variant truncate mb-2">Sabor Real Ltda • BH/MG</p>
+<span class="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-bold uppercase tracking-tight">Em Contato</span>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<img alt="Lead" class="w-10 h-10 rounded-full grayscale hover:grayscale-0 transition-all cursor-pointer" data-alt="headshot of confident man in suit and glasses with window light background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdOSTgxW_H5gii8Lza7J-ltg1u_nyNyuYHKaM1wrcaiEaO7prTWpxr7IMoWLHazo6I8xqLqdEzsuyt9WFNlKG4AyZzu0P028xYTkgDWTDtvilrfni1S_bTRFd5uaHdaY6MyFzbFO8TG2_qty_RKqaoF_v8Lt_VJThKEOLDrtyEpuKlPizBky5EiS4_CNpDFUKigbY_UoBxB3saUFdVU6CD3QfSjAgOvbHZhL7yaQfpl7F36AveJp5X60OBnGVLqqMBw-NFEFVLBwLp"/>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<p class="text-sm font-bold text-on-surface truncate">Ricardo Silveira</p>
+<span class="text-[10px] text-outline font-medium">09:12</span>
+</div>
+<p class="text-xs text-on-surface-variant truncate mb-2">The Burger House • SP/SP</p>
+<span class="px-2 py-0.5 rounded-full bg-primary-container/10 text-primary-container text-[10px] font-bold uppercase tracking-tight">Novo</span>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<img alt="Lead" class="w-10 h-10 rounded-full grayscale hover:grayscale-0 transition-all cursor-pointer" data-alt="headshot of focused young woman with glasses and creative office setting background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNXwAD8B_KBnC0oDK05nIeFCxoEnpDV1pps9BsCcHTsvC7mvrZ3YbLg4Y4i5-fTrdan5ZDcIm8F2fate22w0oRy2LKLum4UZHuh-e9qSHTFaSCiePbsSzOKOd89h6GD-fa3i2AYxdzyT5UTAH3PKxnlGM7zTqtBZ4gPL0APOiAd0Z6JXX4suV8Kl2vRAom9WcoJ8aBPiYULLu8ERdceQKNH_DPEvuQ489gyyMaOOGal1cpao-mwFD2qw1cZ2AWzbqQU1_IlpNZ6F0p"/>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<p class="text-sm font-bold text-on-surface truncate">Juliana Costa</p>
+<span class="text-[10px] text-outline font-medium">Ontem</span>
+</div>
+<p class="text-xs text-on-surface-variant truncate mb-2">Frangos &amp; Cia • RS/POA</p>
+<span class="px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 text-[10px] font-bold uppercase tracking-tight">Qualificado</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Row 4: System Alerts -->
+<div class="grid grid-cols-1 gap-6">
+<div class="bg-surface-container border border-outline-variant/20 rounded-xl p-6">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-error">warning</span>
+<h4 class="font-headline font-bold text-on-surface">Alertas do Sistema</h4>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="flex items-center gap-4 p-4 rounded-lg bg-surface-container-high border-l-4 border-error">
+<div class="flex flex-col">
+<p class="text-sm font-bold text-on-surface">Pagamentos Pendentes</p>
+<p class="text-xs text-on-surface-variant">3 faturas em atraso</p>
+</div>
+<button class="ml-auto material-symbols-outlined text-outline hover:text-on-surface">chevron_right</button>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-lg bg-surface-container-high border-l-4 border-blue-500">
+<div class="flex flex-col">
+<p class="text-sm font-bold text-on-surface">Aprovações de Cadastro</p>
+<p class="text-xs text-on-surface-variant">5 lojas aguardando revisão</p>
+</div>
+<button class="ml-auto material-symbols-outlined text-outline hover:text-on-surface">chevron_right</button>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-lg bg-surface-container-high border-l-4 border-outline">
+<div class="flex flex-col">
+<p class="text-sm font-bold text-on-surface">Tickets Ignorados</p>
+<p class="text-xs text-on-surface-variant">2 chamados sem resposta &gt; 48h</p>
+</div>
+<button class="ml-auto material-symbols-outlined text-outline hover:text-on-surface">chevron_right</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

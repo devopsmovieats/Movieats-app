@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MOVIEATS | Gestão de Leads</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-low": "#1c1b1b",
+                      "on-primary-container": "#572000",
+                      "on-error-container": "#ffdad6",
+                      "surface-variant": "#353534",
+                      "on-primary-fixed-variant": "#7a3000",
+                      "secondary-fixed-dim": "#ffb693",
+                      "on-error": "#690005",
+                      "tertiary-container": "#059eff",
+                      "on-secondary-container": "#ffa173",
+                      "on-secondary-fixed-variant": "#783207",
+                      "primary": "#ffb693",
+                      "tertiary": "#9ccaff",
+                      "on-primary-fixed": "#351000",
+                      "surface-container-lowest": "#0e0e0e",
+                      "secondary-container": "#7b3409",
+                      "secondary-fixed": "#ffdbcc",
+                      "on-primary": "#561f00",
+                      "on-surface": "#e5e2e1",
+                      "on-secondary": "#561f00",
+                      "inverse-surface": "#e5e2e1",
+                      "on-surface-variant": "#e2bfb0",
+                      "primary-fixed-dim": "#ffb693",
+                      "surface-container-high": "#2a2a2a",
+                      "outline-variant": "#5a4136",
+                      "tertiary-fixed": "#d0e4ff",
+                      "error": "#ffb4ab",
+                      "primary-fixed": "#ffdbcc",
+                      "tertiary-fixed-dim": "#9ccaff",
+                      "on-tertiary-container": "#003357",
+                      "primary-container": "#ff6b00",
+                      "surface-dim": "#131313",
+                      "on-tertiary-fixed-variant": "#00497b",
+                      "error-container": "#93000a",
+                      "background": "#131313",
+                      "surface-tint": "#ffb693",
+                      "surface-bright": "#3a3939",
+                      "surface-container": "#201f1f",
+                      "secondary": "#ffb693",
+                      "on-tertiary": "#003257",
+                      "surface-container-highest": "#353534",
+                      "inverse-on-surface": "#313030",
+                      "on-secondary-fixed": "#351000",
+                      "surface": "#131313",
+                      "inverse-primary": "#a04100",
+                      "on-tertiary-fixed": "#001d35",
+                      "outline": "#a98a7d",
+                      "on-background": "#e5e2e1"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "fontFamily": {
+                      "headline": ["Manrope"],
+                      "body": ["Inter"],
+                      "label": ["Inter"]
+              }
+            },
+          }
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .brand-font { font-family: 'Manrope', sans-serif; }
+      </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="flex flex-col fixed left-0 top-0 h-full py-4 bg-[#0e0e0e] w-64 z-50">
+<div class="px-6 mb-10 flex items-center gap-3">
+<span class="material-symbols-outlined text-[#ff6b00] text-3xl" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<div>
+<h1 class="text-xl font-extrabold text-[#ffb693] leading-none">MOVIEATS</h1>
+<p class="text-[10px] uppercase tracking-widest text-gray-500 font-bold mt-1">Painel Admin</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1 px-3">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 hover:bg-[#201f1f] hover:text-[#ffb693] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-manrope text-sm font-semibold tracking-wide">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 hover:bg-[#201f1f] hover:text-[#ffb693] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">store</span>
+<span class="font-manrope text-sm font-semibold tracking-wide">Lojistas</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 hover:bg-[#201f1f] hover:text-[#ffb693] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-manrope text-sm font-semibold tracking-wide">Planos</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 hover:bg-[#201f1f] hover:text-[#ffb693] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-manrope text-sm font-semibold tracking-wide">Financeiro</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 hover:bg-[#201f1f] hover:text-[#ffb693] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-manrope text-sm font-semibold tracking-wide">Usuários</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#201f1f] text-[#ffb693] border-l-4 border-[#ff6b00] transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">leaderboard</span>
+<span class="font-manrope text-sm font-semibold tracking-wide">Leads</span>
+</a>
+</nav>
+<div class="px-3 pt-4 border-t border-[#201f1f]">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 hover:bg-error-container/20 hover:text-error transition-all duration-200" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-manrope text-sm font-semibold tracking-wide">Sair</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="flex-1 ml-64 flex flex-col bg-surface overflow-hidden">
+<!-- TopNavBar -->
+<header class="w-full sticky top-0 z-50 bg-[#131313] shadow-none flex justify-between items-center h-16 px-8">
+<div class="flex items-center gap-2">
+<h2 class="font-manrope font-bold text-lg text-on-surface">Leads</h2>
+<span class="text-xs bg-surface-container-high px-2 py-0.5 rounded text-on-surface-variant">Admin Dashboard</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-gray-400">
+<button class="material-symbols-outlined hover:text-[#ff6b00] transition-colors cursor-pointer">notifications</button>
+<button class="material-symbols-outlined hover:text-[#ff6b00] transition-colors cursor-pointer">settings</button>
+</div>
+<div class="h-8 w-px bg-surface-container-high"></div>
+<div class="flex items-center gap-3 cursor-pointer">
+<div class="text-right">
+<p class="text-xs font-bold text-on-surface leading-none">Admin Movieats</p>
+<p class="text-[10px] text-gray-500">Super Admin</p>
+</div>
+<img alt="Avatar do Administrador" class="w-10 h-10 rounded-full border-2 border-surface-container-high" data-alt="Close-up portrait of a professional man with a friendly expression in high-key studio lighting with a neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD68i7zJ0yDs9jufQKlCvYwgf43utBJzU86NpnVatRv3Zo-404lQxoe07Yb7klRP17fSR9-HstED2Y6tAICyZdCp9er3NliMRsbwiqu-AdulS4Yr-PNiImrszFv74Fse8CrwFOk7m-nrHV4ugcZ2I2ll0gEFw6fh61jzu3PQO1bo0FnspYwKya1bQQ426mQU_4IpUoFSsM-_mSEv9nyyI_MuWTlw835o3Xo5G9gu1FSFgUatz19TzT2i4yL2UrAQBmNVgTCXaYxQ4xC"/>
+</div>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto p-8 space-y-8">
+<!-- Page Header -->
+<div class="flex justify-between items-start">
+<div>
+<h1 class="text-3xl font-black text-on-surface tracking-tight">Gestão de Leads</h1>
+<p class="text-on-surface-variant mt-1">Acompanhe e gerencie todos os leads da plataforma MOVIEATS.</p>
+</div>
+<button class="bg-[#ff6b00] hover:bg-[#e65a00] text-on-primary-fixed font-bold py-2.5 px-6 rounded-lg flex items-center gap-2 shadow-lg shadow-primary-container/20 transition-all active:scale-95">
+<span class="material-symbols-outlined">add_circle</span>
+                    Cadastrar Lead Manual
+                </button>
+</div>
+<!-- Metrics Bento Grid -->
+<div class="grid grid-cols-5 gap-4">
+<div class="bg-surface-container p-5 rounded-xl border-l-4 border-gray-600">
+<p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Total</p>
+<h3 class="text-3xl font-black mt-1">87</h3>
+<p class="text-[10px] text-gray-400 mt-2 flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">trending_up</span> +12% este mês</p>
+</div>
+<div class="bg-surface-container p-5 rounded-xl border-l-4 border-primary-container">
+<p class="text-xs font-bold text-primary-container uppercase tracking-widest">Novos</p>
+<h3 class="text-3xl font-black mt-1">5</h3>
+<div class="h-1.5 w-full bg-surface-container-high rounded-full mt-3 overflow-hidden">
+<div class="h-full bg-primary-container w-[15%]"></div>
+</div>
+</div>
+<div class="bg-surface-container p-5 rounded-xl border-l-4 border-tertiary-container">
+<p class="text-xs font-bold text-tertiary-container uppercase tracking-widest">Em Andamento</p>
+<h3 class="text-3xl font-black mt-1">34</h3>
+<div class="h-1.5 w-full bg-surface-container-high rounded-full mt-3 overflow-hidden">
+<div class="h-full bg-tertiary-container w-[45%]"></div>
+</div>
+</div>
+<div class="bg-surface-container p-5 rounded-xl border-l-4 border-emerald-500">
+<p class="text-xs font-bold text-emerald-500 uppercase tracking-widest">Convertidos</p>
+<h3 class="text-3xl font-black mt-1">28</h3>
+<div class="h-1.5 w-full bg-surface-container-high rounded-full mt-3 overflow-hidden">
+<div class="h-full bg-emerald-500 w-[35%]"></div>
+</div>
+</div>
+<div class="bg-surface-container p-5 rounded-xl border-l-4 border-error">
+<p class="text-xs font-bold text-error uppercase tracking-widest">Perdidos</p>
+<h3 class="text-3xl font-black mt-1">12</h3>
+<div class="h-1.5 w-full bg-surface-container-high rounded-full mt-3 overflow-hidden">
+<div class="h-full bg-error w-[14%]"></div>
+</div>
+</div>
+</div>
+<!-- Pipeline Section -->
+<section class="space-y-4">
+<h4 class="text-sm font-bold uppercase tracking-widest text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">view_kanban</span>
+                    Pipeline de Vendas
+                </h4>
+<div class="grid grid-cols-5 gap-4 h-48">
+<!-- Column 1 -->
+<div class="bg-surface-container-low rounded-xl p-3 border border-surface-container-high flex flex-col gap-2">
+<div class="flex justify-between items-center mb-1">
+<span class="text-[10px] font-bold bg-tertiary-container/20 text-tertiary-container px-2 py-0.5 rounded">NOVO</span>
+<span class="text-[10px] text-gray-500">2 leads</span>
+</div>
+<div class="bg-surface-container-high p-2 rounded border-l-2 border-tertiary-container text-xs cursor-pointer hover:brightness-110">
+<p class="font-bold">Pastel da Vovó</p>
+<p class="text-[10px] text-gray-400 mt-1">Há 2 horas</p>
+</div>
+<div class="bg-surface-container-high p-2 rounded border-l-2 border-tertiary-container text-xs cursor-pointer hover:brightness-110">
+<p class="font-bold">Sushi Express</p>
+<p class="text-[10px] text-gray-400 mt-1">Há 5 horas</p>
+</div>
+</div>
+<!-- Column 2 -->
+<div class="bg-surface-container-low rounded-xl p-3 border border-surface-container-high flex flex-col gap-2">
+<div class="flex justify-between items-center mb-1">
+<span class="text-[10px] font-bold bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded">CONTATADO</span>
+<span class="text-[10px] text-gray-500">1 lead</span>
+</div>
+<div class="bg-surface-container-high p-2 rounded border-l-2 border-yellow-500 text-xs cursor-pointer hover:brightness-110">
+<p class="font-bold">Crepe &amp; Cia</p>
+<p class="text-[10px] text-gray-400 mt-1">Retorno amanhã</p>
+</div>
+</div>
+<!-- Column 3 -->
+<div class="bg-surface-container-low rounded-xl p-3 border border-surface-container-high flex flex-col gap-2">
+<div class="flex justify-between items-center mb-1">
+<span class="text-[10px] font-bold bg-primary-container/20 text-primary-container px-2 py-0.5 rounded">QUALIFICADO</span>
+<span class="text-[10px] text-gray-500">1 lead</span>
+</div>
+<div class="bg-surface-container-high p-2 rounded border-l-2 border-primary-container text-xs cursor-pointer hover:brightness-110">
+<p class="font-bold">Burguer da Vila</p>
+<p class="text-[10px] text-gray-400 mt-1">Aguardando docs</p>
+</div>
+</div>
+<!-- Column 4 -->
+<div class="bg-surface-container-low rounded-xl p-3 border border-surface-container-high flex flex-col gap-2">
+<div class="flex justify-between items-center mb-1">
+<span class="text-[10px] font-bold bg-emerald-500/20 text-emerald-500 px-2 py-0.5 rounded">FECHOU</span>
+<span class="text-[10px] text-gray-500">0 leads</span>
+</div>
+<div class="border-2 border-dashed border-surface-container-high rounded-lg h-full flex items-center justify-center">
+<span class="material-symbols-outlined text-surface-container-high">add</span>
+</div>
+</div>
+<!-- Column 5 -->
+<div class="bg-surface-container-low rounded-xl p-3 border border-surface-container-high flex flex-col gap-2">
+<div class="flex justify-between items-center mb-1">
+<span class="text-[10px] font-bold bg-error/20 text-error px-2 py-0.5 rounded">PERDIDO</span>
+<span class="text-[10px] text-gray-500">0 leads</span>
+</div>
+<div class="border-2 border-dashed border-surface-container-high rounded-lg h-full flex items-center justify-center">
+<span class="material-symbols-outlined text-surface-container-high">add</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Layout Grid (2 Columns) -->
+<div class="grid grid-cols-12 gap-8 items-start">
+<!-- Left: Leads Table -->
+<div class="col-span-8 bg-surface-container rounded-2xl overflow-hidden shadow-2xl">
+<div class="p-6 border-b border-surface-variant flex justify-between items-center">
+<h4 class="font-bold text-lg">Todos os Leads</h4>
+<div class="flex gap-2">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">search</span>
+<input class="bg-surface-container-highest border-none rounded-lg pl-9 pr-4 py-1.5 text-sm focus:ring-1 focus:ring-primary-container w-64" placeholder="Buscar leads..." type="text"/>
+</div>
+<button class="bg-surface-container-highest p-2 rounded-lg text-gray-400 hover:text-on-surface">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left text-sm border-separate border-spacing-0">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant">
+<th class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest">LEAD</th>
+<th class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest">CIDADE</th>
+<th class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest">ORIGEM</th>
+<th class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest">RESPONSÁVEL</th>
+<th class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest">RETORNO</th>
+<th class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest">STATUS</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-variant/50">
+<!-- Urgent Row -->
+<tr class="bg-primary-container/5 border-y-2 border-[#ff6b00] group cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-fixed font-black">B</div>
+<div>
+<p class="font-bold text-[#ff6b00]">Burguer da Vila</p>
+<p class="text-[10px] text-gray-500">Há 4 dias</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-gray-400">São Paulo, SP</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1 text-[10px] font-bold text-blue-400 uppercase">
+<span class="material-symbols-outlined text-xs">ads_click</span> Google Ads
+                                        </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px]">AS</div>
+<span class="text-xs">Ana Silva</span>
+</div>
+</td>
+<td class="px-6 py-4 text-[#ff6b00] font-bold">Amanhã 14:00</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded text-[10px] font-bold bg-primary-container/20 text-primary-container uppercase">Qualificado</span>
+</td>
+</tr>
+<!-- Regular Row -->
+<tr class="hover:bg-surface-container-high transition-colors cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center font-black">C</div>
+<div>
+<p class="font-bold">Crepe &amp; Cia</p>
+<p class="text-[10px] text-gray-500">Há 1 dia</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-gray-400">Curitiba, PR</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1 text-[10px] font-bold text-purple-400 uppercase">
+<span class="material-symbols-outlined text-xs">retweet</span> Instagram
+                                        </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px]">RC</div>
+<span class="text-xs">Ricardo C.</span>
+</div>
+</td>
+<td class="px-6 py-4 text-gray-500">22/10 10:30</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded text-[10px] font-bold bg-yellow-500/20 text-yellow-500 uppercase">Contatado</span>
+</td>
+</tr>
+<!-- Regular Row -->
+<tr class="hover:bg-surface-container-high transition-colors cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center font-black">S</div>
+<div>
+<p class="font-bold">Sushi Express</p>
+<p class="text-[10px] text-gray-500">Hoje 09:12</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-gray-400">Joinville, SC</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1 text-[10px] font-bold text-gray-400 uppercase">
+<span class="material-symbols-outlined text-xs">language</span> Site Direto
+                                        </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px]">AS</div>
+<span class="text-xs">Ana Silva</span>
+</div>
+</td>
+<td class="px-6 py-4 text-gray-500">20/10 16:00</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded text-[10px] font-bold bg-tertiary-container/20 text-tertiary-container uppercase">Novo</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t border-surface-variant flex justify-between items-center text-xs text-gray-500">
+<p>Mostrando 1-8 de 87 leads</p>
+<div class="flex gap-1">
+<button class="w-8 h-8 flex items-center justify-center rounded bg-surface-container-highest text-on-surface">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container-high transition-colors">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container-high transition-colors">3</button>
+<span class="px-1 self-center">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container-high transition-colors">11</button>
+</div>
+</div>
+</div>
+<!-- Right: Side Detail Panel -->
+<div class="col-span-4 sticky top-24 space-y-4">
+<div class="bg-surface-container rounded-2xl p-6 shadow-2xl space-y-6">
+<!-- Detail Header -->
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-bold text-xl leading-tight">Burguer da Vila</h4>
+<p class="text-sm text-gray-500">Cadastrado em 15/10/2023</p>
+</div>
+<span class="material-symbols-outlined text-gray-500 cursor-pointer">more_vert</span>
+</div>
+<!-- Contact Info -->
+<div class="space-y-3">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-lg">person</span>
+<div>
+<p class="text-xs text-gray-500">Proprietário</p>
+<p class="text-sm font-semibold">João Silva</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-lg">call</span>
+<div>
+<p class="text-xs text-gray-500">Telefone</p>
+<p class="text-sm font-semibold">(11) 98765-4321</p>
+</div>
+</div>
+</div>
+<!-- Agendamento de Retorno -->
+<div class="bg-primary-container/10 p-4 rounded-xl border border-primary-container/20">
+<h5 class="text-[10px] font-bold text-primary-container uppercase tracking-widest mb-2">Agendamento de Retorno</h5>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container">event</span>
+<p class="text-sm font-bold text-on-surface">Amanhã, às 14:00</p>
+</div>
+<button class="text-[10px] font-bold text-primary-container hover:underline">ALTERAR</button>
+</div>
+</div>
+<!-- Timeline -->
+<div class="space-y-4">
+<h5 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">history</span> Histórico de Contatos
+                            </h5>
+<div class="space-y-4 relative before:absolute before:left-[7px] before:top-2 before:bottom-2 before:w-[2px] before:bg-surface-variant">
+<div class="relative pl-6">
+<div class="absolute left-0 top-1.5 w-[16px] h-[16px] rounded-full bg-[#ff6b00] border-4 border-surface-container"></div>
+<p class="text-xs font-bold">Ligação Realizada</p>
+<p class="text-[10px] text-gray-500">Hoje às 10:45 por Ana Silva</p>
+</div>
+<div class="relative pl-6">
+<div class="absolute left-0 top-1.5 w-[16px] h-[16px] rounded-full bg-surface-variant border-4 border-surface-container"></div>
+<p class="text-xs font-bold text-gray-400">Proposta Enviada</p>
+<p class="text-[10px] text-gray-500">Ontem às 16:20</p>
+</div>
+</div>
+</div>
+<!-- Anotações -->
+<div class="space-y-2">
+<h5 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Anotações</h5>
+<textarea class="w-full bg-surface-container-highest border-none rounded-xl text-xs p-3 focus:ring-1 focus:ring-primary-container" placeholder="Escreva uma nota..." rows="3">Interessado no plano Premium. Já utiliza delivery próprio mas está insatisfeito com as taxas do concorrente. Enviar contrato até amanhã.</textarea>
+</div>
+<!-- Actions -->
+<div class="grid grid-cols-1 gap-2 pt-4">
+<button class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-900/20 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                Converter em Lojista
+                            </button>
+<div class="grid grid-cols-2 gap-2">
+<button class="py-2.5 rounded-xl border border-surface-variant hover:bg-surface-variant text-on-surface text-xs font-bold transition-all">Editar</button>
+<button class="py-2.5 rounded-xl border border-error-container hover:bg-error-container/20 text-error text-xs font-bold transition-all">Perdido</button>
+</div>
+</div>
+</div>
+<!-- Side Card Mini Insight -->
+<div class="bg-surface-container rounded-2xl p-4 flex items-center gap-4 border border-surface-variant/30">
+<div class="w-12 h-12 rounded-full bg-tertiary-container/20 flex items-center justify-center text-tertiary-container">
+<span class="material-symbols-outlined">lightbulb</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-gray-500 uppercase">Insight do Lead</p>
+<p class="text-xs text-on-surface">Alta probabilidade de conversão baseada no volume de buscas.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#7b3409",
+                    "surface-container": "#201f1f",
+                    "inverse-surface": "#e5e2e1",
+                    "background": "#131313",
+                    "tertiary-container": "#059eff",
+                    "tertiary-fixed-dim": "#9ccaff",
+                    "secondary": "#ffb693",
+                    "on-tertiary": "#003257",
+                    "on-surface": "#e5e2e1",
+                    "surface-tint": "#ffb693",
+                    "tertiary-fixed": "#d0e4ff",
+                    "primary-container": "#ff6b00",
+                    "outline-variant": "#5a4136",
+                    "surface-container-high": "#2a2a2a",
+                    "surface-container-low": "#1c1b1b",
+                    "on-error": "#690005",
+                    "on-tertiary-container": "#003357",
+                    "on-secondary": "#561f00",
+                    "surface-bright": "#3a3939",
+                    "on-primary-fixed-variant": "#7a3000",
+                    "error-container": "#93000a",
+                    "surface-variant": "#353534",
+                    "on-surface-variant": "#e2bfb0",
+                    "inverse-on-surface": "#313030",
+                    "secondary-fixed-dim": "#ffb693",
+                    "on-primary": "#561f00",
+                    "surface-dim": "#131313",
+                    "primary-fixed": "#ffdbcc",
+                    "primary-fixed-dim": "#ffb693",
+                    "surface": "#131313",
+                    "on-primary-container": "#572000",
+                    "surface-container-highest": "#353534",
+                    "outline": "#a98a7d",
+                    "error": "#ffb4ab",
+                    "tertiary": "#9ccaff",
+                    "primary": "#ffb693",
+                    "on-secondary-container": "#ffa173",
+                    "on-background": "#e5e2e1",
+                    "on-secondary-fixed-variant": "#783207",
+                    "secondary-fixed": "#ffdbcc",
+                    "on-tertiary-fixed": "#001d35",
+                    "on-primary-fixed": "#351000",
+                    "on-secondary-fixed": "#351000",
+                    "surface-container-lowest": "#0e0e0e",
+                    "on-error-container": "#ffdad6",
+                    "on-tertiary-fixed-variant": "#00497b",
+                    "inverse-primary": "#a04100"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        vertical-align: middle;
+      }
+      body {
+        background-color: #131313;
+        color: #e5e2e1;
+        font-family: 'Inter', sans-serif;
+      }
+      .snappy { transition: all 200ms ease-in-out; }
+    </style>
+</head>
+<body class="flex min-h-screen overflow-x-hidden">
+<!-- SideNavBar Anchor -->
+<aside class="h-screen w-[240px] sticky top-0 left-0 bg-[#131313] flex flex-col py-6 px-4 font-manrope text-sm font-medium border-r border-[#2a2a2a]/30 hidden md:flex">
+<div class="mb-10 px-2">
+<span class="text-2xl font-black tracking-tighter text-[#ff6b00]">MOVIEATS</span>
+<p class="text-[10px] uppercase tracking-[0.2em] text-zinc-500 mt-1">Admin Panel</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-zinc-500 hover:bg-[#201f1f] hover:text-white transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-zinc-500 hover:bg-[#201f1f] hover:text-white transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span>Clientes - Lojistas</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-zinc-500 hover:bg-[#201f1f] hover:text-white transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span>Planos</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-zinc-500 hover:bg-[#201f1f] hover:text-white transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span>Financeiro</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#ffb693] bg-[#2a2a2a] border-r-4 border-[#ff6b00]" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span>Usuários</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-zinc-500 hover:bg-[#201f1f] hover:text-white transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="lead_intelligence">network_intelligence</span>
+<span>Leads</span>
+</a>
+</nav>
+<div class="pt-6 mt-6 border-t border-[#2a2a2a]/20">
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#0e0e0e]">
+<img class="w-8 h-8 rounded-full border border-[#2a2a2a]" data-alt="close up headshot of a smiling professional man with short dark hair in front of a neutral gray background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXHiii3geZnEL7P5-2AWHS4JbInyhT2AqKy2lgdBnOgffzeDp0L-IEmw3FwwvoT3CcstEnNum5WWBJOOHBikDx6yOl4JGzFlvX1it1ku6jX6eSbijw-a0YAqLLQuwoMd7uxxBpJ-UkJOGlrTgPKxeorbmn0C_GAG4-XSKelAhT4ppHel4En7zhR8MEZxur6hBeIduWHHYzyXrqPpB7p-l_daFnfUunaRX5x_NNGL6SoaK_BVV8IN_5sEeZeGj0RP54VF7EMxHzVRzX"/>
+<div class="flex flex-col">
+<span class="text-xs font-bold text-white">Admin Master</span>
+<span class="text-[10px] text-zinc-500">Sair da conta</span>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col min-w-0 bg-[#0f0f0f]">
+<!-- TopNavBar Anchor -->
+<header class="sticky top-0 w-full z-40 bg-[#131313] border-b border-[#2a2a2a]/15 shadow-2xl shadow-[#ffb693]/5 flex justify-between items-center px-8 py-4">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined md:hidden text-[#ff6b00]" data-icon="menu">menu</span>
+<h1 class="font-manrope font-bold text-xl text-[#f0f0f0]">Usuários &amp; Permissões</h1>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm" data-icon="search">search</span>
+<input class="bg-[#1c1b1b] border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-[#ff6b00]/30 w-64 text-zinc-300" placeholder="Pesquisar..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-zinc-400 hover:text-white scale-95 active:scale-90 transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-zinc-400 hover:text-white scale-95 active:scale-90 transition-all">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<div class="p-7 space-y-7 max-w-[1600px] mx-auto w-full">
+<!-- Page Header Row -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<div>
+<h2 class="text-2xl font-extrabold font-headline tracking-tight text-[#f0f0f0]">Gestão de Acessos</h2>
+<p class="text-on-surface-variant text-sm mt-1">Controle quem pode acessar e o que pode fazer no painel MOVIEATS.</p>
+</div>
+<button class="bg-[#ff6b00] hover:bg-[#783207] text-[#351000] font-bold px-6 py-3 rounded-lg flex items-center gap-2 shadow-lg shadow-[#ff6b00]/10 transition-all duration-200">
+<span class="material-symbols-outlined text-lg" data-icon="person_add">person_add</span>
+<span>Convidar Usuário</span>
+</button>
+</div>
+<!-- Metrics Row -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-[#1a1a1a] p-6 rounded-xl border border-transparent flex flex-col gap-1">
+<span class="text-zinc-500 text-xs font-bold uppercase tracking-wider">Total de Usuários</span>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-black text-white">12</span>
+<span class="text-xs text-[#ffb693]">+1 este mês</span>
+</div>
+</div>
+<div class="bg-[#1a1a1a] p-6 rounded-xl border-l-4 border-[#ff6b00] flex flex-col gap-1">
+<span class="text-zinc-500 text-xs font-bold uppercase tracking-wider">Administradores</span>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-black text-[#ff6b00]">2</span>
+<span class="material-symbols-outlined text-sm text-[#ff6b00]" data-icon="security" style="font-variation-settings: 'FILL' 1;">security</span>
+</div>
+</div>
+<div class="bg-[#1a1a1a] p-6 rounded-xl border border-transparent flex flex-col gap-1">
+<span class="text-zinc-500 text-xs font-bold uppercase tracking-wider">Usuários Ativos</span>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-black text-[#059eff]">10</span>
+<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+</div>
+</div>
+<div class="bg-[#1a1a1a] p-6 rounded-xl border border-transparent flex flex-col gap-1">
+<span class="text-zinc-500 text-xs font-bold uppercase tracking-wider">Último Acesso</span>
+<div class="flex items-baseline gap-2">
+<span class="text-xl font-bold text-white">Hoje, 14:32</span>
+</div>
+<span class="text-[10px] text-zinc-500">v.1.4.2-stable</span>
+</div>
+</div>
+<!-- Permissions Matrix -->
+<div class="bg-[#1a1a1a] rounded-xl overflow-hidden">
+<div class="p-6 border-b border-[#2a2a2a]">
+<h3 class="font-headline font-bold text-lg">Matriz de Permissões</h3>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#201f1f] text-[11px] font-bold text-zinc-400 uppercase tracking-widest">
+<th class="px-6 py-4">Módulo</th>
+<th class="px-6 py-4">Administrador</th>
+<th class="px-6 py-4">Gerente Comercial</th>
+<th class="px-6 py-4">Analista de Planos</th>
+<th class="px-6 py-4">Analista Financeiro</th>
+<th class="px-6 py-4">Suporte</th>
+</tr>
+</thead>
+<tbody class="text-sm divide-y divide-[#2a2a2a]">
+<tr class="hover:bg-[#252525] transition-colors">
+<td class="px-6 py-4 font-semibold text-zinc-200">Dashboard</td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-emerald-500" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span></td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-emerald-500" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span></td>
+<td class="px-6 py-4"><span class="bg-[#059eff]/10 text-[#059eff] text-[10px] px-2 py-0.5 rounded font-bold uppercase">Leitura</span></td>
+<td class="px-6 py-4"><span class="bg-[#059eff]/10 text-[#059eff] text-[10px] px-2 py-0.5 rounded font-bold uppercase">Leitura</span></td>
+<td class="px-6 py-4"><span class="bg-[#059eff]/10 text-[#059eff] text-[10px] px-2 py-0.5 rounded font-bold uppercase">Leitura</span></td>
+</tr>
+<tr class="hover:bg-[#252525] transition-colors">
+<td class="px-6 py-4 font-semibold text-zinc-200">Lojistas</td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-emerald-500" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span></td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-emerald-500" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span></td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-zinc-700" data-icon="cancel" style="font-variation-settings: 'FILL' 1;">cancel</span></td>
+<td class="px-6 py-4"><span class="bg-[#059eff]/10 text-[#059eff] text-[10px] px-2 py-0.5 rounded font-bold uppercase">Leitura</span></td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-emerald-500" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span></td>
+</tr>
+<tr class="hover:bg-[#252525] transition-colors">
+<td class="px-6 py-4 font-semibold text-zinc-200">Planos</td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-emerald-500" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span></td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-zinc-700" data-icon="cancel" style="font-variation-settings: 'FILL' 1;">cancel</span></td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-emerald-500" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span></td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-zinc-700" data-icon="cancel" style="font-variation-settings: 'FILL' 1;">cancel</span></td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-zinc-700" data-icon="cancel" style="font-variation-settings: 'FILL' 1;">cancel</span></td>
+</tr>
+<tr class="hover:bg-[#252525] transition-colors">
+<td class="px-6 py-4 font-semibold text-zinc-200">Financeiro</td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-emerald-500" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span></td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-zinc-700" data-icon="cancel" style="font-variation-settings: 'FILL' 1;">cancel</span></td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-zinc-700" data-icon="cancel" style="font-variation-settings: 'FILL' 1;">cancel</span></td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-emerald-500" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span></td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-zinc-700" data-icon="cancel" style="font-variation-settings: 'FILL' 1;">cancel</span></td>
+</tr>
+<tr class="hover:bg-[#252525] transition-colors">
+<td class="px-6 py-4 font-semibold text-zinc-200">Configurações</td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-emerald-500" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span></td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-zinc-700" data-icon="cancel" style="font-variation-settings: 'FILL' 1;">cancel</span></td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-zinc-700" data-icon="cancel" style="font-variation-settings: 'FILL' 1;">cancel</span></td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-zinc-700" data-icon="cancel" style="font-variation-settings: 'FILL' 1;">cancel</span></td>
+<td class="px-6 py-4"><span class="material-symbols-outlined text-zinc-700" data-icon="cancel" style="font-variation-settings: 'FILL' 1;">cancel</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-6 bg-[#131313]/50 flex gap-6 text-[11px] font-bold uppercase tracking-wider">
+<div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> <span class="text-zinc-400">Acesso Total</span></div>
+<div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#059eff]"></span> <span class="text-zinc-400">Somente Leitura</span></div>
+<div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-zinc-700"></span> <span class="text-zinc-400">Sem Acesso</span></div>
+</div>
+</div>
+<!-- Main Interactive Area: Table & Invite -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-7">
+<!-- Users Table -->
+<div class="xl:col-span-8 bg-[#1a1a1a] rounded-xl overflow-hidden flex flex-col">
+<div class="p-6 border-b border-[#2a2a2a] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<h3 class="font-headline font-bold text-lg">Usuários Cadastrados</h3>
+<div class="flex items-center gap-3 w-full md:w-auto">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm" data-icon="search">search</span>
+<input class="bg-[#201f1f] border-none rounded-lg pl-9 pr-4 py-2 text-xs focus:ring-1 focus:ring-[#ff6b00]/30 w-full text-zinc-300" placeholder="Nome ou email..." type="text"/>
+</div>
+<select class="bg-[#201f1f] border-none rounded-lg px-3 py-2 text-xs text-zinc-300 focus:ring-1 focus:ring-[#ff6b00]/30 cursor-pointer">
+<option>Filtrar Nível</option>
+<option>Administrador</option>
+<option>Gerente</option>
+</select>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#201f1f] text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+<th class="px-6 py-3">Usuário</th>
+<th class="px-6 py-3">Nível</th>
+<th class="px-6 py-3">Último Acesso</th>
+<th class="px-6 py-3">Status</th>
+<th class="px-6 py-3 text-right">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#2a2a2a]">
+<!-- User 1 (Admin) -->
+<tr class="hover:bg-[#ff6b00]/5 border-l-2 border-[#ff6b00] group transition-all">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img class="w-9 h-9 rounded-full" data-alt="professional portrait of a brazilian man with glasses and casual shirt, high contrast lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_zXt7LzvdSGDZe5WkxsilGmIIYfsD2wrwn-FXPlnn8f2WGVN8Llm3daYHz3mnqHa63xYxnJjEDXvi_R54SgtWDpBcWRSH9yHu4ulrYwhVNtTvjk1wm3PudVqARoB-4tnEFsAbS__mavqZwWaQHZr3SZsR3YeFyBvkfwYD72NRlhmfrBPZ9YYKS7dTJB0FZslJci0OmPbRwTNu07xlj3PQL3VIVNMQzpa8MbEFhfqdaj5Kpb1QYqzTumkYfniiA4ZlsdZv0CC3DJTw"/>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-zinc-100">Ricardo Oliveira</span>
+<span class="text-[11px] text-zinc-500">ricardo@movieats.com.br</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-4"><span class="bg-[#ff6b00]/20 text-[#ffb693] text-[10px] px-2 py-0.5 rounded-full font-bold uppercase border border-[#ff6b00]/30">Admin</span></td>
+<td class="px-6 py-4 text-xs text-zinc-400">Agora mesmo</td>
+<td class="px-6 py-4"><span class="flex items-center gap-1.5 text-[10px] text-emerald-400 font-bold uppercase"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Ativo</span></td>
+<td class="px-6 py-4 text-right">
+<button class="text-zinc-500 hover:text-[#ff6b00] transition-colors"><span class="material-symbols-outlined" data-icon="more_vert">more_vert</span></button>
+</td>
+</tr>
+<!-- User 2 -->
+<tr class="hover:bg-[#252525] group transition-all">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img class="w-9 h-9 rounded-full" data-alt="headshot of a smiling brazilian woman with curly dark hair, soft natural lighting on dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCD770JhggpOOhBBR4C-3EUdDX6o-UoEOLjGNpCT7hzIf17qLW_YtxpiVKWB9E5voapGRGNJuULdr8MQyx5QQ6jOHwVNms6M0Igrgp_4unUiWORHw7XZmKe9HzBm6wZI8j6iGATPu15wdlG9M5PAVQM5Fca8RfPMMjeOhy3_TcnvsFexQthqfuP8lCLe6hq2744eCblb1WgcTzaSklcK0LWLBEYQgIMG90K7dvucUbztWUeGiLH4gnmH6rhOecfAae7GmSUsU8OYVyZ"/>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-zinc-100">Ana Beatriz Costa</span>
+<span class="text-[11px] text-zinc-500">ana.costa@movieats.com.br</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-4"><span class="bg-[#2a2a2a] text-zinc-400 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Gerente</span></td>
+<td class="px-6 py-4 text-xs text-zinc-400">Há 2 horas</td>
+<td class="px-6 py-4"><span class="flex items-center gap-1.5 text-[10px] text-emerald-400 font-bold uppercase"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Ativo</span></td>
+<td class="px-6 py-4 text-right">
+<button class="text-zinc-500 hover:text-[#ff6b00] transition-colors"><span class="material-symbols-outlined" data-icon="more_vert">more_vert</span></button>
+</td>
+</tr>
+<!-- User 3 -->
+<tr class="hover:bg-[#252525] group transition-all">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img class="w-9 h-9 rounded-full" data-alt="professional male portrait with stubble and neutral expression, studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByb5_C9YUjVAb-1LdTYx8Rdur42jctVKz5-uxmhODdoOwzYD_65i3fGzDXKbmigespyc_XoZBfZqZYg6ftBqasCddQI_avS7MvVvIBis0nX1x0cUw3sjhUSkjZI6RjviSAXrg-y9DNITe5HCqCpZOnf3u8hadPHdIEB3vXTAFppvZPDAxG6pArM77h0ZRUR2LKPPtJ0TsmsrxPMvBVZb33LwHF6PlxzQEbmWuknY4JL5NPdCLrvXbrMqKjSanJzYccumcOQNMllsfR"/>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-zinc-100">Felipe Mendes</span>
+<span class="text-[11px] text-zinc-500">felipe@movieats.com.br</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-4"><span class="bg-[#2a2a2a] text-zinc-400 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Analista</span></td>
+<td class="px-6 py-4 text-xs text-zinc-400">Ontem, 18:45</td>
+<td class="px-6 py-4"><span class="flex items-center gap-1.5 text-[10px] text-emerald-400 font-bold uppercase"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Ativo</span></td>
+<td class="px-6 py-4 text-right">
+<button class="text-zinc-500 hover:text-[#ff6b00] transition-colors"><span class="material-symbols-outlined" data-icon="more_vert">more_vert</span></button>
+</td>
+</tr>
+<!-- User 4 -->
+<tr class="hover:bg-[#252525] group transition-all">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img class="w-9 h-9 rounded-full" data-alt="professional woman in corporate attire, focused expression, high definition business photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGUQrgv2Q0N3-g3u9TcP_HuNevjR2NZkztAby1V1aOKoRVfBdbKexMLrAKWImQwqeDPaxfVy6FiAkuB6l8UiWzFgLSdGmAgfY41LzenlMlHwQmic4Kz5tpFLlfUhOmtlAxnUpSpl9dUM2UQn4smqUL_UX8YzNjt-zlwzZZiAbhoyUzreAeWo21HBXwDuUYYWf57BaxUsvwxUBOn67B3pOMxnVK1fEAQYOJ5eBIzM0UWVAv9qH5TX971TKRSHvE8U9FS8hjgwY-YIjR"/>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-zinc-100">Juliana Santos</span>
+<span class="text-[11px] text-zinc-500">juliana@movieats.com.br</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-4"><span class="bg-[#2a2a2a] text-zinc-400 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Suporte</span></td>
+<td class="px-6 py-4 text-xs text-zinc-400">Há 5 min</td>
+<td class="px-6 py-4"><span class="flex items-center gap-1.5 text-[10px] text-zinc-500 font-bold uppercase"><span class="w-1.5 h-1.5 rounded-full bg-zinc-600"></span> Offline</span></td>
+<td class="px-6 py-4 text-right">
+<button class="text-zinc-500 hover:text-[#ff6b00] transition-colors"><span class="material-symbols-outlined" data-icon="more_vert">more_vert</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="p-6 border-t border-[#2a2a2a] flex flex-col md:flex-row justify-between items-center gap-4">
+<span class="text-xs text-zinc-500">Mostrando <span class="text-zinc-300 font-bold">1-8</span> de <span class="text-zinc-300 font-bold">12</span> usuários</span>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 rounded flex items-center justify-center bg-[#201f1f] text-zinc-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span></button>
+<button class="w-8 h-8 rounded flex items-center justify-center bg-[#ff6b00] text-[#351000] font-bold text-xs">1</button>
+<button class="w-8 h-8 rounded flex items-center justify-center bg-[#201f1f] text-zinc-400 hover:text-white transition-colors text-xs font-bold">2</button>
+<button class="w-8 h-8 rounded flex items-center justify-center bg-[#201f1f] text-zinc-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span></button>
+</div>
+<div class="h-6 w-[1px] bg-[#2a2a2a]"></div>
+<select class="bg-[#201f1f] border-none rounded-lg px-3 py-1.5 text-xs text-zinc-300 cursor-pointer">
+<option>10 por página</option>
+<option>20 por página</option>
+<option>50 por página</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Invite Modal Preview -->
+<div class="xl:col-span-4">
+<div class="sticky top-[100px] bg-[#1a1a1a] rounded-xl border border-[#2a2a2a] shadow-2xl shadow-black/50 p-6 space-y-6">
+<div class="flex items-center justify-between">
+<h3 class="font-headline font-bold text-lg text-white">Novo Convite</h3>
+<span class="bg-[#ff6b00]/10 text-[#ff6b00] p-1.5 rounded-lg"><span class="material-symbols-outlined text-lg" data-icon="mail" style="font-variation-settings: 'FILL' 1;">mail</span></span>
+</div>
+<div class="space-y-4">
+<div class="space-y-1.5">
+<label class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Nome Completo</label>
+<input class="w-full bg-[#201f1f] border-none rounded-lg px-4 py-3 text-sm text-zinc-200 focus:ring-1 focus:ring-[#ff6b00]/30 placeholder:text-zinc-600" placeholder="Ex: Maria Joaquina" type="text"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">E-mail Corporativo</label>
+<input class="w-full bg-[#201f1f] border-none rounded-lg px-4 py-3 text-sm text-zinc-200 focus:ring-1 focus:ring-[#ff6b00]/30 placeholder:text-zinc-600" placeholder="nome@movieats.com.br" type="email"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Nível de Permissão</label>
+<select class="w-full bg-[#201f1f] border-none rounded-lg px-4 py-3 text-sm text-zinc-200 focus:ring-1 focus:ring-[#ff6b00]/30 cursor-pointer">
+<option value="">Selecionar Perfil</option>
+<option>Administrador</option>
+<option>Gerente Comercial</option>
+<option>Analista de Planos</option>
+<option>Analista Financeiro</option>
+<option>Suporte</option>
+</select>
+</div>
+<div class="flex items-center justify-between py-2">
+<div class="flex flex-col">
+<span class="text-xs font-bold text-zinc-300">Enviar e-mail automático</span>
+<span class="text-[10px] text-zinc-500">O usuário receberá link de acesso.</span>
+</div>
+<div class="relative inline-flex items-center cursor-pointer">
+<div class="w-10 h-5 bg-[#ff6b00] rounded-full"></div>
+<div class="absolute left-5 w-4 h-4 bg-white rounded-full transition-all"></div>
+</div>
+</div>
+</div>
+<button class="w-full bg-[#ff6b00] hover:bg-[#783207] text-[#351000] font-extrabold py-4 rounded-lg shadow-xl shadow-[#ff6b00]/5 transition-all snappy">
+                            Enviar Convite
+                        </button>
+<div class="pt-4 border-t border-[#2a2a2a] text-center">
+<p class="text-[10px] text-zinc-500">Convites pendentes: <span class="text-white font-bold">3</span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar for Mobile -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-[#131313] border-t border-[#2a2a2a]/20 px-4 py-3 flex justify-around items-center z-50">
+<button class="flex flex-col items-center gap-1 text-zinc-500">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-[10px]">Início</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-zinc-500">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span class="text-[10px]">Lojistas</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-[#ff6b00]">
+<span class="material-symbols-outlined" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="text-[10px]">Usuários</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-zinc-500">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="text-[10px]">Financ.</span>
+</button>
+</nav>
+</body></html>

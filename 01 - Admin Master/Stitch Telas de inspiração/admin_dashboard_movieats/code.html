@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MOVIEATS | Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "on-tertiary-fixed": "#001d35",
+                "secondary-container": "#7b3409",
+                "on-secondary": "#561f00",
+                "primary-fixed-dim": "#ffb693",
+                "on-tertiary-container": "#003357",
+                "inverse-primary": "#a04100",
+                "surface-container": "#201f1f",
+                "on-primary": "#561f00",
+                "on-background": "#e5e2e1",
+                "primary": "#ffb693",
+                "surface-tint": "#ffb693",
+                "surface-container-low": "#1c1b1b",
+                "on-surface": "#e5e2e1",
+                "error": "#ffb4ab",
+                "on-tertiary-fixed-variant": "#00497b",
+                "on-secondary-fixed-variant": "#783207",
+                "secondary": "#ffb693",
+                "on-error-container": "#ffdad6",
+                "surface-container-highest": "#353534",
+                "surface-container-lowest": "#0e0e0e",
+                "primary-container": "#ff6b00",
+                "error-container": "#93000a",
+                "primary-fixed": "#ffdbcc",
+                "on-secondary-container": "#ffa173",
+                "tertiary": "#9ccaff",
+                "background": "#131313",
+                "outline-variant": "#5a4136",
+                "tertiary-fixed": "#d0e4ff",
+                "surface-dim": "#131313",
+                "outline": "#a98a7d",
+                "tertiary-fixed-dim": "#9ccaff",
+                "surface-variant": "#353534",
+                "surface-container-high": "#2a2a2a",
+                "on-primary-container": "#572000",
+                "on-surface-variant": "#e2bfb0",
+                "on-secondary-fixed": "#351000",
+                "tertiary-container": "#059eff",
+                "secondary-fixed-dim": "#ffb693",
+                "inverse-on-surface": "#313030",
+                "on-primary-fixed": "#351000",
+                "on-tertiary": "#003257",
+                "on-primary-fixed-variant": "#7a3000",
+                "inverse-surface": "#e5e2e1",
+                "surface-bright": "#3a3939",
+                "surface": "#131313",
+                "secondary-fixed": "#ffdbcc",
+                "on-error": "#690005"
+              },
+              "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+              },
+              "fontFamily": {
+                "headline": ["Manrope"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+              }
+            },
+          }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #131313; color: #e5e2e1; }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-card { background: #201f1f; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="overflow-hidden">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full flex flex-col bg-[#0e0e0e] w-64 z-50 transition-all duration-300 border-r border-outline-variant/10">
+<div class="p-6 flex items-center gap-3">
+<div class="bg-primary-container p-2 rounded-lg">
+<span class="material-symbols-outlined text-on-primary-fixed" data-icon="local_fire_department" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</div>
+<div>
+<h1 class="text-[#ff6b00] font-black italic tracking-tighter text-2xl font-headline leading-none">MOVIEATS</h1>
+<p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest mt-1">DeliveryOS Admin</p>
+</div>
+</div>
+<nav class="flex-1 px-4 mt-4 space-y-1">
+<!-- Active State Navigation -->
+<a class="flex items-center gap-3 px-4 py-3 text-[#ffb693] bg-[#2a2a2a] rounded-lg group transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-headline font-bold tracking-tight">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-white hover:bg-[#201f1f] rounded-lg transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined" data-icon="store">store</span>
+<span class="font-headline font-bold tracking-tight">Retailers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-white hover:bg-[#201f1f] rounded-lg transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-headline font-bold tracking-tight">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-white hover:bg-[#201f1f] rounded-lg transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-headline font-bold tracking-tight">Leads</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-white hover:bg-[#201f1f] rounded-lg transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="font-headline font-bold tracking-tight">Fleet</span>
+</a>
+</nav>
+<div class="p-4 mt-auto border-t border-outline-variant/10 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-white hover:bg-[#201f1f] rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-headline font-bold tracking-tight">Settings</span>
+</a>
+<div class="flex items-center gap-3 p-4 bg-[#131313] rounded-xl mt-4">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="Close up portrait of a professional male administrator in a modern office setting with soft cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUdUcW_JOjjxzpyAvOysB2jbekf1tj9zZPR5Z8C94O2tBsS7Rm4o2v9ljUG5-Lrd1tOBE0-uZC8a2YSI_0ydrrqLAchAyQGproiLG3EVTaMvXLomwXpPHN_SzHJEf_hflvxDFrYlxh52J3upDDEUZNNpWCVzvwYiAf5IwK8s7xj9hplzMabZKNYcjrJjpz5k9du6alQsiDAHCEh0Ftc4Cvlj2xq7xGPAAkP7q0JGFMc0RmTObC8RWmailSUQ5u35PWtQy2lwIjGbPt"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold truncate">Admin User</p>
+<p class="text-[10px] text-gray-500 truncate">admin@movieats.com</p>
+</div>
+<button class="text-gray-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="logout">logout</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 flex flex-col h-screen overflow-y-auto no-scrollbar bg-surface">
+<!-- TopNavBar Shell -->
+<header class="w-full h-16 sticky top-0 z-50 bg-[#131313]/80 backdrop-blur-md flex justify-between items-center px-8 shadow-[0_40px_40px_rgba(255,182,147,0.08)]">
+<div class="flex items-center gap-4">
+<h2 class="font-headline font-bold text-xl text-on-surface">Dashboard</h2>
+<div class="h-6 w-px bg-outline-variant/20 mx-2"></div>
+<div class="flex items-center bg-surface-container-high px-3 py-1.5 rounded-full border border-outline-variant/10">
+<span class="material-symbols-outlined text-primary text-sm mr-2" data-icon="calendar_today">calendar_today</span>
+<span class="text-xs font-medium text-on-surface-variant">Terça, 24 Outubro</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group cursor-pointer">
+<span class="material-symbols-outlined text-on-surface-variant hover:text-white transition-colors" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-primary-container rounded-full border-2 border-surface"></span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-white transition-colors cursor-pointer" data-icon="help">help</span>
+<div class="w-8 h-8 rounded-full border border-primary/20 p-0.5">
+<img class="w-full h-full rounded-full object-cover" data-alt="Close up portrait of a professional male administrator in a modern office setting with soft cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChVh5806G9OoZKDbaFEMEfovWt_w1TxQnV6dnaUE3MOZJa629ZHLLfNW1m7c64PPoZYO-tX19DsAuAK-a8I1JvycGCVTii08YbYs1YhliCBt3SzV4UWmN81JIUpNLa-3VkLL70A8AJ7NliFzf4PW-Ie0Gp16XnH8y9eqsxOGUU83UFB7oYL0XcNss1u2c96_Cihc7jfgsoc32lJhDetJ76f3jabyc_4umbdLUSlyBSWHGAQPfbM6cp_1uY5C-I4wEnsWe7opE3s26Z"/>
+</div>
+</div>
+</header>
+<!-- Dashboard Canvas -->
+<div class="p-8 space-y-8">
+<!-- Welcome Header -->
+<section>
+<h1 class="text-3xl font-headline font-extrabold tracking-tight">Bom dia, Admin 👋</h1>
+<p class="text-on-surface-variant mt-1">Aqui está o que está acontecendo com a MOVIEATS hoje.</p>
+</section>
+<!-- Row 1: Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="glass-card p-6 rounded-xl border border-outline-variant/10 relative overflow-hidden group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-surface-container-high rounded-lg text-primary">
+<span class="material-symbols-outlined" data-icon="store">store</span>
+</div>
+<span class="text-xs font-bold text-tertiary flex items-center gap-1 bg-tertiary/10 px-2 py-0.5 rounded-full">
+                            +12% <span class="material-symbols-outlined text-xs" data-icon="trending_up">trending_up</span>
+</span>
+</div>
+<p class="text-sm text-on-surface-variant font-medium">Lojistas Ativos</p>
+<h3 class="text-2xl font-headline font-bold mt-1">1,284</h3>
+</div>
+<div class="bg-primary-container p-6 rounded-xl border border-primary/20 relative overflow-hidden group shadow-lg shadow-primary-container/20">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-white/20 rounded-lg text-white">
+<span class="material-symbols-outlined" data-icon="shopping_cart" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
+</div>
+<span class="text-xs font-bold text-white flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded-full">
+                            +24% <span class="material-symbols-outlined text-xs" data-icon="trending_up">trending_up</span>
+</span>
+</div>
+<p class="text-sm text-on-primary-fixed-variant font-medium">Pedidos Hoje</p>
+<h3 class="text-2xl font-headline font-bold text-on-primary-fixed mt-1">4,892</h3>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-8xl" data-icon="bolt">bolt</span>
+</div>
+</div>
+<div class="glass-card p-6 rounded-xl border border-outline-variant/10 relative overflow-hidden group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-surface-container-high rounded-lg text-primary">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+</div>
+<span class="text-xs font-bold text-tertiary flex items-center gap-1 bg-tertiary/10 px-2 py-0.5 rounded-full">
+                            +8.5% <span class="material-symbols-outlined text-xs" data-icon="trending_up">trending_up</span>
+</span>
+</div>
+<p class="text-sm text-on-surface-variant font-medium">Faturamento Hoje</p>
+<h3 class="text-2xl font-headline font-bold mt-1">R$ 42.680</h3>
+</div>
+<div class="glass-card p-6 rounded-xl border border-outline-variant/10 relative overflow-hidden group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-surface-container-high rounded-lg text-primary">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+</div>
+<span class="text-xs font-bold text-error flex items-center gap-1 bg-error/10 px-2 py-0.5 rounded-full">
+                            -3% <span class="material-symbols-outlined text-xs" data-icon="trending_down">trending_down</span>
+</span>
+</div>
+<p class="text-sm text-on-surface-variant font-medium">Leads Novos</p>
+<h3 class="text-2xl font-headline font-bold mt-1">42</h3>
+</div>
+</div>
+<!-- Row 2: Charts -->
+<div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+<!-- Bar Chart Simulation -->
+<div class="lg:col-span-3 glass-card p-8 rounded-xl border border-outline-variant/10">
+<div class="flex justify-between items-center mb-8">
+<h4 class="font-headline font-bold text-lg">Pedidos por dia essa semana</h4>
+<div class="flex gap-2">
+<button class="px-3 py-1 text-xs rounded-full bg-surface-container-high border border-outline-variant/10 text-on-surface-variant">7 Dias</button>
+<button class="px-3 py-1 text-xs rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant">30 Dias</button>
+</div>
+</div>
+<div class="flex items-end justify-between h-48 gap-4 px-4">
+<div class="flex flex-col items-center gap-3 w-full group">
+<div class="w-full bg-primary-container/20 rounded-t-lg relative group-hover:bg-primary-container transition-all duration-300" style="height: 60%;">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-container-highest px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">2.4k</div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-bold">SEG</span>
+</div>
+<div class="flex flex-col items-center gap-3 w-full group">
+<div class="w-full bg-primary-container/20 rounded-t-lg relative group-hover:bg-primary-container transition-all duration-300" style="height: 75%;">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-container-highest px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">3.1k</div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-bold">TER</span>
+</div>
+<div class="flex flex-col items-center gap-3 w-full group">
+<div class="w-full bg-primary-container/20 rounded-t-lg relative group-hover:bg-primary-container transition-all duration-300" style="height: 45%;">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-container-highest px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">1.8k</div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-bold">QUA</span>
+</div>
+<div class="flex flex-col items-center gap-3 w-full group">
+<div class="w-full bg-primary-container/20 rounded-t-lg relative group-hover:bg-primary-container transition-all duration-300" style="height: 90%;">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-container-highest px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">4.2k</div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-bold">QUI</span>
+</div>
+<div class="flex flex-col items-center gap-3 w-full group">
+<div class="w-full bg-primary-container/20 rounded-t-lg relative group-hover:bg-primary-container transition-all duration-300" style="height: 65%;">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-container-highest px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">2.8k</div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-bold">SEX</span>
+</div>
+<div class="flex flex-col items-center gap-3 w-full group">
+<div class="w-full bg-primary-container rounded-t-lg relative" style="height: 100%;">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-container-highest px-2 py-1 rounded text-[10px]">4.8k</div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-bold">SAB</span>
+</div>
+<div class="flex flex-col items-center gap-3 w-full group">
+<div class="w-full bg-primary-container/20 rounded-t-lg relative group-hover:bg-primary-container transition-all duration-300" style="height: 55%;">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-container-highest px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">2.2k</div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-bold">DOM</span>
+</div>
+</div>
+</div>
+<!-- Donut Chart Simulation -->
+<div class="lg:col-span-2 glass-card p-8 rounded-xl border border-outline-variant/10 flex flex-col items-center text-center">
+<h4 class="font-headline font-bold text-lg mb-8 w-full text-left">Lojistas por Plano</h4>
+<div class="relative w-40 h-40 mb-6">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<circle cx="18" cy="18" fill="none" r="15.915" stroke="#2a2a2a" stroke-width="3"></circle>
+<circle cx="18" cy="18" fill="none" r="15.915" stroke="#ff6b00" stroke-dasharray="45 100" stroke-dashoffset="0" stroke-width="3"></circle>
+<circle cx="18" cy="18" fill="none" r="15.915" stroke="#ffb693" stroke-dasharray="30 100" stroke-dashoffset="-45" stroke-width="3"></circle>
+<circle cx="18" cy="18" fill="none" r="15.915" stroke="#5a4136" stroke-dasharray="25 100" stroke-dashoffset="-75" stroke-width="3"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-2xl font-bold font-headline">1.2k</span>
+<span class="text-[10px] text-on-surface-variant font-bold uppercase">Total</span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-4 w-full mt-auto">
+<div class="flex flex-col items-center">
+<div class="flex items-center gap-2 mb-1">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="text-xs font-bold">Enterprise</span>
+</div>
+<span class="text-on-surface-variant text-xs">45%</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="flex items-center gap-2 mb-1">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-xs font-bold">Pro</span>
+</div>
+<span class="text-on-surface-variant text-xs">30%</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="flex items-center gap-2 mb-1">
+<span class="w-2 h-2 rounded-full bg-outline-variant"></span>
+<span class="text-xs font-bold">Básico</span>
+</div>
+<span class="text-on-surface-variant text-xs">25%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Row 3: Lists -->
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+<!-- Recent Retailers -->
+<div class="glass-card rounded-xl border border-outline-variant/10 overflow-hidden">
+<div class="p-6 border-b border-outline-variant/10 flex justify-between items-center">
+<h4 class="font-headline font-bold text-lg">Últimos Lojistas Cadastrados</h4>
+<button class="text-xs text-primary font-bold hover:underline">Ver Todos</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
+<tr>
+<th class="px-6 py-3">Lojista</th>
+<th class="px-6 py-3">Cidade</th>
+<th class="px-6 py-3">Plano</th>
+<th class="px-6 py-3">Status</th>
+<th class="px-6 py-3"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10 text-sm">
+<tr>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg overflow-hidden bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="Close up high quality photo of a traditional italian pizza on a wooden board" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7GdPZ9yRn3cg0oBadJMv8HGJOSSifhCeB9f6f_8IChRL4oj0Lf5d_eNv-uUDht1HmfNvlsLeFiH2y2wWpb6GDUSktsf3O33LZTRyuglb1t8eOs2LZEqXmfi7iONuy0IHoFqRKOpJ-MuQ0G837POvgbLitTUZT4YbOnJ7NxTIjLA8W3TftqMGSQiKXz8wlX139CCyyDw4d1dtaX1_4zF3-cYgKH0BNQeG0odWCXeuRmzFpbi8DZw1M3AuUZRVZol_h_BtSOa5Qn4k2"/>
+</div>
+<span class="font-bold">Pizzaria Del Grano</span>
+</div>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">São Paulo, SP</td>
+<td class="px-6 py-4">
+<span class="bg-tertiary-container/10 text-tertiary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase">Pro</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5 text-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="text-[10px] font-bold uppercase">Ativo</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<a class="text-primary hover:text-white transition-colors" href="#">Ver</a>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg overflow-hidden bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="Professional food photography of a juicy double cheeseburger with melting cheddar on a dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADzPII4Q3Hl4rX5PSX6rx_SZokGcpNzY_vi0cmPUxPIKTMzGQX87MZs-QXiP4SsnA4Eopj4xScnFUBhD154m8phUkfBa5HT9AMm2AeTUDCgFNJMq839vzo81Ve4PPCzS3jo42WFqwmiCqspgic194dkQYJda69z7HnNCK0OrBqTuU76M2nE1PfeYdT1Vdit9yVtijhvaA9AfqHE5b-pF28OV0PZ02PZFoYb7KjhAJrW4l9_OIt2NpBP6Xfte4WXvg9xifAfvWTT_jN"/>
+</div>
+<span class="font-bold">Burger King Dom</span>
+</div>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">Rio de Janeiro, RJ</td>
+<td class="px-6 py-4">
+<span class="bg-primary-container/10 text-primary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase">Enterprise</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5 text-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="text-[10px] font-bold uppercase">Ativo</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<a class="text-primary hover:text-white transition-colors" href="#">Ver</a>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg overflow-hidden bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="Exquisite plating of gourmet sushi rolls with fresh salmon and avocado on a slate platter" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDU0CUe_j031GLXBv3BpIm-OgLcz-1q66P7rMYqkjKiundpTfCY2Fa_5fCxCn3NGW-_AY9DFtIImSY9epqWSmyZh5wMQijeuuzK9RnhXYFw6qB1heuQeXObLBfSZbY_AxMlY5p23jZwzIgW-OUAb6L72UHcwO-x0gXoI1glFcc8L8JTrsGMR3lFBOS9cStSw7pRt5nCkDihcFt68JKa22NZnUd8KATz3ZoyXYTtc6f_pxvIysihiMqyZsT-OJpeS-akev_3QfeyVnsM"/>
+</div>
+<span class="font-bold">Sushiro Express</span>
+</div>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">Curitiba, PR</td>
+<td class="px-6 py-4">
+<span class="bg-surface-container-highest text-on-surface-variant px-2 py-0.5 rounded text-[10px] font-bold uppercase">Básico</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-on-surface-variant"></span>
+<span class="text-[10px] font-bold uppercase">Pendente</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<a class="text-primary hover:text-white transition-colors" href="#">Ver</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Recent Leads -->
+<div class="glass-card rounded-xl border border-outline-variant/10 overflow-hidden">
+<div class="p-6 border-b border-outline-variant/10 flex justify-between items-center">
+<h4 class="font-headline font-bold text-lg">Últimos Leads</h4>
+<button class="text-xs text-primary font-bold hover:underline">Gerenciar Leads</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
+<tr>
+<th class="px-6 py-3">Contato</th>
+<th class="px-6 py-3">Cidade</th>
+<th class="px-6 py-3">Data</th>
+<th class="px-6 py-3">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10 text-sm">
+<tr>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-bold">Ricardo Alvez</span>
+<span class="text-[10px] text-on-surface-variant">Sushi Master LTDA</span>
+</div>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">Belo Horizonte, MG</td>
+<td class="px-6 py-4 text-on-surface-variant">Hoje, 10:24</td>
+<td class="px-6 py-4">
+<span class="bg-tertiary-container/10 text-tertiary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase">Novo</span>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-bold">Marina Sousa</span>
+<span class="text-[10px] text-on-surface-variant">Café das Artes</span>
+</div>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">Porto Alegre, RS</td>
+<td class="px-6 py-4 text-on-surface-variant">Hoje, 09:15</td>
+<td class="px-6 py-4">
+<span class="bg-primary-container/10 text-primary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase">Em Contato</span>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-bold">Carlos Mendes</span>
+<span class="text-[10px] text-on-surface-variant">Mendes Delivery</span>
+</div>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">Campinas, SP</td>
+<td class="px-6 py-4 text-on-surface-variant">Ontem, 18:40</td>
+<td class="px-6 py-4">
+<span class="bg-surface-container-highest text-on-surface-variant px-2 py-0.5 rounded text-[10px] font-bold uppercase">Qualificado</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Row 4: System Alerts -->
+<section class="glass-card p-8 rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary" data-icon="report">report</span>
+<h4 class="font-headline font-bold text-lg">Alertas do Sistema</h4>
+</div>
+<div class="space-y-4">
+<div class="p-4 bg-surface-container-low rounded-lg border-l-4 border-primary-container flex justify-between items-center">
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-primary-container" data-icon="warning">warning</span>
+<div>
+<p class="text-sm font-bold">Instabilidade na API de Pagamentos</p>
+<p class="text-xs text-on-surface-variant">Latência elevada detectada no gateway principal.</p>
+</div>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant">Há 5 min</span>
+</div>
+<div class="p-4 bg-surface-container-low rounded-lg border-l-4 border-yellow-500 flex justify-between items-center">
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-yellow-500" data-icon="notifications_active">notifications_active</span>
+<div>
+<p class="text-sm font-bold">Aprovação de Lojistas Pendente</p>
+<p class="text-xs text-on-surface-variant">12 novos lojistas aguardando revisão de documentos.</p>
+</div>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant">Há 1h</span>
+</div>
+<div class="p-4 bg-surface-container-low rounded-lg border-l-4 border-red-500 flex justify-between items-center">
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-red-500" data-icon="dangerous">dangerous</span>
+<div>
+<p class="text-sm font-bold">Falha de Backup Critica</p>
+<p class="text-xs text-on-surface-variant">O backup agendado para as 04:00 AM não foi concluído.</p>
+</div>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant">Há 4h</span>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>

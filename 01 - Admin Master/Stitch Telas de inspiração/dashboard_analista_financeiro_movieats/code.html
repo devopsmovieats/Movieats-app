@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MOVIEATS - Kinetic Command</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#561f00",
+                        "tertiary-container": "#059eff",
+                        "background": "#131313",
+                        "surface": "#131313",
+                        "on-background": "#e5e2e1",
+                        "outline-variant": "#5a4136",
+                        "on-error": "#690005",
+                        "surface-container-high": "#2a2a2a",
+                        "primary-fixed": "#ffdbcc",
+                        "outline": "#a98a7d",
+                        "on-secondary": "#561f00",
+                        "primary-fixed-dim": "#ffb693",
+                        "secondary-container": "#7b3409",
+                        "primary": "#ffb693",
+                        "tertiary-fixed": "#d0e4ff",
+                        "on-secondary-fixed-variant": "#783207",
+                        "on-secondary-container": "#ffa173",
+                        "on-secondary-fixed": "#351000",
+                        "surface-dim": "#131313",
+                        "tertiary-fixed-dim": "#9ccaff",
+                        "surface-variant": "#353534",
+                        "secondary": "#ffb693",
+                        "surface-container": "#201f1f",
+                        "secondary-fixed-dim": "#ffb693",
+                        "on-surface-variant": "#e2bfb0",
+                        "inverse-on-surface": "#313030",
+                        "error": "#ffb4ab",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-primary-fixed-variant": "#7a3000",
+                        "on-primary-fixed": "#351000",
+                        "on-tertiary-fixed": "#001d35",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-bright": "#3a3939",
+                        "on-tertiary-fixed-variant": "#00497b",
+                        "primary-container": "#ff6b00",
+                        "surface-tint": "#ffb693",
+                        "on-tertiary-container": "#003357",
+                        "surface-container-highest": "#353534",
+                        "tertiary": "#9ccaff",
+                        "on-error-container": "#ffdad6",
+                        "on-surface": "#e5e2e1",
+                        "secondary-fixed": "#ffdbcc",
+                        "on-primary-container": "#572000",
+                        "surface-container-low": "#1c1b1b",
+                        "inverse-primary": "#a04100",
+                        "on-tertiary": "#003257",
+                        "error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .headline { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-texture { background: linear-gradient(135deg, rgba(255,107,0,0.05) 0%, rgba(255,182,147,0.02) 100%); }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container min-h-screen">
+<!-- SideNavBar (Execution from JSON) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col h-screen w-64 bg-[#0e0e0e] dark:bg-[#0e0e0e] z-50">
+<div class="p-8">
+<h1 class="text-xl font-black text-[#ff6b00] tracking-tighter uppercase font-headline">MOVIEATS</h1>
+<p class="font-['Manrope'] uppercase tracking-wider text-xs font-bold text-gray-500 mt-1">Kinetic Command</p>
+</div>
+<nav class="flex-1 px-4 space-y-2 mt-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#ffb693] bg-[#2a2a2a] border-r-4 border-[#ff6b00] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-['Manrope'] uppercase tracking-wider text-xs font-bold">Dashboard</span>
+</a>
+<a class="flex items-center justify-between gap-3 px-4 py-3 rounded-lg text-gray-500 hover:text-gray-300 hover:bg-[#201f1f] transition-colors duration-200" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span class="font-['Manrope'] uppercase tracking-wider text-xs font-bold">Retailers</span>
+</div>
+<span class="text-[10px] bg-surface-container-high px-2 py-0.5 rounded text-gray-400">Visualização</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 hover:text-gray-300 hover:bg-[#201f1f] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-['Manrope'] uppercase tracking-wider text-xs font-bold">Financials</span>
+</a>
+</nav>
+<div class="mt-auto p-4 bg-[#0e0e0e]">
+<div class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low">
+<img alt="User profile" class="w-10 h-10 rounded-full object-cover grayscale brightness-90 contrast-125" data-alt="Professional headshot of a female financial analyst in a dark suit with a confident expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwBeGnCMy3V8-zhOo5HLz7URcDiulHEZzoSdN5Q7ko25Df8WW1zc11tUnAa4Den_t_gtIx7ko_g-HFr8I153b-qfhGJrlhpjlI0FaN4LB5xD-0L-F_BDvf94vX7K_DW1Wjg26cSyMEVIlM4524L9iM4ka0cgKsm9ynjcIUzldVtpKXqnMYGmVTkYUBxOoujoepJT_HhBzpDk3CzqcnQzNgkeQrqy5A7-EuNQ0kc0__2AWwbhrA6fj98h3P3VmnPyrYc4yvwR-qddBS"/>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-on-surface">Luciana Financeiro</span>
+<span class="text-[10px] font-bold text-on-primary px-1.5 py-0.5 bg-primary-container rounded uppercase">Analista</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopNavBar (Execution from JSON) -->
+<header class="sticky top-0 z-40 flex justify-between items-center px-8 ml-64 w-full h-16 bg-[#131313] dark:bg-[#131313] bg-[#201f1f] separation shadow-2xl shadow-orange-900/5">
+<div class="flex items-center gap-6">
+<h2 class="font-headline font-extrabold text-lg text-on-surface tracking-tight">Dashboard</h2>
+<div class="bg-primary-container/20 border border-primary-container/30 px-3 py-1 rounded-full">
+<span class="text-[11px] font-bold text-primary uppercase tracking-widest">Analista Financeiro</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-high rounded-lg">
+<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+<span class="font-body font-semibold text-xs text-on-surface-variant">ASAS Sincronizado</span>
+<span class="material-symbols-outlined text-xs text-on-surface-variant" data-icon="sync">sync</span>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors" data-icon="notifications">notifications</span>
+<div class="h-4 w-[1px] bg-outline-variant"></div>
+<span class="font-headline font-semibold text-sm">Financial Analyst</span>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="ml-64 p-8 space-y-8 max-w-[1600px]">
+<!-- Row 1: Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-surface-container p-6 rounded-xl shadow-none group hover:bg-surface-container-high transition-all duration-200">
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Receita Hoje</span>
+<span class="material-symbols-outlined text-emerald-500" data-icon="trending_up">trending_up</span>
+</div>
+<div class="text-3xl font-black font-headline text-emerald-400">R$ 48.200</div>
+<div class="mt-2 text-[10px] font-semibold text-emerald-500/80">+12% vs ontem</div>
+</div>
+<div class="bg-surface-container p-6 rounded-xl shadow-none group hover:bg-surface-container-high transition-all duration-200">
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Inadimplentes</span>
+<span class="material-symbols-outlined text-red-500" data-icon="warning">warning</span>
+</div>
+<div class="text-3xl font-black font-headline text-red-400">08</div>
+<div class="mt-2 text-[10px] font-semibold text-red-500/80">Crítico: +2 novos</div>
+</div>
+<div class="bg-surface-container p-6 rounded-xl shadow-none group hover:bg-surface-container-high transition-all duration-200 border-l-4 border-primary-container">
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-widest text-primary">Aguardando ASAS</span>
+<span class="material-symbols-outlined text-primary" data-icon="hourglass_empty">hourglass_empty</span>
+</div>
+<div class="text-3xl font-black font-headline text-primary">R$ 8.600</div>
+<div class="mt-2 text-[10px] font-semibold text-primary/80">14 faturas pendentes</div>
+</div>
+<div class="bg-surface-container p-6 rounded-xl shadow-none group hover:bg-surface-container-high transition-all duration-200 opacity-80">
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Cancelamentos</span>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="cancel">cancel</span>
+</div>
+<div class="text-3xl font-black font-headline text-on-surface">03</div>
+<div class="mt-2 text-[10px] font-semibold text-on-surface-variant/80">Média mensal estável</div>
+</div>
+</div>
+<!-- Row 2: ASAS Sync Card -->
+<div class="bg-surface-container rounded-2xl overflow-hidden relative glass-texture">
+<div class="absolute top-0 right-0 w-64 h-full opacity-10 pointer-events-none">
+<span class="text-9xl font-black font-headline text-primary absolute -right-10 top-0">ASAS</span>
+</div>
+<div class="p-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+<div>
+<h3 class="font-headline font-bold text-on-surface-variant text-sm uppercase tracking-[0.2em] mb-2">Conciliação Financeira ASAS</h3>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-black font-headline text-on-surface">R$ 32.400</span>
+<span class="text-primary font-bold text-xs uppercase">Saldo Disponível</span>
+</div>
+</div>
+<div class="flex gap-12 border-l border-outline-variant/30 pl-12">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase mb-1">Aguardando</span>
+<span class="text-xl font-bold font-headline text-primary-fixed-dim">R$ 8.600</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase mb-1">Bloqueado</span>
+<span class="text-xl font-bold font-headline text-error/80">R$ 2.100</span>
+</div>
+</div>
+<button class="bg-primary-container hover:bg-secondary-container text-on-primary-fixed font-bold px-6 py-3 rounded-lg transition-all duration-200 shadow-xl shadow-primary-container/10">
+                    Realizar Saque
+                </button>
+</div>
+</div>
+<!-- Row 3: Chart & Alerts -->
+<div class="grid grid-cols-1 lg:grid-cols-10 gap-8">
+<div class="lg:col-span-6 bg-surface-container p-8 rounded-2xl">
+<div class="flex justify-between items-center mb-8">
+<h3 class="font-headline font-bold text-on-surface text-lg">Receita por Período</h3>
+<div class="flex gap-2">
+<span class="bg-surface-container-high px-3 py-1 rounded text-[10px] font-bold text-on-surface-variant cursor-pointer">JAN - ABR 2026</span>
+</div>
+</div>
+<div class="h-64 flex items-end justify-between gap-4">
+<!-- Fake Chart Visualization -->
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary/10 rounded-t-lg relative group h-[40%]">
+<div class="absolute inset-0 bg-primary/20 scale-y-0 group-hover:scale-y-100 transition-transform origin-bottom duration-300"></div>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant">JAN</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary/10 rounded-t-lg relative group h-[65%]">
+<div class="absolute inset-0 bg-primary/20 scale-y-0 group-hover:scale-y-100 transition-transform origin-bottom duration-300"></div>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant">FEV</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary/10 rounded-t-lg relative group h-[55%]">
+<div class="absolute inset-0 bg-primary/20 scale-y-0 group-hover:scale-y-100 transition-transform origin-bottom duration-300"></div>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant">MAR</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary-container rounded-t-lg relative group h-[90%] shadow-lg shadow-primary-container/20">
+<div class="absolute top-[-30px] left-1/2 -translate-x-1/2 bg-on-surface text-surface text-[10px] font-black px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">R$48.2k</div>
+</div>
+<span class="text-[10px] font-bold text-on-surface uppercase">ABR</span>
+</div>
+</div>
+</div>
+<div class="lg:col-span-4 bg-surface-container p-8 rounded-2xl">
+<h3 class="font-headline font-bold text-on-surface text-lg mb-6">Alertas Financeiros</h3>
+<div class="space-y-4">
+<div class="flex items-center gap-4 p-4 rounded-xl bg-error-container/20 border-l-4 border-error">
+<span class="material-symbols-outlined text-error" data-icon="error">error</span>
+<div class="flex-1">
+<p class="text-xs font-bold text-on-surface">Inadimplência Crítica: Pizzaria Donatello</p>
+<p class="text-[10px] text-on-surface-variant">Fatura vencida há 15 dias • R$ 1.250,00</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-xl bg-primary-container/10 border-l-4 border-primary">
+<span class="material-symbols-outlined text-primary" data-icon="notifications_active">notifications_active</span>
+<div class="flex-1">
+<p class="text-xs font-bold text-on-surface">Assinatura Expirando: Burger House</p>
+<p class="text-[10px] text-on-surface-variant">Renovação automática em 48h</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-xl bg-tertiary-container/10 border-l-4 border-tertiary-container">
+<span class="material-symbols-outlined text-tertiary-container" data-icon="check_circle">check_circle</span>
+<div class="flex-1">
+<p class="text-xs font-bold text-on-surface">Backup de Notas Fiscais</p>
+<p class="text-[10px] text-on-surface-variant">Sincronização concluída com sucesso</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Row 4: Table & Donut -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<div class="bg-surface-container p-8 rounded-2xl">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline font-bold text-on-surface text-lg">Últimas Transações ASAS</h3>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer" data-icon="more_horiz">more_horiz</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="border-b border-outline-variant/30">
+<th class="pb-4 text-[10px] font-bold text-on-surface-variant uppercase">Cliente</th>
+<th class="pb-4 text-[10px] font-bold text-on-surface-variant uppercase text-right">Valor</th>
+<th class="pb-4 text-[10px] font-bold text-on-surface-variant uppercase text-center">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20">
+<tr>
+<td class="py-4">
+<p class="text-xs font-bold text-on-surface">Sushi Zen Premium</p>
+<p class="text-[10px] text-on-surface-variant">12 Abr, 14:32</p>
+</td>
+<td class="py-4 text-right font-headline font-bold text-xs text-on-surface">R$ 450,00</td>
+<td class="py-4 text-center">
+<span class="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-1 rounded">Pago</span>
+</td>
+</tr>
+<tr>
+<td class="py-4">
+<p class="text-xs font-bold text-on-surface">Taco Bell Plaza</p>
+<p class="text-[10px] text-on-surface-variant">12 Abr, 11:15</p>
+</td>
+<td class="py-4 text-right font-headline font-bold text-xs text-on-surface">R$ 890,00</td>
+<td class="py-4 text-center">
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-1 rounded">Pendente</span>
+</td>
+</tr>
+<tr>
+<td class="py-4">
+<p class="text-xs font-bold text-on-surface">Steak House Prime</p>
+<p class="text-[10px] text-on-surface-variant">11 Abr, 18:20</p>
+</td>
+<td class="py-4 text-right font-headline font-bold text-xs text-on-surface">R$ 1.200,00</td>
+<td class="py-4 text-center">
+<span class="bg-error/10 text-error text-[10px] font-bold px-2 py-1 rounded">Estornado</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="bg-surface-container p-8 rounded-2xl">
+<h3 class="font-headline font-bold text-on-surface text-lg mb-8 text-center">Assinaturas por Plano</h3>
+<div class="flex items-center justify-center gap-12 h-48">
+<!-- Donut Mockup -->
+<div class="relative w-40 h-40">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<circle class="stroke-surface-container-high" cx="18" cy="18" fill="none" r="16" stroke-width="4"></circle>
+<circle class="stroke-primary" cx="18" cy="18" fill="none" r="16" stroke-dasharray="60, 100" stroke-width="4"></circle>
+<circle class="stroke-tertiary-container" cx="18" cy="18" fill="none" r="16" stroke-dasharray="25, 100" stroke-dashoffset="-60" stroke-width="4"></circle>
+<circle class="stroke-on-surface-variant" cx="18" cy="18" fill="none" r="16" stroke-dasharray="15, 100" stroke-dashoffset="-85" stroke-width="4"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-2xl font-black font-headline text-on-surface">158</span>
+<span class="text-[8px] font-bold text-on-surface-variant uppercase">Total Ativos</span>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-xs font-semibold text-on-surface-variant">Pro (60%)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-tertiary-container"></div>
+<span class="text-xs font-semibold text-on-surface-variant">Enterprise (25%)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-on-surface-variant"></div>
+<span class="text-xs font-semibold text-on-surface-variant">Básico (15%)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Row 5: Retailers Table (View Only) -->
+<div class="bg-surface-container rounded-2xl overflow-hidden">
+<div class="px-8 py-6 flex justify-between items-center border-b border-outline-variant/10">
+<h3 class="font-headline font-bold text-on-surface text-lg">Lojistas</h3>
+<div class="flex items-center gap-2 text-primary-fixed-dim bg-primary-fixed-dim/10 px-3 py-1 rounded-md">
+<span class="material-symbols-outlined text-sm" data-icon="visibility">visibility</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Somente Visualização</span>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-8 py-4 text-[10px] font-bold text-on-surface-variant uppercase">Unidade</th>
+<th class="px-8 py-4 text-[10px] font-bold text-on-surface-variant uppercase">CNPJ / Identificador</th>
+<th class="px-8 py-4 text-[10px] font-bold text-on-surface-variant uppercase">Plano Atual</th>
+<th class="px-8 py-4 text-[10px] font-bold text-on-surface-variant uppercase">Última Auditoria</th>
+<th class="px-8 py-4 text-[10px] font-bold text-on-surface-variant uppercase text-right">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-surface-container-high/50 transition-colors">
+<td class="px-8 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary/20 flex items-center justify-center text-primary font-black text-xs">PZ</div>
+<span class="text-xs font-bold text-on-surface">Pizzaria da Nonna</span>
+</div>
+</td>
+<td class="px-8 py-4 text-xs font-mono text-on-surface-variant">12.345.678/0001-90</td>
+<td class="px-8 py-4 text-xs text-on-surface">MOVIEATS Pro</td>
+<td class="px-8 py-4 text-xs text-on-surface-variant">10 Abr 2026</td>
+<td class="px-8 py-4 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="open_in_new">open_in_new</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-high/50 transition-colors">
+<td class="px-8 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-tertiary-container/20 flex items-center justify-center text-tertiary-container font-black text-xs">BG</div>
+<span class="text-xs font-bold text-on-surface">Burger King - Shopping Norte</span>
+</div>
+</td>
+<td class="px-8 py-4 text-xs font-mono text-on-surface-variant">98.765.432/0005-11</td>
+<td class="px-8 py-4 text-xs text-on-surface">MOVIEATS Enterprise</td>
+<td class="px-8 py-4 text-xs text-on-surface-variant">08 Abr 2026</td>
+<td class="px-8 py-4 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="open_in_new">open_in_new</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-high/50 transition-colors">
+<td class="px-8 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-secondary-container/20 flex items-center justify-center text-on-secondary-container font-black text-xs">CM</div>
+<span class="text-xs font-bold text-on-surface">Café do Mercado</span>
+</div>
+</td>
+<td class="px-8 py-4 text-xs font-mono text-on-surface-variant">45.678.901/0001-22</td>
+<td class="px-8 py-4 text-xs text-on-surface">MOVIEATS Básico</td>
+<td class="px-8 py-4 text-xs text-on-surface-variant">11 Abr 2026</td>
+<td class="px-8 py-4 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="open_in_new">open_in_new</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-high/50 transition-colors">
+<td class="px-8 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-outline/20 flex items-center justify-center text-on-surface-variant font-black text-xs">GG</div>
+<span class="text-xs font-bold text-on-surface">Gelato Gourmet</span>
+</div>
+</td>
+<td class="px-8 py-4 text-xs font-mono text-on-surface-variant">33.221.100/0001-33</td>
+<td class="px-8 py-4 text-xs text-on-surface">MOVIEATS Pro</td>
+<td class="px-8 py-4 text-xs text-on-surface-variant">05 Abr 2026</td>
+<td class="px-8 py-4 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="open_in_new">open_in_new</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#93000a",
+                        "surface-container-low": "#1c1b1b",
+                        "primary-fixed": "#ffdbcc",
+                        "outline": "#a98a7d",
+                        "on-surface-variant": "#e2bfb0",
+                        "tertiary": "#9ccaff",
+                        "secondary-fixed-dim": "#ffb693",
+                        "surface": "#131313",
+                        "surface-bright": "#3a3939",
+                        "surface-tint": "#ffb693",
+                        "primary-container": "#ff6b00",
+                        "on-primary": "#561f00",
+                        "on-tertiary-fixed-variant": "#00497b",
+                        "on-secondary": "#561f00",
+                        "error": "#ffb4ab",
+                        "on-tertiary": "#003257",
+                        "surface-container": "#201f1f",
+                        "inverse-on-surface": "#313030",
+                        "on-secondary-fixed-variant": "#783207",
+                        "background": "#131313",
+                        "on-secondary-fixed": "#351000",
+                        "inverse-primary": "#a04100",
+                        "surface-dim": "#131313",
+                        "on-primary-fixed": "#351000",
+                        "secondary-fixed": "#ffdbcc",
+                        "on-error": "#690005",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-highest": "#353534",
+                        "surface-container-high": "#2a2a2a",
+                        "outline-variant": "#5a4136",
+                        "on-tertiary-container": "#003357",
+                        "on-error-container": "#ffdad6",
+                        "on-primary-container": "#572000",
+                        "tertiary-container": "#059eff",
+                        "secondary": "#ffb693",
+                        "surface-variant": "#353534",
+                        "secondary-container": "#7b3409",
+                        "on-background": "#e5e2e1",
+                        "primary-fixed-dim": "#ffb693",
+                        "tertiary-fixed-dim": "#9ccaff",
+                        "primary": "#ffb693",
+                        "on-tertiary-fixed": "#001d35",
+                        "inverse-surface": "#e5e2e1",
+                        "on-primary-fixed-variant": "#7a3000",
+                        "tertiary-fixed": "#d0e4ff",
+                        "on-secondary-container": "#ffa173",
+                        "on-surface": "#e5e2e1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #131313; color: #e5e2e1; }
+        .font-manrope { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #131313; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #353534; border-radius: 10px; }
+    </style>
+</head>
+<body class="flex flex-col h-screen overflow-hidden">
+<!-- TopNavBar -->
+<header class="w-full h-16 sticky top-0 z-50 bg-[#131313] flex justify-between items-center px-6 w-full">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black tracking-tighter text-[#ff6b00] font-manrope">MOVIEATS</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-zinc-400 font-medium hover:bg-zinc-800/50 transition-colors duration-200 px-3 py-1 rounded" href="#">Dashboard</a>
+<a class="text-zinc-400 font-medium hover:bg-zinc-800/50 transition-colors duration-200 px-3 py-1 rounded" href="#">Vendas</a>
+<a class="text-[#ff6b00] font-bold border-b-2 border-[#ff6b00] px-3 py-1" href="#">Configurações</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-zinc-400 hover:bg-zinc-800/50 rounded-full transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-[#ff6b00] hover:bg-zinc-800/50 rounded-full transition-all">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant">
+<img alt="Admin Avatar" class="w-full h-full object-cover" data-alt="Professional studio portrait of a male administrative executive with a friendly expression and neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhE6sJcifHLCAlvozaNrnuYF1QHZOvmj2xBsD49qkVCIUnaYqvg-JiNyBtgrOrAI7wOO1CA9lH2GASJvwoTPN0jfiqDMgR_94fZQS-kQDFk7vP8kW6mKqWWDY6hiyawOzlFZ5YVIxZ7wH4_kOsDlKGVth9L_zh1_Xz5HLQMDfGMBckUfNxTiW4woIJcvBwSDaDotpM_rJXq-044SXI9PyG0PXif6YyqZT85V2TtHYsK80bHPyasytKLZ2CpzeGZage8kj2xs7plHES"/>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- SideNavBar / Vertical Tabs -->
+<aside class="h-full w-72 bg-[#201f1f] flex flex-col py-8 px-4 shadow-[40px_0_40px_rgba(255,182,147,0.08)] z-40">
+<div class="mb-8 px-4">
+<h2 class="font-manrope font-extrabold text-xl text-white tracking-tight">Ajustes do Sistema</h2>
+<p class="text-xs text-zinc-500 font-medium uppercase tracking-widest mt-1">Configurações Globais</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:bg-[#2a2a2a] hover:text-white transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="business">business</span>
+<span class="font-manrope font-bold text-sm tracking-wide">Dados da Empresa</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#ffb693] bg-[#2a2a2a] rounded-lg border-r-4 border-[#ff6b00]" href="#">
+<span class="material-symbols-outlined text-[#ff6b00]" data-icon="mail">mail</span>
+<span class="font-manrope font-bold text-sm tracking-wide">E-mail e Notificações</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:bg-[#2a2a2a] hover:text-white transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="integration_instructions">integration_instructions</span>
+<span class="font-manrope font-bold text-sm tracking-wide">Integrações</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:bg-[#2a2a2a] hover:text-white transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="admin_panel_settings">admin_panel_settings</span>
+<span class="font-manrope font-bold text-sm tracking-wide">Matriz de Permissões</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:bg-[#2a2a2a] hover:text-white transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="security">security</span>
+<span class="font-manrope font-bold text-sm tracking-wide">Segurança e Backup</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:bg-[#2a2a2a] hover:text-white transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="database">database</span>
+<span class="font-manrope font-bold text-sm tracking-wide">Logs do Sistema</span>
+</a>
+</nav>
+<div class="pt-6 border-t border-zinc-800/50">
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:bg-[#2a2a2a] hover:text-white transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-error transition-colors" data-icon="logout">logout</span>
+<span class="font-manrope font-bold text-sm tracking-wide">Sair do Painel</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 bg-[#0e0e0e] overflow-y-auto custom-scrollbar p-8">
+<div class="max-w-5xl mx-auto space-y-8 pb-12">
+<!-- Section Header -->
+<div class="flex justify-between items-end">
+<div>
+<h1 class="font-manrope text-4xl font-extrabold text-white">E-mail e Notificações</h1>
+<p class="text-zinc-500 mt-2 text-lg">Gerencie a comunicação automatizada e alertas do sistema.</p>
+</div>
+<button class="bg-primary-container text-on-primary-fixed font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 hover:brightness-110 transition-all shadow-lg shadow-primary-container/20">
+<span class="material-symbols-outlined text-sm" data-icon="save">save</span>
+                        Salvar Alterações
+                    </button>
+</div>
+<!-- SMTP Config Card -->
+<div class="bg-[#1a1a1a] rounded-xl p-8 border-l-4 border-[#ff6b00] shadow-xl">
+<div class="flex justify-between items-start mb-8">
+<div class="flex items-center gap-4">
+<div class="p-3 bg-zinc-800/50 rounded-lg">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="dns">dns</span>
+</div>
+<div>
+<h3 class="text-xl font-manrope font-bold text-white">Configurações de E-mail SMTP</h3>
+<p class="text-zinc-500 text-sm">Servidor de saída para notificações do sistema</p>
+</div>
+</div>
+<span class="bg-emerald-500/10 text-emerald-500 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 border border-emerald-500/20">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            Conectado
+                        </span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="space-y-2">
+<label class="text-xs font-bold text-zinc-400 uppercase tracking-tighter">Servidor SMTP</label>
+<input class="w-full bg-[#2a2a2a] border-none rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-primary/20 transition-all" type="text" value="smtp.sendgrid.net"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-zinc-400 uppercase tracking-tighter">Porta</label>
+<input class="w-full bg-[#2a2a2a] border-none rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-primary/20 transition-all" type="text" value="587"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-zinc-400 uppercase tracking-tighter">Segurança</label>
+<select class="w-full bg-[#2a2a2a] border-none rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-primary/20 transition-all">
+<option selected="">TLS</option>
+<option>SSL</option>
+<option>Nenhum</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-zinc-400 uppercase tracking-tighter">Usuário (API Key)</label>
+<input class="w-full bg-[#2a2a2a] border-none rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-primary/20 transition-all" type="text" value="apikey"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-zinc-400 uppercase tracking-tighter">Senha</label>
+<input class="w-full bg-[#2a2a2a] border-none rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-primary/20 transition-all" type="password" value="********"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-zinc-400 uppercase tracking-tighter">E-mail Remetente</label>
+<input class="w-full bg-[#2a2a2a] border-none rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-primary/20 transition-all" type="email" value="noreply@movieats.com.br"/>
+</div>
+</div>
+<div class="mt-8 flex justify-end">
+<button class="text-primary font-bold text-sm border border-primary/20 px-6 py-2 rounded-lg hover:bg-primary/5 transition-all">
+                            Testar Conexão
+                        </button>
+</div>
+</div>
+<!-- Bento Grid Layout for Templates & Notifications -->
+<div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+<!-- Templates Card (Left Large) -->
+<div class="lg:col-span-3 bg-[#1a1a1a] rounded-xl p-8 border border-zinc-800 shadow-xl">
+<div class="flex items-center gap-4 mb-8">
+<div class="p-3 bg-zinc-800/50 rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="article">article</span>
+</div>
+<h3 class="text-xl font-manrope font-bold text-white">Templates de E-mail</h3>
+</div>
+<div class="space-y-2">
+<div class="flex items-center justify-between p-4 bg-zinc-800/30 rounded-lg hover:bg-zinc-800/50 transition-all border border-transparent hover:border-zinc-700">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-zinc-500" data-icon="celebration">celebration</span>
+<span class="font-medium text-zinc-200">Boas-vindas ao Lojista</span>
+</div>
+<a class="text-[#ff6b00] text-sm font-bold hover:underline flex items-center gap-1" href="#">
+                                    Editar <span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</a>
+</div>
+<div class="flex items-center justify-between p-4 bg-zinc-800/30 rounded-lg hover:bg-zinc-800/50 transition-all border border-transparent hover:border-zinc-700">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-zinc-500" data-icon="payments">payments</span>
+<span class="font-medium text-zinc-200">Confirmação de Pagamento</span>
+</div>
+<a class="text-[#ff6b00] text-sm font-bold hover:underline flex items-center gap-1" href="#">
+                                    Editar <span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</a>
+</div>
+<div class="flex items-center justify-between p-4 bg-zinc-800/30 rounded-lg hover:bg-zinc-800/50 transition-all border border-transparent hover:border-zinc-700">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-zinc-500" data-icon="warning">warning</span>
+<span class="font-medium text-zinc-200">Notificação de Inadimplência</span>
+</div>
+<a class="text-[#ff6b00] text-sm font-bold hover:underline flex items-center gap-1" href="#">
+                                    Editar <span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</a>
+</div>
+<div class="flex items-center justify-between p-4 bg-zinc-800/30 rounded-lg hover:bg-zinc-800/50 transition-all border border-transparent hover:border-zinc-700">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-zinc-500" data-icon="person_add">person_add</span>
+<span class="font-medium text-zinc-200">Convite para Novo Usuário</span>
+</div>
+<a class="text-[#ff6b00] text-sm font-bold hover:underline flex items-center gap-1" href="#">
+                                    Editar <span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</a>
+</div>
+<div class="flex items-center justify-between p-4 bg-zinc-800/30 rounded-lg hover:bg-zinc-800/50 transition-all border border-transparent hover:border-zinc-700">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-zinc-500" data-icon="lock_reset">lock_reset</span>
+<span class="font-medium text-zinc-200">Recuperação de Senha</span>
+</div>
+<a class="text-[#ff6b00] text-sm font-bold hover:underline flex items-center gap-1" href="#">
+                                    Editar <span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</a>
+</div>
+</div>
+</div>
+<!-- System Notifications (Right Small) -->
+<div class="lg:col-span-2 bg-[#1a1a1a] rounded-xl p-8 border border-zinc-800 shadow-xl">
+<div class="flex items-center gap-4 mb-8">
+<div class="p-3 bg-zinc-800/50 rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="notifications_active">notifications_active</span>
+</div>
+<h3 class="text-xl font-manrope font-bold text-white">Notificações</h3>
+</div>
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-bold text-white">Novo lojista</p>
+<p class="text-xs text-zinc-500">Alertar equipe sobre novos cadastros</p>
+</div>
+<button class="w-12 h-6 rounded-full bg-[#ff6b00] flex items-center px-1 relative">
+<span class="w-4 h-4 rounded-full bg-white ml-auto"></span>
+</button>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-bold text-white">Pagamento ASAS</p>
+<p class="text-xs text-zinc-500">Confirmação de recebimento</p>
+</div>
+<button class="w-12 h-6 rounded-full bg-[#ff6b00] flex items-center px-1 relative">
+<span class="w-4 h-4 rounded-full bg-white ml-auto"></span>
+</button>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-bold text-white">Lojista inadimplente</p>
+<p class="text-xs text-zinc-500">Alertas de atraso financeiro</p>
+</div>
+<button class="w-12 h-6 rounded-full bg-zinc-700 flex items-center px-1 relative">
+<span class="w-4 h-4 rounded-full bg-zinc-400"></span>
+</button>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-bold text-white">Novo lead</p>
+<p class="text-xs text-zinc-500">Capturas do site principal</p>
+</div>
+<button class="w-12 h-6 rounded-full bg-[#ff6b00] flex items-center px-1 relative">
+<span class="w-4 h-4 rounded-full bg-white ml-auto"></span>
+</button>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-bold text-white">Erro integração</p>
+<p class="text-xs text-zinc-500">Falhas de comunicação API</p>
+</div>
+<button class="w-12 h-6 rounded-full bg-[#ff6b00] flex items-center px-1 relative">
+<span class="w-4 h-4 rounded-full bg-white ml-auto"></span>
+</button>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-bold text-white">Backup</p>
+<p class="text-xs text-zinc-500">Confirmação de cópia diária</p>
+</div>
+<button class="w-12 h-6 rounded-full bg-zinc-700 flex items-center px-1 relative">
+<span class="w-4 h-4 rounded-full bg-zinc-400"></span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Stats or Info -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+<div class="bg-[#1a1a1a] p-6 rounded-xl border border-zinc-800">
+<p class="text-xs text-zinc-500 uppercase tracking-widest font-bold">Volume Mensal</p>
+<p class="text-2xl font-manrope font-extrabold text-white mt-1">12.482</p>
+<p class="text-xs text-emerald-500 mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="trending_up">trending_up</span>
+                            8% maior que mês anterior
+                        </p>
+</div>
+<div class="bg-[#1a1a1a] p-6 rounded-xl border border-zinc-800">
+<p class="text-xs text-zinc-500 uppercase tracking-widest font-bold">Taxa de Entrega</p>
+<p class="text-2xl font-manrope font-extrabold text-white mt-1">99.4%</p>
+<div class="w-full bg-zinc-800 h-1.5 rounded-full mt-3 overflow-hidden">
+<div class="bg-emerald-500 h-full w-[99.4%]"></div>
+</div>
+</div>
+<div class="bg-[#1a1a1a] p-6 rounded-xl border border-zinc-800">
+<p class="text-xs text-zinc-500 uppercase tracking-widest font-bold">Último Disparo</p>
+<p class="text-2xl font-manrope font-extrabold text-white mt-1">08:42:15</p>
+<p class="text-xs text-zinc-400 mt-1">Confirmação de Pagamento #A293</p>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MOVIEATS - Gerenciamento de Planos</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#561f00",
+                    "error": "#ffb4ab",
+                    "inverse-primary": "#a04100",
+                    "surface-container-highest": "#353534",
+                    "outline-variant": "#5a4136",
+                    "inverse-on-surface": "#313030",
+                    "on-tertiary-fixed-variant": "#00497b",
+                    "error-container": "#93000a",
+                    "surface": "#131313",
+                    "secondary-fixed-dim": "#ffb693",
+                    "secondary-fixed": "#ffdbcc",
+                    "primary-fixed": "#ffdbcc",
+                    "on-primary-container": "#572000",
+                    "surface-container-high": "#2a2a2a",
+                    "surface-dim": "#131313",
+                    "surface-container-low": "#1c1b1b",
+                    "surface-bright": "#3a3939",
+                    "on-secondary-fixed": "#351000",
+                    "on-secondary-container": "#ffa173",
+                    "on-secondary-fixed-variant": "#783207",
+                    "on-tertiary-fixed": "#001d35",
+                    "tertiary-fixed": "#d0e4ff",
+                    "tertiary-container": "#059eff",
+                    "primary-fixed-dim": "#ffb693",
+                    "on-tertiary": "#003257",
+                    "surface-tint": "#ffb693",
+                    "on-tertiary-container": "#003357",
+                    "secondary-container": "#7b3409",
+                    "background": "#131313",
+                    "surface-variant": "#353534",
+                    "on-primary-fixed": "#351000",
+                    "on-background": "#e5e2e1",
+                    "primary": "#ffb693",
+                    "outline": "#a98a7d",
+                    "on-error-container": "#ffdad6",
+                    "surface-container-lowest": "#0e0e0e",
+                    "primary-container": "#ff6b00",
+                    "on-primary-fixed-variant": "#7a3000",
+                    "on-surface-variant": "#e2bfb0",
+                    "on-surface": "#e5e2e1",
+                    "tertiary": "#9ccaff",
+                    "surface-container": "#201f1f",
+                    "inverse-surface": "#e5e2e1",
+                    "on-error": "#690005",
+                    "tertiary-fixed-dim": "#9ccaff",
+                    "secondary": "#ffb693",
+                    "on-primary": "#561f00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { background-color: #0f0f0f; font-family: 'Inter', sans-serif; }
+        .headline { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .fill-icon { font-variation-settings: 'FILL' 1; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="text-on-surface">
+<div class="flex min-h-screen">
+<!-- Sidebar Navigation (Hidden on Mobile) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col p-4 w-64 bg-[#131313] z-50 hidden md:flex">
+<div class="mb-8 px-4">
+<span class="text-2xl font-black tracking-tighter text-[#ff6b00] headline">MOVIEATS</span>
+<p class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">Management Console</p>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:text-zinc-300 transition-colors hover:bg-[#2a2a2a] rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-['Manrope'] font-bold tracking-tight">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:text-zinc-300 transition-colors hover:bg-[#2a2a2a] rounded-lg" href="#">
+<span class="material-symbols-outlined">storefront</span>
+<span class="font-['Manrope'] font-bold tracking-tight">Clientes - Lojistas</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#ffb693] bg-[#201f1f] rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">layers</span>
+<span class="font-['Manrope'] font-bold tracking-tight">Planos</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:text-zinc-300 transition-colors hover:bg-[#2a2a2a] rounded-lg" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-['Manrope'] font-bold tracking-tight">Financeiro</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:text-zinc-300 transition-colors hover:bg-[#2a2a2a] rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-['Manrope'] font-bold tracking-tight">Usuários</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:text-zinc-300 transition-colors hover:bg-[#2a2a2a] rounded-lg" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="font-['Manrope'] font-bold tracking-tight">Leads</span>
+</a>
+</nav>
+<div class="mt-auto p-4 bg-[#0e0e0e] rounded-xl flex items-center gap-3">
+<img alt="Admin" class="w-10 h-10 rounded-full border border-[#2a2a2a]" data-alt="close-up portrait of a professional male administrator in a modern office setting with soft cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjlOpAS2lA3EFH2Ky6qxDx9NoLI7aIzMQ4wXbsPl0cx6MWosDDPIpP-brLzkA5VimbZmpuJPzIbKbNw7gJxqYcjkPX9FgnFI_S1QDdBfYwObRE7alECb4ur8z7DN8TW0Zz62cwSW7m--zdui7sdE4AVaO7h8_krhop9RDBPtCmJXnsegyo_OTe6c5vydTioULJPpxAr34eIbXgDzBiWRRYjwV5tNvM3AT6KI4gR45hbrMqkrJCYZciTUBU1Y3BJ3_VQTpRcVCK2_jI"/>
+<div>
+<p class="text-sm font-bold headline text-on-surface">Admin Master</p>
+<p class="text-xs text-zinc-500">Administrador</p>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 bg-[#0f0f0f]">
+<!-- Top App Bar -->
+<header class="flex justify-between items-center w-full px-8 py-4 sticky top-0 z-40 bg-[#131313]/80 backdrop-blur-md">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-zinc-400">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="text-xl font-bold text-zinc-100 headline tracking-tight">Planos</h1>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative">
+<span class="material-symbols-outlined text-zinc-400 hover:text-white transition-colors cursor-pointer">notifications</span>
+<span class="absolute -top-1 -right-1 w-4 h-4 bg-[#ff6b00] text-[10px] flex items-center justify-center rounded-full text-white font-bold">3</span>
+</div>
+<img alt="Administrator Profile" class="w-8 h-8 rounded-full object-cover" data-alt="professional male headshot for user profile icon in a sleek dark interface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2_Z7JyKyZhwIg9jjjfmd_7T8p-7eLmJdPNrj0mHpWxMi-jYUCk50SvRg9sloeDRn_fJtSLjkxS5DTU0TDGl9dbS-pLJvOc9uFDSwgI9XbRMP5lO2IGv-1wVPANeV0gU3GTCUP0hjwB1qJwMqmIu9MTy8VSbGTasaIk3HmGRtwXBuhuFEwX9L2nGxlbueqyOErKQ0bkm8Jb4AJNHwySOTOXlmu6G1G2HwzbPaYW1rU_nOMJL-KoRoftAEK1lRK1gOlYu-D2UPls_bC"/>
+</div>
+</header>
+<!-- Page Content -->
+<div class="p-7 space-y-8 max-w-7xl mx-auto">
+<!-- Page Header -->
+<div class="flex justify-between items-end">
+<div>
+<h2 class="text-3xl font-black headline text-on-surface tracking-tight">Planos</h2>
+<p class="text-zinc-500 text-sm mt-1">Gerencie as ofertas e recursos da plataforma</p>
+</div>
+<button class="bg-[#ff6b00] hover:bg-[#7a3000] text-[#351000] font-bold px-6 py-3 rounded-lg flex items-center gap-2 transition-all duration-200">
+<span class="material-symbols-outlined">add</span>
+                        Criar Novo Plano
+                    </button>
+</div>
+<!-- Metrics Row -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-[#1a1a1a] border border-[#2a2a2a] p-5 rounded-xl transition-all hover:border-[#ffb693]/30">
+<p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Total de Planos</p>
+<p class="text-4xl font-black headline text-white">4</p>
+</div>
+<div class="bg-[#1a1a1a] border border-[#2a2a2a] p-5 rounded-xl transition-all hover:border-[#ffb693]/30">
+<p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Lojistas no Grátis</p>
+<p class="text-4xl font-black headline text-zinc-400">38</p>
+</div>
+<div class="bg-[#1a1a1a] border border-[#2a2a2a] p-5 rounded-xl transition-all hover:border-[#ffb693]/30">
+<p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Lojistas no Pro</p>
+<p class="text-4xl font-black headline text-[#ff6b00]">67</p>
+</div>
+<div class="bg-[#1a1a1a] border border-[#2a2a2a] p-5 rounded-xl transition-all hover:border-[#ffb693]/30">
+<p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Receita Mensal</p>
+<p class="text-4xl font-black headline text-emerald-500">R$ 24.800</p>
+</div>
+</div>
+<!-- Toggle Row -->
+<div class="flex flex-col md:flex-row items-center justify-center gap-8 bg-[#1a1a1a]/50 p-6 rounded-2xl border border-[#2a2a2a]">
+<div class="flex bg-[#0e0e0e] p-1.5 rounded-xl border border-[#2a2a2a]">
+<button class="px-8 py-2 rounded-lg bg-[#ff6b00] text-[#351000] font-bold text-sm transition-all">Mensal</button>
+<button class="px-8 py-2 rounded-lg text-zinc-500 hover:text-white font-bold text-sm transition-all">Anual</button>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex flex-col">
+<label class="text-[10px] font-bold text-zinc-500 uppercase mb-1">% desconto anual</label>
+<div class="flex items-center bg-[#2a2a2a] px-4 py-2 rounded-lg border border-[#3a3939]">
+<input class="bg-transparent border-none p-0 w-12 text-sm font-bold text-on-surface focus:ring-0" type="text" value="20%"/>
+<span class="material-symbols-outlined text-xs text-zinc-500">percent</span>
+</div>
+</div>
+<p class="text-xs text-[#ffb693] font-medium max-w-[150px]">Lojistas no plano anual economizam 20%</p>
+</div>
+</div>
+<!-- Plans Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
+<!-- PLAN 1: GRÁTIS -->
+<div class="bg-[#1a1a1a] p-8 rounded-2xl border border-[#2a2a2a] flex flex-col h-full relative overflow-hidden group">
+<div class="mb-6">
+<span class="text-[10px] font-black tracking-widest text-[#ffb693] bg-[#ff6b00]/10 px-3 py-1 rounded-full uppercase">7 DIAS GRÁTIS</span>
+</div>
+<h3 class="text-2xl font-black headline text-white mb-2">Grátis</h3>
+<div class="flex items-baseline gap-1 mb-8">
+<span class="text-3xl font-black headline text-white">R$ 0</span>
+<span class="text-zinc-500 font-medium text-sm">/mês</span>
+</div>
+<ul class="space-y-4 mb-10 flex-1">
+<li class="flex items-center gap-3 text-sm text-zinc-300">
+<span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span> Cadastro de Produtos
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-300">
+<span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span> Cardápio Digital
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-500">
+<span class="material-symbols-outlined text-zinc-700 text-lg">cancel</span> App do Garçom
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-500">
+<span class="material-symbols-outlined text-zinc-700 text-lg">cancel</span> Relatórios Avançados
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-500">
+<span class="material-symbols-outlined text-zinc-700 text-lg">cancel</span> Exportação de Dados
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-500">
+<span class="material-symbols-outlined text-zinc-700 text-lg">cancel</span> Suporte 24/7
+                            </li>
+</ul>
+<button class="w-full py-3 rounded-lg border border-[#2a2a2a] text-zinc-400 font-bold text-sm hover:bg-[#2a2a2a] transition-all">Editar Plano</button>
+</div>
+<!-- PLAN 2: BÁSICO -->
+<div class="bg-[#1a1a1a] p-8 rounded-2xl border border-[#2a2a2a] flex flex-col h-full group">
+<div class="mb-6">
+<span class="text-[10px] font-black tracking-widest text-zinc-400 bg-zinc-800 px-3 py-1 rounded-full uppercase">PEQUENOS ESTABELECIMENTOS</span>
+</div>
+<h3 class="text-2xl font-black headline text-white mb-2">Básico</h3>
+<div class="flex flex-col mb-8">
+<div class="flex items-baseline gap-1">
+<span class="text-3xl font-black headline text-white">R$ 97</span>
+<span class="text-zinc-500 font-medium text-sm">/mês</span>
+</div>
+<span class="text-xs text-zinc-500 mt-1">R$ 931/ano</span>
+</div>
+<ul class="space-y-4 mb-10 flex-1">
+<li class="flex items-center gap-3 text-sm text-zinc-300">
+<span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span> Até 50 Produtos
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-300">
+<span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span> Cardápio Digital
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-300">
+<span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span> App do Garçom
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-500">
+<span class="material-symbols-outlined text-zinc-700 text-lg">cancel</span> Relatórios Avançados
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-500">
+<span class="material-symbols-outlined text-zinc-700 text-lg">cancel</span> Exportação de Dados
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-500">
+<span class="material-symbols-outlined text-zinc-700 text-lg">cancel</span> Suporte 24/7
+                            </li>
+</ul>
+<button class="w-full py-3 rounded-lg border border-[#2a2a2a] text-zinc-400 font-bold text-sm hover:bg-[#2a2a2a] transition-all">Editar Plano</button>
+</div>
+<!-- PLAN 3: PRO -->
+<div class="bg-[#201f1f] p-8 rounded-2xl border-2 border-[#ff6b00] flex flex-col h-full relative group transform md:-translate-y-2 shadow-xl shadow-[#ff6b00]/10">
+<div class="mb-6">
+<span class="text-[10px] font-black tracking-widest text-white bg-[#ff6b00] px-3 py-1 rounded-full uppercase">MAIS POPULAR</span>
+</div>
+<h3 class="text-2xl font-black headline text-[#ff6b00] mb-2">Pro</h3>
+<div class="flex flex-col mb-8">
+<div class="flex items-baseline gap-1">
+<span class="text-3xl font-black headline text-white">R$ 197</span>
+<span class="text-zinc-500 font-medium text-sm">/mês</span>
+</div>
+<span class="text-xs text-[#ffb693] mt-1 font-bold">R$ 1.891/ano</span>
+</div>
+<ul class="space-y-4 mb-10 flex-1">
+<li class="flex items-center gap-3 text-sm text-zinc-200">
+<span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span> Até 200 Produtos
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-200">
+<span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span> Cardápio Digital
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-200">
+<span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span> App do Garçom
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-200">
+<span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span> Relatórios Avançados
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-200">
+<span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span> Exportação de Dados
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-500">
+<span class="material-symbols-outlined text-zinc-700 text-lg">cancel</span> Suporte 24/7
+                            </li>
+</ul>
+<button class="w-full py-3 rounded-lg bg-[#ff6b00] text-[#351000] font-bold text-sm hover:bg-[#7a3000] transition-all">Editar Plano</button>
+</div>
+<!-- PLAN 4: ENTERPRISE -->
+<div class="bg-[#1a1a1a] p-8 rounded-2xl border border-purple-500/50 flex flex-col h-full group">
+<div class="mb-6">
+<span class="text-[10px] font-black tracking-widest text-purple-400 bg-purple-500/10 px-3 py-1 rounded-full uppercase">GRANDES ESTABELECIMENTOS</span>
+</div>
+<h3 class="text-2xl font-black headline text-white mb-2">Enterprise</h3>
+<div class="flex flex-col mb-8">
+<div class="flex items-baseline gap-1">
+<span class="text-3xl font-black headline text-white">R$ 397</span>
+<span class="text-zinc-500 font-medium text-sm">/mês</span>
+</div>
+<span class="text-xs text-zinc-500 mt-1">R$ 3.811/ano</span>
+</div>
+<ul class="space-y-4 mb-10 flex-1">
+<li class="flex items-center gap-3 text-sm text-zinc-300">
+<span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span> Produtos Ilimitados
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-300">
+<span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span> Cardápio Digital
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-300">
+<span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span> App do Garçom
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-300">
+<span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span> Relatórios Avançados
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-300">
+<span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span> Exportação de Dados
+                            </li>
+<li class="flex items-center gap-3 text-sm text-zinc-300">
+<span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span> Suporte 24/7 VIP
+                            </li>
+</ul>
+<button class="w-full py-3 rounded-lg border border-purple-500/30 text-purple-400 font-bold text-sm hover:bg-purple-500/10 transition-all">Editar Plano</button>
+</div>
+</div>
+<!-- Bottom Section: Merchants Table -->
+<div class="bg-[#1a1a1a] rounded-2xl border border-[#2a2a2a] overflow-hidden">
+<div class="p-6 flex justify-between items-center border-b border-[#2a2a2a]/50">
+<h3 class="text-xl font-bold headline text-white">Distribuição de Lojistas</h3>
+<a class="text-[#ffb693] text-sm font-bold hover:underline" href="#">Ver todos</a>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-[#0e0e0e]/50 text-zinc-500 text-[10px] font-black uppercase tracking-widest">
+<tr>
+<th class="px-6 py-4">Lojista</th>
+<th class="px-6 py-4">Plano</th>
+<th class="px-6 py-4">Período</th>
+<th class="px-6 py-4">Valor Pago</th>
+<th class="px-6 py-4">Próx. Renovação</th>
+<th class="px-6 py-4">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#2a2a2a]/30">
+<tr class="hover:bg-[#201f1f] transition-colors">
+<td class="px-6 py-4 font-bold text-sm text-zinc-200">Cantina da Nonna</td>
+<td class="px-6 py-4 text-sm text-zinc-400">Pro</td>
+<td class="px-6 py-4 text-sm text-zinc-400">Mensal</td>
+<td class="px-6 py-4 text-sm text-zinc-200">R$ 197,00</td>
+<td class="px-6 py-4 text-sm text-zinc-400">12/11/2023</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-black uppercase tracking-widest">Ativo</span>
+</td>
+</tr>
+<tr class="hover:bg-[#201f1f] transition-colors">
+<td class="px-6 py-4 font-bold text-sm text-zinc-200">Burger House SP</td>
+<td class="px-6 py-4 text-sm text-zinc-400">Pro</td>
+<td class="px-6 py-4 text-sm text-zinc-400">Anual</td>
+<td class="px-6 py-4 text-sm text-zinc-200">R$ 1.891,00</td>
+<td class="px-6 py-4 text-sm text-zinc-400">25/08/2024</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-black uppercase tracking-widest">Ativo</span>
+</td>
+</tr>
+<tr class="hover:bg-[#201f1f] transition-colors">
+<td class="px-6 py-4 font-bold text-sm text-zinc-200">Sushi Premium</td>
+<td class="px-6 py-4 text-sm text-zinc-400">Enterprise</td>
+<td class="px-6 py-4 text-sm text-zinc-400">Mensal</td>
+<td class="px-6 py-4 text-sm text-zinc-200">R$ 397,00</td>
+<td class="px-6 py-4 text-sm text-zinc-400">02/11/2023</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-red-500/10 text-red-500 text-[10px] font-black uppercase tracking-widest">Inadimplente</span>
+</td>
+</tr>
+<tr class="hover:bg-[#201f1f] transition-colors">
+<td class="px-6 py-4 font-bold text-sm text-zinc-200">Pastelaria Central</td>
+<td class="px-6 py-4 text-sm text-zinc-400">Básico</td>
+<td class="px-6 py-4 text-sm text-zinc-400">Mensal</td>
+<td class="px-6 py-4 text-sm text-zinc-200">R$ 97,00</td>
+<td class="px-6 py-4 text-sm text-zinc-400">15/11/2023</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-black uppercase tracking-widest">Ativo</span>
+</td>
+</tr>
+<tr class="hover:bg-[#201f1f] transition-colors">
+<td class="px-6 py-4 font-bold text-sm text-zinc-200">Pizzaria da Vila</td>
+<td class="px-6 py-4 text-sm text-zinc-400">Grátis</td>
+<td class="px-6 py-4 text-sm text-zinc-400">Trial</td>
+<td class="px-6 py-4 text-sm text-zinc-200">R$ 0,00</td>
+<td class="px-6 py-4 text-sm text-zinc-400">01/11/2023</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-zinc-700/50 text-zinc-400 text-[10px] font-black uppercase tracking-widest">Cancelado</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

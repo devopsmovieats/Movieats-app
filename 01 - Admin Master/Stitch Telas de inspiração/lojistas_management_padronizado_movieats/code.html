@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#7b3409",
+                        "outline-variant": "#5a4136",
+                        "on-primary-fixed-variant": "#7a3000",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-highest": "#353534",
+                        "on-surface-variant": "#e2bfb0",
+                        "on-tertiary-fixed": "#001d35",
+                        "tertiary": "#9ccaff",
+                        "surface-container-high": "#2a2a2a",
+                        "inverse-primary": "#a04100",
+                        "outline": "#a98a7d",
+                        "on-background": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#00497b",
+                        "tertiary-fixed": "#d0e4ff",
+                        "surface-container": "#201f1f",
+                        "on-primary": "#561f00",
+                        "error-container": "#93000a",
+                        "primary-fixed": "#ffdbcc",
+                        "primary-fixed-dim": "#ffb693",
+                        "tertiary-container": "#059eff",
+                        "surface-dim": "#131313",
+                        "surface-container-low": "#1c1b1b",
+                        "background": "#131313",
+                        "tertiary-fixed-dim": "#9ccaff",
+                        "primary-container": "#ff6b00",
+                        "error": "#ffb4ab",
+                        "inverse-on-surface": "#313030",
+                        "on-secondary-fixed": "#351000",
+                        "on-surface": "#e5e2e1",
+                        "on-secondary-container": "#ffa173",
+                        "on-secondary-fixed-variant": "#783207",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface": "#131313",
+                        "surface-bright": "#3a3939",
+                        "on-tertiary-container": "#003357",
+                        "secondary": "#ffb693",
+                        "secondary-fixed-dim": "#ffb693",
+                        "secondary-fixed": "#ffdbcc",
+                        "on-primary-container": "#572000",
+                        "surface-tint": "#ffb693",
+                        "on-tertiary": "#003257",
+                        "on-secondary": "#561f00",
+                        "on-error": "#690005",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-variant": "#353534",
+                        "primary": "#ffb693",
+                        "on-primary-fixed": "#351000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #0e0e0e; color: #e5e2e1; }
+        h1, h2, h3, .headline { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #131313; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 10px; }
+    </style>
+</head>
+<body class="flex min-h-screen overflow-hidden">
+<!-- SideNavBar (Standardized) -->
+<aside class="flex flex-col h-screen fixed left-0 top-0 z-40 overflow-y-auto transition-all duration-300 w-[240px] border-r border-[#2a2a2a] bg-[#141414] dark:bg-[#141414]">
+<div class="p-6 flex flex-col gap-1">
+<span class="text-xl font-black text-[#ff6b00] tracking-tighter font-['Manrope']">MOVIEATS</span>
+<span class="text-[10px] uppercase tracking-widest text-[#888888] font-bold">Painel Admin</span>
+</div>
+<nav class="flex-1 space-y-[2px] py-4">
+<a class="flex items-center gap-3 font-['Manrope'] font-bold tracking-tight text-[13px] text-[#888888] bg-transparent px-[16px] py-[10px] my-[2px] mx-[8px] rounded-[8px] hover:bg-[#1e1e1e] hover:text-[#cccccc] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 font-['Manrope'] font-bold tracking-tight text-[13px] bg-[#ff6b00]/12 border-l-[3px] border-[#ff6b00] text-[#ff6b00] rounded-r-lg ml-0 pl-[13px] py-[10px] my-[2px] mr-[8px] transition-all duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="storefront">storefront</span>
+<span>Clientes - Lojistas</span>
+</a>
+<a class="flex items-center gap-3 font-['Manrope'] font-bold tracking-tight text-[13px] text-[#888888] bg-transparent px-[16px] py-[10px] my-[2px] mx-[8px] rounded-[8px] hover:bg-[#1e1e1e] hover:text-[#cccccc] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="layers">layers</span>
+<span>Planos</span>
+</a>
+<a class="flex items-center gap-3 font-['Manrope'] font-bold tracking-tight text-[13px] text-[#888888] bg-transparent px-[16px] py-[10px] my-[2px] mx-[8px] rounded-[8px] hover:bg-[#1e1e1e] hover:text-[#cccccc] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="payments">payments</span>
+<span>Financeiro</span>
+</a>
+<a class="flex items-center gap-3 font-['Manrope'] font-bold tracking-tight text-[13px] text-[#888888] bg-transparent px-[16px] py-[10px] my-[2px] mx-[8px] rounded-[8px] hover:bg-[#1e1e1e] hover:text-[#cccccc] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="group">group</span>
+<span>Usuários</span>
+</a>
+<a class="flex items-center gap-3 font-['Manrope'] font-bold tracking-tight text-[13px] text-[#888888] bg-transparent px-[16px] py-[10px] my-[2px] mx-[8px] rounded-[8px] hover:bg-[#1e1e1e] hover:text-[#cccccc] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="leaderboard">leaderboard</span>
+<span>Leads</span>
+</a>
+</nav>
+<div class="p-4 border-t border-[#2a2a2a] mt-auto">
+<div class="flex items-center gap-3 p-2 hover:bg-[#1e1e1e] rounded-xl transition-colors cursor-pointer group">
+<img class="w-10 h-10 rounded-lg object-cover" data-alt="Admin User Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDI_weYjen7uouax1h3Uc-JlYdy1aNmnpeHM87QWxpEdlcdMsTWRNIsQ1l4UMj0Ue-k0eH4wKFSDHPvFYnZd06NfmZ1uk65sXMld5qeOFCW4RH0i8__mFF-xC7z-zYrzpBInEq4rswhxPhARS_Od-Z0dnZ0YKmiasHDVIGObdv79VVKtwcbhtb8cua90LqY6xEptC2I-HwuSzUTAjgdT9qufGvbHObtI8YId0l4XXexC1_MaZ8NvTQpojiLpe57Dj56GxbqSBFFyh77"/>
+<div class="flex flex-col overflow-hidden">
+<span class="text-sm font-bold text-on-surface truncate">Admin Master</span>
+<div class="flex items-center gap-1 text-[10px] text-gray-500 group-hover:text-red-400 transition-colors">
+<span class="material-symbols-outlined text-[12px]" data-icon="logout">logout</span>
+<span>Sair da conta</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 ml-[240px] flex flex-col min-h-screen bg-[#131313] relative overflow-x-hidden">
+<!-- TopNavBar (Standardized) -->
+<header class="flex justify-between items-center px-6 sticky top-0 z-50 h-16 w-full border-b border-[#2a2a2a] bg-[#131313] dark:bg-[#131313] shadow-sm shadow-orange-900/10 font-['Manrope'] font-semibold">
+<div class="flex items-center gap-4 bg-surface-container-high rounded-lg px-4 py-2 w-96">
+<span class="material-symbols-outlined text-gray-400" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm text-on-surface-variant w-full placeholder-gray-500" placeholder="Buscar por nome, CNPJ ou ID..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-all text-gray-400 hover:text-white">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-all text-gray-400 hover:text-white">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-container/20 border border-primary-container/30 flex items-center justify-center cursor-pointer">
+<img class="w-full h-full rounded-full" data-alt="Admin User Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_uySjqytFbt_7mdGntItNs6XQ7skkwTf-S8CAs694gdyFVSIXV0wy__OIFDz000-WpAZQGp6WROA-recLBsWwCw2y6_9PwoMerXfPkOT9dj0dUwS8ZicdmCMCUnNF7gzpt8KGlkKQW-0tvdFm8toPINCmlYgeqwynZQ_FHmV_0jjcFi-ULyQzpWk5_Wpatyk_l5Kn3Op3ULfcECM3KW2CL1cOqs7MStW9vCYfD_jKt8PR3T6gWRYOnElXXvpD8YjMN5uIzxejvjha"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<div class="p-[28px] space-y-8 max-w-[1400px]">
+<!-- Header Row -->
+<div class="flex justify-between items-center">
+<div>
+<h1 class="text-3xl font-extrabold text-white tracking-tight font-headline">Lojistas</h1>
+<p class="text-on-surface-variant text-sm mt-1">Gerenciamento centralizado de parceiros comerciais.</p>
+</div>
+<button class="flex items-center gap-2 bg-[#ff6b00] hover:bg-[#ff8533] text-[#351000] font-bold px-6 py-3 rounded-lg transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                    Cadastrar Lojista
+                </button>
+</div>
+<!-- Metrics Row -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="bg-surface-container p-5 rounded-xl border border-transparent hover:border-outline-variant/30 transition-all">
+<p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">Total de Lojistas</p>
+<div class="flex items-end gap-2">
+<span class="text-3xl font-black text-white">142</span>
+<span class="text-xs text-primary mb-1 font-semibold">+4 este mês</span>
+</div>
+</div>
+<div class="bg-surface-container p-5 rounded-xl border border-transparent hover:border-outline-variant/30 transition-all">
+<p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">Ativos</p>
+<div class="flex items-end gap-2">
+<span class="text-3xl font-black text-emerald-400">118</span>
+<div class="w-full bg-surface-container-high h-1 rounded-full mb-1">
+<div class="bg-emerald-400 h-full rounded-full" style="width: 83%"></div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container p-5 rounded-xl border border-transparent hover:border-outline-variant/30 transition-all">
+<p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">Pendentes</p>
+<div class="flex items-end gap-2">
+<span class="text-3xl font-black text-yellow-400">19</span>
+<span class="material-symbols-outlined text-yellow-400 text-sm mb-2" data-icon="pending">pending</span>
+</div>
+</div>
+<div class="bg-surface-container p-5 rounded-xl border border-transparent hover:border-outline-variant/30 transition-all">
+<p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">Suspensos</p>
+<div class="flex items-end gap-2">
+<span class="text-3xl font-black text-red-500">5</span>
+<span class="material-symbols-outlined text-red-500 text-sm mb-2" data-icon="block">block</span>
+</div>
+</div>
+</div>
+<!-- Filters Row -->
+<div class="bg-surface-container p-4 rounded-xl flex flex-wrap items-center gap-4">
+<div class="flex-1 min-w-[300px] relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xl" data-icon="search">search</span>
+<input class="w-full bg-surface-container-high border-none rounded-lg pl-10 py-2.5 text-sm focus:ring-1 focus:ring-primary/50 text-white placeholder-gray-500" placeholder="Buscar por nome..." type="text"/>
+</div>
+<div class="flex gap-2">
+<select class="bg-surface-container-high border-none rounded-lg text-sm px-4 py-2.5 text-gray-300 focus:ring-1 focus:ring-primary/50">
+<option>Status</option>
+<option>Ativo</option>
+<option>Pendente</option>
+<option>Suspenso</option>
+</select>
+<select class="bg-surface-container-high border-none rounded-lg text-sm px-4 py-2.5 text-gray-300 focus:ring-1 focus:ring-primary/50">
+<option>Planos</option>
+<option>Básico</option>
+<option>PRO</option>
+<option>Enterprise</option>
+</select>
+<select class="bg-surface-container-high border-none rounded-lg text-sm px-4 py-2.5 text-gray-300 focus:ring-1 focus:ring-primary/50">
+<option>Estado</option>
+<option>São Paulo</option>
+<option>Rio de Janeiro</option>
+<option>Minas Gerais</option>
+</select>
+</div>
+<button class="flex items-center gap-2 border border-outline-variant/30 hover:bg-surface-container-high text-gray-300 px-4 py-2.5 rounded-lg transition-all text-sm font-semibold ml-auto">
+<span class="material-symbols-outlined text-lg" data-icon="download">download</span>
+                    Exportar
+                </button>
+</div>
+<!-- Main Table Container -->
+<div class="bg-surface-container rounded-2xl overflow-hidden shadow-2xl shadow-black/50">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high/50">
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-gray-500">Lojista</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-gray-500">CNPJ</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-gray-500">Cidade/Estado</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-gray-500">Plano</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-gray-500">Status</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-gray-500">Pedidos Mês</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-gray-500">Cadastro</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-gray-500 text-center">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-highest/20 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center">
+<img class="w-8 h-8 rounded object-cover" data-alt="Logo for Pizzaria Del Grano, elegant pizza oven icon with warm orange and gold tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7RAP2zUawR_QXTGxpQ-wULT1r1UKYjjZQYTJzKC7DyhEaOG93575ENIDsqd5Uwu-R2MHpEk1pATJawRikhDtNEfhy7Mth740sLx7uEbWkOhJAfgJdisEOza-XhN0CVVDBDQgZfsCKfFuEuLKugNXuznP74kGuYst2VjjS9ZEX4VY8YAWJwenf6jUDRDGFV4r6mnPST7Wiu4RgMJQsmn16UnnToCF4e0AFkV7ifVt9-wZMNQNBDVJG2jDpYxMdlBhASESy4pWp5Y-0"/>
+</div>
+<div>
+<p class="font-bold text-white text-sm">Pizzaria Del Grano</p>
+<p class="text-[10px] text-gray-500 uppercase tracking-tighter">ID: #4492</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-gray-400 font-mono">12.345.678/0001-90</td>
+<td class="px-6 py-4 text-sm text-gray-400">São Paulo, SP</td>
+<td class="px-6 py-4">
+<span class="bg-orange-500/10 text-orange-400 px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest border border-orange-500/20">PRO</span>
+</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-emerald-400 text-xs font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Ativo
+                                    </span>
+</td>
+<td class="px-6 py-4 text-sm text-white font-bold">1,280</td>
+<td class="px-6 py-4 text-sm text-gray-400">12/05/2023</td>
+<td class="px-6 py-4">
+<div class="flex justify-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-highest text-primary hover:bg-primary-container hover:text-on-primary transition-all">
+<span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-highest text-gray-400 hover:text-white transition-all">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-highest/20 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
+<img class="w-8 h-8 rounded object-cover" data-alt="Minimalist fast food burger silhouette logo with professional branding style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6-SXY7D0W5Iail_s19m7JXRy26DHejZTkmn4o6UmD0xx5PucTe5CSkmXqi2wlu3hwGCOjb6m_yDyItsBljHl9tyP23154Nroi2KhKqe4Jfd4HF_xorKt2Zf7iRHJybarMgbqzwIwzEwxAGoMo5PyPzE1FVarViSJ3nSFOg_9eLPmyCF2ZlpZx_HBFsjhFZD3DYKrvxYn3CoiGnMSrUA9Y1I3ap6dYsucl7TLBN49M42RydE7NieUoG7YBpStaMnrmi24HP4CCJ9VB"/>
+</div>
+<div>
+<p class="font-bold text-white text-sm">Burger King Dom</p>
+<p class="text-[10px] text-gray-500 uppercase tracking-tighter">ID: #8821</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-gray-400 font-mono">98.765.432/0001-12</td>
+<td class="px-6 py-4 text-sm text-gray-400">Curitiba, PR</td>
+<td class="px-6 py-4">
+<span class="bg-primary text-on-primary px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20">ENTERPRISE</span>
+</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-emerald-400 text-xs font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Ativo
+                                    </span>
+</td>
+<td class="px-6 py-4 text-sm text-white font-bold">4,502</td>
+<td class="px-6 py-4 text-sm text-gray-400">01/02/2024</td>
+<td class="px-6 py-4">
+<div class="flex justify-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-highest text-primary transition-all"><span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span></button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-highest text-gray-400 transition-all"><span class="material-symbols-outlined text-lg" data-icon="edit">edit</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-highest/20 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+<img class="w-8 h-8 rounded object-cover" data-alt="Sushi restaurant logo with minimalist blue wave and red sun elements" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCrVvmbTringioj-GI6Kdj00p8slUp2-Wo_HjgoWJBSmSiGsWIdYnEWPrGj5gtcev9fr70ndOAvge3rKUZO2nGzRvoYqJNwgSeVN4PoO3IwvXr9RHnLf4uJy8LsEkalbixnGNjYJhzn0a6BHgDVarzGeJcFrnQi6lbDhX-hygDo0oBenGHeJMpNFVeGayd6mDQhy98C-AWwK0AQ0BXHj3_9589LtfXADSgJc8ZFzJ-198ne8eKavE3E-my8M8daeXNcoLUJMlnoFUF"/>
+</div>
+<div>
+<p class="font-bold text-white text-sm">Sushiro Express</p>
+<p class="text-[10px] text-gray-500 uppercase tracking-tighter">ID: #1105</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-gray-400 font-mono">11.222.333/0001-44</td>
+<td class="px-6 py-4 text-sm text-gray-400">Rio de Janeiro, RJ</td>
+<td class="px-6 py-4">
+<span class="bg-gray-700/50 text-gray-300 px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest border border-white/10">BÁSICO</span>
+</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-yellow-400 text-xs font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span> Pendente
+                                    </span>
+</td>
+<td class="px-6 py-4 text-sm text-white font-bold">0</td>
+<td class="px-6 py-4 text-sm text-gray-400">22/05/2024</td>
+<td class="px-6 py-4">
+<div class="flex justify-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-highest text-primary transition-all"><span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span></button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-highest text-gray-400 transition-all"><span class="material-symbols-outlined text-lg" data-icon="edit">edit</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-highest/20 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+<img class="w-8 h-8 rounded object-cover" data-alt="Traditional Brazilian tapioca logo with rustic yellow and brown artisanal style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWDJn6D-zeTF70bU8vPne5_QVSgzWwtVBLymvES3zRdKABoaJLD1y0ORBgzZN7A4hrEWlQYuQDlHr2mS9ct8NfnU0F8L03COB6C60tIkgcTi8CxThp6s5kzJbfqFz6YFDww-Z3N6kYfgibxVU_4_nOF13eS4X7aOWSfH5faIUT1mRhxCNJTyMp-HR7DhC0JYK0nUiJ689Su0eX2cawAl_UZgqI68TJQ1t9mJXuTuwVZoZREhJK6PGfg9ykV7lGgnhU_jDdXN3feNTu"/>
+</div>
+<div>
+<p class="font-bold text-white text-sm">Tapioca da Cris</p>
+<p class="text-[10px] text-gray-500 uppercase tracking-tighter">ID: #3928</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-gray-400 font-mono">55.666.777/0001-88</td>
+<td class="px-6 py-4 text-sm text-gray-400">Belo Horizonte, MG</td>
+<td class="px-6 py-4">
+<span class="bg-orange-500/10 text-orange-400 px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest border border-orange-500/20">PRO</span>
+</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-emerald-400 text-xs font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Ativo
+                                    </span>
+</td>
+<td class="px-6 py-4 text-sm text-white font-bold">542</td>
+<td class="px-6 py-4 text-sm text-gray-400">10/11/2023</td>
+<td class="px-6 py-4">
+<div class="flex justify-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-highest text-primary transition-all"><span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span></button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-highest text-gray-400 transition-all"><span class="material-symbols-outlined text-lg" data-icon="edit">edit</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-highest/20 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
+<img class="w-8 h-8 rounded object-cover" data-alt="Deep purple acai bowl logo with vibrant green palm leaf accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD03le7beXUoDjp6D6rOiYDbgOHEz16lNnk5fk2Qm2JUwBt5C91XRAnvrQQukbd16ccVR5d9A4F3TPErEUU8XDPCMsDR3B8gKOlrATtiqyERG9oheeBNHOKp7WJMSx0zL0nxwaotrRt37k4CF4MeofvpxohO_f7yHhMCkkQgnkJOgYdid7h4cOZ1T730MCwFvEOkr620uGtpr2cnaZIloat5NaSLYFdB7JwfC7qznBDOQ1avFhabrVw_ynKbBxr92_xMfhYsjvBNmMn"/>
+</div>
+<div>
+<p class="font-bold text-white text-sm">Açaí do Maneco</p>
+<p class="text-[10px] text-gray-500 uppercase tracking-tighter">ID: #9921</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-gray-400 font-mono">00.111.222/0001-33</td>
+<td class="px-6 py-4 text-sm text-gray-400">Fortaleza, CE</td>
+<td class="px-6 py-4">
+<span class="bg-gray-700/50 text-gray-300 px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest border border-white/10">BÁSICO</span>
+</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-red-500 text-xs font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Suspenso
+                                    </span>
+</td>
+<td class="px-6 py-4 text-sm text-white font-bold">88</td>
+<td class="px-6 py-4 text-sm text-gray-400">15/01/2024</td>
+<td class="px-6 py-4">
+<div class="flex justify-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-highest text-primary transition-all"><span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span></button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-highest text-gray-400 transition-all"><span class="material-symbols-outlined text-lg" data-icon="edit">edit</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 6 -->
+<tr class="hover:bg-surface-container-highest/20 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+<img class="w-8 h-8 rounded object-cover" data-alt="Traditional Italian cantina logo with green, white, and red subtle elements and premium typography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnUQxW-iwYVf7vXRHEGgkq2ieaHf2nyaQ4id_Utc-iBvKNvqTOIZm0NPBaOb7nBBcr6aONuD8_4b01PthQHAtNsGfqcpJsXstUribR6iSz_iTitfIS6w4x8w9u0jzG5gTt3KiU1mamwjJrfFnlkVKDPam21Hy4C7di_1mPKDriHBD8gdRDqdTfMUBcadUAl-aanNHAa_6X3SJcS_opNHqoUf3u1J9cvQy4W1dCPF799oaD29hwWHwQGExq3gbRHBLSZy5PIPzzr-dB"/>
+</div>
+<div>
+<p class="font-bold text-white text-sm">La Cantina Italiana</p>
+<p class="text-[10px] text-gray-500 uppercase tracking-tighter">ID: #2284</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-gray-400 font-mono">44.555.666/0001-77</td>
+<td class="px-6 py-4 text-sm text-gray-400">Porto Alegre, RS</td>
+<td class="px-6 py-4">
+<span class="bg-primary text-on-primary px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20">ENTERPRISE</span>
+</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-emerald-400 text-xs font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Ativo
+                                    </span>
+</td>
+<td class="px-6 py-4 text-sm text-white font-bold">3,110</td>
+<td class="px-6 py-4 text-sm text-gray-400">05/03/2023</td>
+<td class="px-6 py-4">
+<div class="flex justify-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-highest text-primary transition-all"><span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span></button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-highest text-gray-400 transition-all"><span class="material-symbols-outlined text-lg" data-icon="edit">edit</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 bg-surface-container-low flex justify-between items-center text-xs text-gray-500">
+<p>Exibindo 1-6 de 142 lojistas</p>
+<div class="flex gap-1">
+<button class="w-8 h-8 flex items-center justify-center rounded bg-surface-container-highest text-white"><span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span></button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-primary text-on-primary font-bold">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container-highest">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container-highest">3</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-surface-container-highest text-white"><span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Detail Panel (Slide-in) -->
+<div class="fixed top-0 right-0 h-screen w-[380px] bg-surface-container border-l border-outline-variant/20 shadow-2xl z-50 transform transition-transform duration-500 translate-x-0 overflow-y-auto custom-scrollbar">
+<div class="p-6">
+<div class="flex justify-between items-start mb-8">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-all text-gray-400">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+<div class="flex gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/30 text-gray-400 hover:text-white"><span class="material-symbols-outlined text-lg" data-icon="settings">settings</span></button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/30 text-red-500 hover:bg-red-500/10"><span class="material-symbols-outlined text-lg" data-icon="block">block</span></button>
+</div>
+</div>
+<!-- Profile Section -->
+<div class="flex flex-col items-center mb-8">
+<div class="relative mb-4">
+<img class="w-24 h-24 rounded-2xl object-cover ring-4 ring-primary/20" data-alt="Close-up profile image of Pizzaria Del Grano pizza prep station with artisanal dough and fresh ingredients" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZIMLYMqA3i8kNbGC20A1AkChfdiGIRmCRzXfU8O1fS2eC8ZUHWXqY_wFq7X7Ocvc6RoQneLjYoVaLuCfytWs1sqbUqr2QuggvT0jmvijcVQYycmndDdKpuVglY0ycvExPCsruID1H8YTvrxzvvEGohJ6ILRUiBXO_xb46iZchrcdJv5z5aYf0gouQMdGbf9CFgOBrJ9IX3xirzoU85JaUfAyIWSEObffV1bzWAcvL_yHcOJTiWcCqJB3mwzoCeaZ23ZzvyIFeLkBH"/>
+<span class="absolute -bottom-2 -right-2 bg-emerald-500 text-white p-1 rounded-full border-4 border-surface-container material-symbols-outlined text-xs" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h2 class="text-xl font-black text-white headline">Pizzaria Del Grano</h2>
+<span class="bg-orange-500/10 text-orange-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mt-2 border border-orange-500/20">Plano PRO</span>
+</div>
+<div class="space-y-8">
+<!-- Dados do Estabelecimento -->
+<section>
+<h3 class="text-xs font-black text-gray-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+<span class="w-1 h-3 bg-primary rounded-full"></span>
+                            Dados do Estabelecimento
+                        </h3>
+<div class="bg-surface-container-high/40 p-4 rounded-xl space-y-3">
+<div class="flex justify-between">
+<span class="text-xs text-gray-500">CNPJ</span>
+<span class="text-xs text-white font-mono">12.345.678/0001-90</span>
+</div>
+<div class="flex justify-between">
+<span class="text-xs text-gray-500">Inscrição Est.</span>
+<span class="text-xs text-white font-mono">ISENTO</span>
+</div>
+<div class="flex justify-between">
+<span class="text-xs text-gray-500">Endereço</span>
+<span class="text-xs text-white text-right">Rua das Flores, 123<br/>São Paulo, SP</span>
+</div>
+</div>
+</section>
+<!-- Responsável -->
+<section>
+<h3 class="text-xs font-black text-gray-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+<span class="w-1 h-3 bg-primary rounded-full"></span>
+                            Responsável
+                        </h3>
+<div class="bg-surface-container-high/40 p-4 rounded-xl flex items-center gap-4">
+<img class="w-10 h-10 rounded-lg" data-alt="Photo of restaurant owner, a professional woman with glasses and friendly expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuArRv_diJPwHJvASaoqo9CHYIoyksAbNZeY42e4_j8Cn9cDyHB-DB3Sv1y-5i6_E9naH21qv1LtMlK3vknK0HKGfB5kL-KfjgCb6b2LtoR6wHldbu4e-_O8yqJ9yjsgQuvkJKSiCEdHbzuW1Jsts2eDLOKDZ2ZnCccJA93rgXyrLzxdMgmNtoQHq1QStcmqSXdLq2q1L8uhiLGH67wKa7MvN8ksmDGKd1sOUJpINIbyL6vj-DJA0-zsaSNQB0LZi--X3IJOFtf10bKu"/>
+<div>
+<p class="text-sm font-bold text-white">Roberto Grano</p>
+<p class="text-[10px] text-gray-500">Sócio-Proprietário</p>
+</div>
+<button class="ml-auto w-8 h-8 rounded-full bg-surface-container-highest text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" data-icon="chat">chat</span>
+</button>
+</div>
+</section>
+<!-- Desempenho -->
+<section>
+<h3 class="text-xs font-black text-gray-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+<span class="w-1 h-3 bg-primary rounded-full"></span>
+                            Desempenho (30d)
+                        </h3>
+<div class="grid grid-cols-3 gap-2">
+<div class="bg-surface-container-high p-3 rounded-xl text-center">
+<p class="text-[10px] text-gray-500 mb-1">Vendas</p>
+<p class="text-sm font-black text-white">R$ 12k</p>
+</div>
+<div class="bg-surface-container-high p-3 rounded-xl text-center">
+<p class="text-[10px] text-gray-500 mb-1">Ticket</p>
+<p class="text-sm font-black text-white">R$ 88</p>
+</div>
+<div class="bg-surface-container-high p-3 rounded-xl text-center">
+<p class="text-[10px] text-gray-500 mb-1">Aval.</p>
+<p class="text-sm font-black text-white flex items-center justify-center gap-1">4.8 <span class="material-symbols-outlined text-[10px] text-yellow-500" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span></p>
+</div>
+</div>
+</section>
+<!-- Plano Atual -->
+<section class="pb-8">
+<div class="bg-gradient-to-br from-[#7b3409]/30 to-surface-container-high p-5 rounded-2xl border border-primary/20">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="text-[10px] text-primary-fixed-dim font-black uppercase tracking-widest">Plano Atual</p>
+<h4 class="text-lg font-black text-white">PROFISSIONAL</h4>
+</div>
+<span class="material-symbols-outlined text-primary" data-icon="workspace_premium">workspace_premium</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-6 leading-relaxed">Taxas reduzidas de 8% e suporte prioritário 24/7 incluso.</p>
+<a class="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline underline-offset-4" href="#">
+                                Alterar Plano
+                                <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+</body></html>
