@@ -1,0 +1,749 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import DashboardLayout from "@/components/DashboardLayout";
+import { 
+  Plus, 
+  Pencil, 
+  Trash2, 
+  Image as ImageIcon, 
+  X, 
+  ChevronRight,
+  Search,
+  Layers,
+  CheckCircle2,
+  XCircle,
+  Download,
+  ChevronDown,
+  Upload,
+  Loader2
+} from "lucide-react";
+import Swal from "sweetalert2";
+
+// Configuração do Toast elegante conforme o padrão Movieats
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+  background: "#141414",
+  color: "#fff",
+  customClass: {
+    popup: "rounded-xl border border-white/5 shadow-2xl shadow-black/50"
+  },
+  didOpen: (toast) => {
+    toast.addEventListener("mouseenter", Swal.stopTimer);
+    toast.addEventListener("mouseleave", Swal.resumeTimer);
+  }
+});
+
+interface Category {
+  id: number;
+  name: string;
+  order: number;
+  status: "ativo" | "inativo";
+  image: string;
+}
+
+const initialCategories: Category[] = [
+  { 
+    id: 1, 
+    name: "Hambúrgueres Artesanais", 
+    order: 1, 
+    status: "ativo", 
+    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150&h=150&auto=format&fit=crop" 
+  },
+  { 
+    id: 2, 
+    name: "Pizzas Gourmet", 
+    order: 2, 
+    status: "ativo", 
+    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=150&h=150&auto=format&fit=crop" 
+  },
+  { 
+    id: 3, 
+    name: "Bebidas e Coquetéis", 
+    order: 3, 
+    status: "ativo", 
+    image: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=150&h=150&auto=format&fit=crop" 
+  },
+];
+
+export default function CategoriasPage() {
+  const [categories, setCategories] = useState<Category[]>(initialCategories);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("todos");
+  const [isStatusFilterOpen, setIsStatusFilterOpen] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [isImporting, setIsImporting] = useState(false);
+  const [importProgress, setImportProgress] = useState(0);
+  const [importStatus, setImportStatus] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const importFileRef = useRef<HTMLInputElement>(null);
+
+  // Carregar dados iniciais do localStorage
+  useEffect(() => {
+    const savedCategories = localStorage.getItem('movieats_categories');
+    if (savedCategories) {
+      try {
+        setCategories(JSON.parse(savedCategories));
+      } catch (e) {
+        console.error("Erro ao carregar categorias do localStorage", e);
+      }
+    }
+  }, []);
+
+  // Salvar categorias no localStorage sempre que houver mudança
+  useEffect(() => {
+    localStorage.setItem('movieats_categories', JSON.stringify(categories));
+  }, [categories]);
+
+  const filteredCategories = categories.filter(cat => {
+    const matchesSearch = cat.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === "todos" || cat.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const openAddModal = () => {
+    setEditingCategory(null);
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (category: Category) => {
+    setEditingCategory(category);
+    setIsModalOpen(true);
+  };
+
+  const handleSelectOne = (id: number) => {
+    const newSelected = new Set(selectedIds);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedIds(newSelected);
+  };
+
+  const handleSelectAll = () => {
+    if (selectedIds.size === filteredCategories.length && filteredCategories.length > 0) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredCategories.map(cat => cat.id)));
+    }
+  };
+
+  const handleDelete = (category: Category) => {
+    Swal.fire({
+      title: "Remover Categoria?",
+      text: `Deseja excluir "${category.name}"?`,
+      icon: "warning",
+      width: "400px",
+      showCancelButton: true,
+      confirmButtonText: "Excluir",
+      cancelButtonText: "Cancelar",
+      background: "#1a1a1a",
+      color: "#fff",
+      confirmButtonColor: "#ff6b00",
+      cancelButtonColor: "#2a2a2a",
+      iconColor: "#ff6b00",
+      customClass: {
+        popup: "rounded-[8px] border border-white/5 shadow-2xl p-4",
+        confirmButton: "rounded-lg font-black uppercase text-[10px] px-6 py-3 tracking-widest cursor-pointer",
+        cancelButton: "rounded-lg font-black uppercase text-[10px] px-6 py-3 tracking-widest cursor-pointer",
+        title: "text-base font-black leading-tight mb-2 uppercase tracking-tight",
+        htmlContainer: "text-[11px] text-muted-foreground mb-4",
+        icon: "scale-75 mb-0"
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setCategories(prev => {
+          const newState = prev.filter(c => c.id !== category.id);
+          localStorage.setItem('movieats_categories', JSON.stringify(newState));
+          return newState;
+        });
+        Toast.fire({
+          icon: "success",
+          title: "Categoria excluída com sucesso"
+        });
+      }
+    });
+  };
+
+  const handleExport = () => {
+    const categoriesToExport = categories.filter(cat => selectedIds.has(cat.id));
+    
+    if (categoriesToExport.length === 0) {
+      Toast.fire({
+        icon: "info",
+        title: "Selecione categorias para exportar"
+      });
+      return;
+    }
+    
+    // Header do CSV
+    const csvContent = [
+      ["ID", "Nome", "Ordem", "Status"],
+      ...categoriesToExport.map(cat => [cat.id, cat.name, cat.order, cat.status])
+    ].map(e => e.join(",")).join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `categorias_movieats_${new Date().getTime()}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    Toast.fire({
+      icon: "success",
+      title: `${categoriesToExport.length} categorias exportadas com sucesso!`
+    });
+  };
+
+  const handleImportClick = () => {
+    importFileRef.current?.click();
+  };
+
+  const handleFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const fileName = file.name.toLowerCase();
+    if (!fileName.endsWith('.csv') && !fileName.endsWith('.xlsx')) {
+      Toast.fire({
+        icon: "error",
+        title: "Arquivo Inválido. Selecione .csv ou .xlsx"
+      });
+      return;
+    }
+
+    // Inicia simulação de importação "Elite"
+    setIsImporting(true);
+    setImportProgress(0);
+    setImportStatus("Iniciando...");
+
+    const phrases = [
+      "Lendo arquivo...",
+      "Validando estrutura...",
+      "Processando categorias...",
+      "Sincronizando banco de dados...",
+      "Finalizando..."
+    ];
+
+    let currentPhraseIndex = 0;
+    const intervalTime = 3000; // total 3s
+    const steps = 100;
+    const stepTime = intervalTime / steps;
+
+    const progressInterval = setInterval(() => {
+      setImportProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          return 100;
+        }
+        return prev + 1;
+      });
+    }, stepTime);
+
+    const phraseInterval = setInterval(() => {
+      if (currentPhraseIndex < phrases.length - 1) {
+        currentPhraseIndex++;
+        setImportStatus(phrases[currentPhraseIndex]);
+      } else {
+        clearInterval(phraseInterval);
+      }
+    }, 600);
+    
+    setTimeout(() => {
+      // Simulação de novas categorias vindas da planilha
+      const newItems: Category[] = [
+        { id: Date.now() + 1, name: "Sobremesas Geladas", order: categories.length + 1, status: "ativo", image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?q=80&w=150&h=150&auto=format&fit=crop" },
+        { id: Date.now() + 2, name: "Massas Italianas", order: categories.length + 2, status: "ativo", image: "https://images.unsplash.com/photo-1473093226795-af9932fe5856?q=80&w=150&h=150&auto=format&fit=crop" },
+        { id: Date.now() + 3, name: "Pratos Saudáveis", order: categories.length + 3, status: "inativo", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150&h=150&auto=format&fit=crop" },
+      ];
+
+      setCategories(prev => [...prev, ...newItems]);
+      setIsImporting(false);
+      
+      // Limpa o input para permitir importar o mesmo arquivo novamente se necessário
+      if (importFileRef.current) importFileRef.current.value = "";
+
+      Swal.fire({
+        title: "Importação Finalizada",
+        text: `${newItems.length} categorias importadas com sucesso!`,
+        icon: "success",
+        background: "#1a1a1a",
+        color: "#fff",
+        confirmButtonColor: "#ff6b00",
+        timer: 3000,
+        customClass: { popup: "rounded-[8px]" }
+      });
+    }, intervalTime + 200);
+  };
+
+  const handleSaveCategory = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingCategory) {
+      setCategories(prev => {
+        const newState = prev.map(c => c.id === editingCategory.id ? editingCategory : c);
+        localStorage.setItem('movieats_categories', JSON.stringify(newState));
+        return newState;
+      });
+      Toast.fire({ icon: "success", title: "Alterações salvas com sucesso" });
+    } else {
+      const newCategory: Category = {
+        id: Date.now(),
+        name: editingCategory?.name || "Nova Categoria",
+        order: editingCategory?.order || (categories.length + 1),
+        status: editingCategory?.status || "ativo",
+        image: editingCategory?.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150&h=150&auto=format&fit=crop"
+      };
+      setCategories(prev => {
+        const newState = [...prev, newCategory];
+        localStorage.setItem('movieats_categories', JSON.stringify(newState));
+        return newState;
+      });
+      Toast.fire({ icon: "success", title: "Categoria criada com sucesso" });
+    }
+    setIsModalOpen(false);
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validação de 2MB via Toast conforme solicitado
+    if (file.size > 2 * 1024 * 1024) {
+      Toast.fire({
+        icon: "error",
+        title: "Tamanho excedido (Máx 2MB)"
+      });
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
+    // Simulação de upload (leitura local)
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      setEditingCategory(prev => prev ? { ...prev, image: base64String } : { 
+        id: 0, 
+        name: "", 
+        order: categories.length + 1, 
+        status: "ativo" as const, 
+        image: base64String 
+      });
+      Toast.fire({
+        icon: "success",
+        title: "Imagem selecionada com sucesso"
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  return (
+    <DashboardLayout>
+      <div className="max-w-[1400px] mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        
+        {/* Page Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <div className="flex items-center gap-3 mb-1">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <Layers className="text-primary w-5 h-5" />
+              </div>
+              <h2 className="text-2xl font-headline font-black text-white tracking-tight uppercase leading-none">
+                Categorias
+              </h2>
+            </div>
+            <p className="text-muted-foreground text-sm font-medium">
+              Gerencie os grupos de produtos do seu cardápio digital.
+            </p>
+          </div>
+
+          <button 
+            onClick={openAddModal}
+            className="flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-orange-600 text-white rounded-[8px] font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-primary/20 active:scale-95 group cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5 transition-transform group-hover:rotate-90" />
+            Adicionar Nova Categoria
+          </button>
+        </div>
+
+        {/* Search & Filter Bar */}
+        <div className="glass border border-white/5 rounded-[8px] p-4 flex flex-col md:flex-row gap-4 items-center">
+          {/* Search Field */}
+          <div className="relative w-full max-w-xs group cursor-text">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <input 
+              type="text" 
+              placeholder="Buscar categoria..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-white/[0.03] border border-white/5 rounded-lg py-3 pl-11 pr-4 text-xs text-white placeholder:text-muted-foreground/30 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium"
+            />
+          </div>
+
+          {/* Status Filter Custom Dropdown */}
+          <div className="relative group/dropdown">
+            <button 
+              onClick={() => setIsStatusFilterOpen(!isStatusFilterOpen)}
+              className="flex items-center bg-white/[0.03] border border-white/5 rounded-lg py-3 pl-20 pr-10 text-xs text-white font-bold focus:outline-none focus:border-primary/50 transition-all cursor-pointer uppercase tracking-tight relative min-w-[160px] text-left"
+            >
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2 border-r border-white/10 pr-3 pointer-events-none">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(255,107,0,0.5)]" />
+                <span className="text-[9px] font-black text-muted-foreground uppercase tracking-wider">Status:</span>
+              </div>
+              
+              {statusFilter === "todos" ? "Todos" : statusFilter === "ativo" ? "Ativo" : "Inativo"}
+              
+              <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none transition-transform ${isStatusFilterOpen ? 'rotate-180 text-white' : ''}`} />
+            </button>
+
+            {/* Dropdown Menu */}
+            {isStatusFilterOpen && (
+              <>
+                <div 
+                  className="fixed inset-0 z-[60]" 
+                  onClick={() => setIsStatusFilterOpen(false)}
+                />
+                <div className="absolute top-full left-0 mt-2 w-full bg-[#1a1a1a] border border-white/10 rounded-[8px] shadow-2xl z-[70] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                  <div className="flex flex-col py-1">
+                    {[
+                      { value: "todos", label: "Todos" },
+                      { value: "ativo", label: "Ativo" },
+                      { value: "inativo", label: "Inativo" }
+                    ].map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => {
+                          setStatusFilter(option.value);
+                          setIsStatusFilterOpen(false);
+                        }}
+                        className={`w-full text-left px-5 py-3 text-[11px] font-bold uppercase tracking-wider transition-colors cursor-pointer
+                          ${statusFilter === option.value ? 'bg-primary/10 text-primary' : 'text-white hover:bg-[#ff6b00] hover:text-white'}
+                        `}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="flex-1" />
+
+          {/* Import/Export Actions */}
+          <div className="flex items-center gap-3">
+            {/* Hidden Import Input */}
+            <input 
+              type="file" 
+              ref={importFileRef}
+              onChange={handleFileImport}
+              accept=".csv, .xlsx"
+              className="hidden"
+            />
+            
+            <button 
+              onClick={handleImportClick}
+              className="flex items-center gap-2 px-5 py-3 glass border-white/10 hover:border-primary/30 hover:bg-white/5 rounded-lg text-[10px] font-black text-white hover:text-primary uppercase tracking-[0.15em] transition-all cursor-pointer active:scale-95 group"
+            >
+              <Upload className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
+              Importar
+            </button>
+
+            <button 
+              onClick={handleExport}
+              className="flex items-center gap-2 px-5 py-3 glass border-white/10 hover:border-primary/30 hover:bg-primary/5 rounded-lg text-[10px] font-black text-white hover:text-primary uppercase tracking-[0.15em] transition-all cursor-pointer active:scale-95 group"
+            >
+              <Download className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
+              {selectedIds.size > 0 ? `Exportar (${selectedIds.size})` : "Exportar"}
+            </button>
+          </div>
+
+          <div className="h-8 w-[1px] bg-white/10 mx-2 hidden md:block" />
+
+          <div className="flex items-center gap-2 px-4 py-3 bg-white/[0.03] border border-white/5 rounded-lg text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+            Total itens: <span className="text-white ml-1">{categories.length}</span>
+          </div>
+        </div>
+
+        {/* Categories Table Wrapper */}
+        <div className="glass border border-white/5 rounded-[8px] overflow-hidden shadow-2xl">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-white/[0.02] border-b border-white/5">
+                  <th className="px-6 py-5 w-10">
+                    <div className="flex items-center justify-center">
+                      <input 
+                        type="checkbox" 
+                        checked={filteredCategories.length > 0 && selectedIds.size === filteredCategories.length}
+                        onChange={handleSelectAll}
+                        className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
+                      />
+                    </div>
+                  </th>
+                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Imagem</th>
+                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Nome da Categoria</th>
+                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-center">Ordem</th>
+                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-center">Status</th>
+                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {filteredCategories.map((category) => (
+                  <tr key={category.id} className={`hover:bg-white/[0.02] transition-colors group ${selectedIds.has(category.id) ? 'bg-primary/5' : ''}`}>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-center">
+                        <input 
+                          type="checkbox" 
+                          checked={selectedIds.has(category.id)}
+                          onChange={() => handleSelectOne(category.id)}
+                          className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
+                        />
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <div className="w-12 h-12 rounded-full border-2 border-white/5 overflow-hidden shadow-inner group-hover:border-primary/30 transition-colors mx-auto">
+                        <img 
+                          src={category.image} 
+                          alt={category.name} 
+                          className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" 
+                        />
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-white group-hover:text-primary transition-colors tracking-tight uppercase">
+                          {category.name}
+                        </span>
+                        <span className="text-[9px] text-muted-foreground font-bold mt-0.5 uppercase tracking-widest opacity-50">ID: #{category.id.toString().padStart(4, '0')}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <span className="inline-flex items-center justify-center w-7 h-7 bg-white/5 border border-white/10 rounded-lg text-[11px] font-black text-white/60">
+                        {category.order}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex justify-center">
+                        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${
+                          category.status === "ativo" 
+                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" 
+                            : "bg-red-500/10 border-red-500/20 text-red-500"
+                        }`}>
+                          {category.status === "ativo" ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                          <span className="text-[9px] font-black uppercase tracking-widest">{category.status}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button 
+                          onClick={() => openEditModal(category)}
+                          className="p-2.5 rounded-lg bg-white/5 hover:bg-primary/10 text-muted-foreground hover:text-primary border border-white/5 hover:border-primary/20 transition-all duration-300 cursor-pointer"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(category)}
+                          className="p-2.5 rounded-lg bg-white/5 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 border border-white/5 hover:border-red-500/20 transition-all duration-300 cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Modal de Cadastro/Edição Padronizado (max-w-2xl) */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 overflow-hidden">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-[#0a0a0a]/90 backdrop-blur-xl animate-in fade-in duration-500"
+            onClick={() => setIsModalOpen(false)}
+          />
+          
+          {/* Modal Container - Largura Padronizada com Produtos */}
+          <div className="relative w-full max-w-2xl bg-[#141414] border border-white/10 rounded-[8px] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-500 overflow-hidden">
+            
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  {editingCategory ? <Pencil className="text-primary w-4 h-4" /> : <Plus className="text-primary w-4 h-4" />}
+                </div>
+                <h3 className="text-[12px] font-headline font-black text-white uppercase tracking-tight leading-none">
+                  {editingCategory?.id ? `Editar: ${editingCategory.name}` : "Nova Categoria"}
+                </h3>
+              </div>
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="p-2 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-white transition-all cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Body - Spacing and Padding Reduced */}
+            <form onSubmit={handleSaveCategory} className="p-5 space-y-4">
+              {/* Image Upload Area */}
+              <div className="space-y-2">
+                <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Imagem da Categoria</label>
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleImageChange}
+                  className="hidden" 
+                  accept="image/*"
+                />
+                <div 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full h-28 border-2 border-dashed border-white/5 hover:border-primary/30 rounded-[8px] flex flex-col items-center justify-center gap-2 bg-white/[0.02] cursor-pointer group transition-all relative overflow-hidden"
+                >
+                  {editingCategory?.image && (
+                    <img src={editingCategory.image} className="absolute inset-0 w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity" alt="" />
+                  )}
+                  <div className="p-2 bg-white/5 rounded-full group-hover:scale-110 transition-all">
+                    <ImageIcon className="w-5 h-5 text-white/30 group-hover:text-primary transition-colors" />
+                  </div>
+                  <div className="flex flex-col items-center relative z-10">
+                    <span className="text-[10px] font-black text-white/20 uppercase tracking-widest group-hover:text-white transition-colors">
+                      {editingCategory?.id ? "Alterar imagem" : "Upload da Imagem"}
+                    </span>
+                    <span className="text-[8px] text-muted-foreground/30 font-bold uppercase mt-0.5">PNG ou JPG • Máx 2MB</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Form Grid - Padronizado (grid-cols-2) */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 block">Nome da Categoria</label>
+                  <input 
+                    type="text" 
+                    value={editingCategory?.name || ""}
+                    onChange={(e) => setEditingCategory(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, order: categories.length + 1, status: "ativo", image: "" })}
+                    placeholder="Ex: Pizzas Gourmet"
+                    className="w-full bg-white/[0.03] border border-white/5 rounded-lg h-10 px-4 text-xs text-white placeholder:text-muted-foreground/20 focus:outline-none focus:border-primary/50 transition-all font-medium"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 block">Ordem</label>
+                  <input 
+                    type="number" 
+                    value={editingCategory?.order || ""}
+                    onChange={(e) => setEditingCategory(prev => prev ? { ...prev, order: parseInt(e.target.value) || 0 } : { id: 0, name: "", order: parseInt(e.target.value) || 0, status: "ativo", image: "" })}
+                    placeholder="Ex: 1"
+                    className="w-full bg-white/[0.03] border border-white/5 rounded-lg h-10 px-4 text-xs text-white placeholder:text-muted-foreground/20 focus:outline-none focus:border-primary/50 transition-all font-black text-center"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Status Toggle Compact */}
+              <div className="flex items-center justify-between p-3.5 bg-white/[0.02] border border-white/5 rounded-lg group hover:border-white/10 transition-colors">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black text-white uppercase tracking-wider">Status Visível</span>
+                  <span className="text-[8px] text-muted-foreground font-medium uppercase opacity-50 italic">Habilita no Cardápio Digital</span>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    className="sr-only peer" 
+                    checked={editingCategory ? editingCategory.status === "ativo" : true} 
+                    onChange={() => {
+                      if (editingCategory) {
+                        const newStatus = editingCategory.status === "ativo" ? "inativo" : "ativo";
+                        setEditingCategory({ ...editingCategory, status: newStatus });
+                        Toast.fire({
+                          icon: "success",
+                          title: `Status atualizado para ${newStatus === "ativo" ? "Ativo" : "Inativo"}`
+                        });
+                      }
+                    }}
+                  />
+                  <div className="w-10 h-5.5 bg-white/5 border border-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white/20 after:border-gray-500 after:border after:rounded-full after:h-4.5 after:w-4.5 after:transition-all peer-checked:bg-emerald-500/20 peer-checked:after:bg-emerald-500 transition-all" />
+                </label>
+              </div>
+
+              {/* Modal Footer (Buttons) - Compact */}
+              <div className="flex gap-4 pt-3 border-t border-white/5">
+                <button 
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="flex-1 h-10 bg-white/5 hover:bg-white/10 text-white font-black text-[10px] uppercase tracking-widest rounded-lg transition-all border border-white/5 active:scale-95 cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit"
+                  className="flex-1 h-10 bg-primary hover:bg-orange-600 text-white font-black text-[10px] uppercase tracking-widest rounded-lg transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center justify-center gap-2 group cursor-pointer"
+                >
+                  {editingCategory?.id ? "Salvar" : "Confirmar"}
+                  <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      )}
+      {/* Loading Overlay Importação "Elite" */}
+      {isImporting && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-[#0a0a0a]/80 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="flex flex-col items-center gap-8 w-full max-w-[400px] px-6">
+            <div className="relative">
+              {/* Outer Ring */}
+              <div className="w-20 h-20 rounded-full border-2 border-primary/10 border-t-primary animate-spin" />
+              {/* Icon in Center */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Loader2 className="w-8 h-8 text-primary animate-pulse" />
+              </div>
+            </div>
+
+            <div className="w-full space-y-4">
+              <div className="flex flex-col items-center text-center gap-2">
+                <h3 className="text-white font-black text-[16px] uppercase tracking-[0.2em]">
+                  {importStatus}
+                </h3>
+                <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest opacity-60">
+                  Operação em progresso • {importProgress}%
+                </p>
+              </div>
+
+              {/* Progress Bar Container */}
+              <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                <div 
+                  className="h-full bg-primary transition-all duration-300 ease-out shadow-[0_0_15px_rgba(255,107,0,0.5)]"
+                  style={{ width: `${importProgress}%` }}
+                />
+              </div>
+            </div>
+            
+            <span className="text-[9px] text-white/20 font-black uppercase tracking-[0.3em] mt-2">
+              DNA ELITE • MOVIEATS
+            </span>
+          </div>
+        </div>
+      )}
+
+    </DashboardLayout>
+  );
+}
