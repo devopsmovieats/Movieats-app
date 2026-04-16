@@ -583,27 +583,27 @@ export default function CategoriasPage() {
 
         {/* Categories Table Wrapper ou Empty State */}
         {!loading && categories.length === 0 ? (
-          <div className="glass border border-white/5 rounded-3xl p-20 flex flex-col items-center justify-center text-center space-y-6 animate-in fade-in zoom-in duration-700">
+          <div className="glass border border-white/5 rounded-3xl p-24 flex flex-col items-center justify-center text-center space-y-7 animate-in fade-in zoom-in duration-700">
             <div className="relative">
-              <Layers className="w-24 h-24 text-white opacity-10" />
-              <div className="absolute inset-0 bg-primary/5 blur-3xl rounded-full" />
+              <Package className="w-24 h-24 text-white opacity-10" />
+              <div className="absolute inset-0 bg-primary/5 blur-[100px] rounded-full" />
             </div>
             
-            <div className="space-y-2 max-w-md">
-              <h3 className="text-xl font-headline font-black text-white uppercase tracking-tight leading-none mb-1">
-                Nenhuma categoria encontrada
+            <div className="space-y-3 max-w-sm">
+              <h3 className="text-2xl font-headline font-black text-white uppercase tracking-tight leading-none">
+                Nenhuma categoria cadastrada
               </h3>
-              <p className="text-sm text-muted-foreground/60 font-medium leading-relaxed">
-                Gerencie as categorias de produtos que seu estabelecimento oferece para organizar seu cardápio de forma profissional e intuitiva.
+              <p className="text-[13px] text-muted-foreground font-medium leading-relaxed px-4">
+                Organize seu cardápio criando sua primeira categoria agora.
               </p>
             </div>
 
             <button 
               onClick={openAddModal}
-              className="px-8 py-4 bg-primary hover:bg-orange-600 text-white rounded-lg font-black text-[11px] uppercase tracking-[0.2em] transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center gap-3 group cursor-pointer"
+              className="px-10 py-4.5 bg-primary hover:bg-orange-600 text-white rounded-lg font-black text-[11px] uppercase tracking-[0.2em] transition-all shadow-2xl shadow-primary/30 active:scale-95 flex items-center gap-3 group cursor-pointer"
             >
               <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
-              Adicionar Nova Categoria
+              + Adicionar Nova Categoria
             </button>
           </div>
         ) : (
@@ -956,12 +956,11 @@ export default function CategoriasPage() {
         .category-row {
           cursor: pointer !important;
           border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-          transition: background-color 0.2s ease !important;
+          transition: background 0.2s !important;
         }
         .category-row:hover {
-          background-color: rgba(255, 255, 255, 0.03) !important;
+          background: rgba(255, 255, 255, 0.03) !important;
         }
-        /* Ajuste para não ter borda na última linha se desejar, mas o usuário pediu em cada linha */
       `}</style>
 
     </DashboardLayout>
