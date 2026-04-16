@@ -86,7 +86,7 @@ export default function CategoriasPage() {
   
   // Paginação
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const itemsPerPage = 10;
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const importFileRef = useRef<HTMLInputElement>(null);
@@ -600,58 +600,56 @@ export default function CategoriasPage() {
               </tbody>
             </table>
           </div>
-        </div>
-
-        {/* Paginação Premium Refinada */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-6 px-2 animate-in fade-in slide-in-from-bottom-2 duration-1000">
           
-          {/* Controles de Navegação (Esquerda) */}
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="flex items-center gap-2 px-5 py-2.5 bg-white/[0.03] border border-white/5 rounded-full text-[9px] font-black text-white uppercase tracking-widest hover:bg-white/5 transition-all disabled:opacity-30 disabled:cursor-not-allowed group cursor-pointer"
-            >
-              <ChevronLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
-              Anterior
-            </button>
+          {/* Paginação Premium Refinada (Integrada) */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-5 px-6 border-t border-white/5 bg-white/[0.01]">
+            {/* Controles de Navegação (Esquerda) */}
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="flex items-center gap-2 px-5 py-2.5 bg-white/[0.03] border border-white/5 rounded-full text-[9px] font-black text-white uppercase tracking-widest hover:bg-white/5 transition-all disabled:opacity-30 disabled:cursor-not-allowed group cursor-pointer"
+              >
+                <ChevronLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
+                Anterior
+              </button>
 
-            <div className="flex items-center gap-1.5 px-4 h-11 bg-white/[0.02] border border-white/5 rounded-full">
-              {[...Array(totalPages)].map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentPage(i + 1)}
-                  className={`min-w-[34px] h-7 flex items-center justify-center rounded-full text-[10px] font-black transition-all cursor-pointer ${
-                    currentPage === i + 1 
-                      ? "bg-primary text-white shadow-lg shadow-primary/30 scale-110" 
-                      : "text-muted-foreground/40 hover:text-white hover:bg-white/5"
-                  }`}
-                >
-                  {String(i + 1).padStart(2, '0')}
-                </button>
-              ))}
+              <div className="flex items-center gap-1.5 px-3 h-10 bg-white/[0.02] border border-white/5 rounded-xl">
+                {[...Array(totalPages)].map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`min-w-[32px] h-7 flex items-center justify-center rounded-lg text-[10px] font-black transition-all cursor-pointer ${
+                      currentPage === i + 1 
+                        ? "bg-primary text-white shadow-lg shadow-primary/30 scale-105" 
+                        : "text-muted-foreground/40 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    {String(i + 1).padStart(2, '0')}
+                  </button>
+                ))}
+              </div>
+
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages || totalPages === 0}
+                className="flex items-center gap-2 px-5 py-2.5 bg-white/[0.03] border border-white/5 rounded-full text-[9px] font-black text-white uppercase tracking-widest hover:bg-white/5 transition-all disabled:opacity-30 disabled:cursor-not-allowed group cursor-pointer"
+              >
+                Próximo
+                <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+              </button>
             </div>
 
-            <button 
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages || totalPages === 0}
-              className="flex items-center gap-2 px-5 py-2.5 bg-white/[0.03] border border-white/5 rounded-full text-[9px] font-black text-white uppercase tracking-widest hover:bg-white/5 transition-all disabled:opacity-30 disabled:cursor-not-allowed group cursor-pointer"
-            >
-              Próximo
-              <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-            </button>
+            {/* Info Texto (Direita) */}
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
+                Exibindo <span className="text-white">{totalItems === 0 ? 0 : startIndex + 1}</span>-
+                <span className="text-white">{Math.min(startIndex + itemsPerPage, totalItems)}</span> de 
+                <span className="text-white"> {totalItems}</span> categorias
+              </span>
+              <div className="w-1 h-4 bg-primary rounded-full shadow-[0_0_8px_rgba(255,107,0,0.5)]" />
+            </div>
           </div>
-
-          {/* Info Texto (Direita) */}
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
-              Exibindo <span className="text-white">{Math.min(startIndex + 1, totalItems)}</span>-
-              <span className="text-white">{Math.min(startIndex + itemsPerPage, totalItems)}</span> de 
-              <span className="text-white"> {totalItems}</span> categorias
-            </span>
-            <div className="w-1 h-4 bg-primary rounded-full" />
-          </div>
-
         </div>
 
       </div>
