@@ -1,4 +1,4 @@
-// VERSION 3.0 - FORCED EMPTY STATE
+// VERSION 4.0 - TESTE DE CONEXÃO V4
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -45,8 +45,8 @@ const Toast = Swal.mixin({
   }
 });
 
-// Gerador de ID curto Elite (6 caracteres: Letras e Números)
-const generateShortId = () => Math.random().toString(36).substring(2, 8).toUpperCase();
+// Gerador de ID curto Elite (Matemático)
+const generateShortId = () => Math.random().toString(36).substring(7).toUpperCase();
 
 interface Category {
   id: string | number;
@@ -93,7 +93,48 @@ export default function CategoriasPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const importFileRef = useRef<HTMLInputElement>(null);
 
-  // Função para buscar categorias do Supabase
+  // VERSION 4.0 - EARLY RETURN LOGIC
+  if (categories.length === 0 && !loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        height: '100vh', 
+        backgroundColor: '#000',
+        textAlign: 'center',
+        padding: '20px'
+      }}>
+        <h1 style={{ color: '#ff0000', fontSize: '80px', fontWeight: '900', animation: 'pulse 1s infinite' }}>TESTE DE CONEXÃO V4</h1>
+        <h2 style={{ color: '#fff', fontSize: '30px', marginBottom: '40px', fontWeight: '900', textTransform: 'uppercase' }}>Sua vitrine está vazia</h2>
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          style={{ 
+            backgroundColor: '#FF6B00', 
+            color: '#fff', 
+            padding: '24px 60px', 
+            borderRadius: '16px', 
+            border: 'none', 
+            fontWeight: '900', 
+            fontSize: '18px',
+            cursor: 'pointer',
+            boxShadow: '0 20px 40px rgba(255, 107, 0, 0.3)'
+          }}
+        >
+          CADASTRAR PRIMEIRA CATEGORIA
+        </button>
+        <style>{`
+          @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
   const fetchCategories = async () => {
     setLoading(true);
     try {
@@ -454,9 +495,12 @@ export default function CategoriasPage() {
               <div className="p-2 bg-primary/10 rounded-lg">
                 <Layers className="text-primary w-5 h-5" />
               </div>
-              <h2 className="text-2xl font-headline font-black text-white tracking-tight uppercase leading-none">
-                Categorias
-              </h2>
+              <div className="flex flex-col">
+                <h2 className="text-2xl font-headline font-black text-white tracking-tight uppercase leading-none">
+                  Categorias
+                </h2>
+                <h1 className="text-4xl font-black text-red-600 animate-pulse bg-white p-2 mt-2 w-fit">TESTE DE CONEXÃO V4</h1>
+              </div>
             </div>
             <p className="text-muted-foreground text-sm font-medium">
               Gerencie os grupos de produtos do seu cardápio digital.
@@ -839,7 +883,6 @@ export default function CategoriasPage() {
                 </div>
               </div>
 
-              {/* Status Toggle Compact */}
               <div className="flex items-center justify-between p-3.5 bg-white/[0.02] border border-white/5 rounded-lg group hover:border-white/10 transition-colors">
                 <div className="flex flex-col">
                   <span className="text-[10px] font-black text-white uppercase tracking-wider">Status Visível</span>
