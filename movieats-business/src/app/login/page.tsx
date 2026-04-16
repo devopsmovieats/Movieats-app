@@ -139,8 +139,8 @@ export default function LoginPage() {
       {/* Conteúdo Centralizado (Modal) */}
       <div className="relative z-10 w-full max-w-[440px] px-6 animate-in fade-in zoom-in-95 duration-1000">
         
-        {/* Modal Premium Light (Largo e Compacto) */}
-        <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.15)] relative overflow-hidden border-none transition-all">
+        {/* Modal Premium Dark Reclamação (Largo e Compacto) */}
+        <div className="bg-[#0a0a0a]/85 backdrop-blur-[15px] rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] relative overflow-hidden border border-white/5 transition-all">
           
           {/* Branding */}
           <div className="flex flex-col items-center mb-6">
@@ -148,20 +148,20 @@ export default function LoginPage() {
               <div className="p-2 bg-primary/10 rounded-xl">
                 <Flame className="text-primary w-8 h-8 fill-primary" />
               </div>
-              <h1 className="font-headline text-3xl font-black tracking-tighter text-[#1a1a1a]">MOVIEATS</h1>
+              <h1 className="font-headline text-3xl font-black tracking-tighter text-white/80">MOVIEATS</h1>
             </div>
-            <span className="text-[9px] mt-4 uppercase tracking-[0.5em] font-medium text-[#1a1a1a]/40 whitespace-nowrap">Portal do Estabelecimento</span>
+            <span className="text-[9px] mt-4 uppercase tracking-[0.5em] font-medium text-white/40 whitespace-nowrap">Portal do Estabelecimento</span>
           </div>
 
           {/* Welcome Text */}
           <div className="mb-6 text-center">
-            <h2 className="font-headline text-2xl font-black text-[#1a1a1a] tracking-tight">Acesse sua operação</h2>
+            <h2 className="font-headline text-2xl font-black text-white/80 tracking-tight">Acesse sua operação</h2>
           </div>
 
           {/* Form */}
           <form id="login-form-premium" onSubmit={handleLogin} className="space-y-4 flex flex-col">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#1a1a1a]/40 ml-1 mb-2 block" htmlFor="email">
+              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 ml-1 mb-2 block" htmlFor="email">
                 E-mail de Acesso
               </label>
               <input 
@@ -172,12 +172,12 @@ export default function LoginPage() {
                 placeholder="seu@estabelecimento.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-12 bg-black/[0.03] border-none rounded-xl px-5 text-sm text-[#1a1a1a] font-medium placeholder:text-black/20 outline-none transition-all focus:bg-white"
+                className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:bg-white/[0.08]"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#1a1a1a]/40 ml-1 mb-2 block" htmlFor="password">
+              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 ml-1 mb-2 block" htmlFor="password">
                 Senha Segura
               </label>
               <div className="relative group">
@@ -189,12 +189,12 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-12 bg-black/[0.03] border-none rounded-xl px-5 text-sm text-[#1a1a1a] font-medium placeholder:text-black/20 outline-none transition-all focus:bg-white pr-14"
+                  className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:bg-white/[0.08] pr-14"
                 />
                 <button 
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 hover:bg-black/5 rounded-lg text-[#1a1a1a]/40 hover:text-[#1a1a1a] transition-all cursor-pointer"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 hover:bg-white/5 rounded-lg text-white/40 hover:text-white transition-all cursor-pointer"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -205,16 +205,16 @@ export default function LoginPage() {
               <label className="flex items-center gap-3 cursor-pointer group">
                 <div className="relative">
                   <input type="checkbox" className="peer hidden" />
-                  <div className="w-4 h-4 rounded-md bg-black/5 border-none peer-checked:bg-primary transition-all flex items-center justify-center">
+                  <div className="w-4 h-4 rounded-md bg-white/5 border border-white/10 peer-checked:bg-primary transition-all flex items-center justify-center">
                     <div className="w-2 h-2 rounded-full bg-white scale-0 peer-checked:scale-100 transition-transform" />
                   </div>
                 </div>
-                <span className="text-[10px] text-[#1a1a1a]/40 group-hover:text-primary transition-colors font-bold uppercase tracking-widest">Lembrar</span>
+                <span className="text-[10px] text-white/40 group-hover:text-primary transition-colors font-bold uppercase tracking-widest">Lembrar</span>
               </label>
               <button 
                 type="button" 
                 onClick={handleRecoverPassword}
-                className="text-[10px] font-bold text-[#1a1a1a]/40 hover:text-primary tracking-widest uppercase transition-colors cursor-pointer"
+                className="text-[10px] font-bold text-white/40 hover:text-primary tracking-widest uppercase transition-colors cursor-pointer"
               >
                 Esqueci a Senha
               </button>
@@ -234,7 +234,7 @@ export default function LoginPage() {
           </form>
 
           {/* Footer */}
-          <div className="mt-8 text-center text-[#1a1a1a]/30">
+          <div className="mt-8 text-center text-white/40">
             <p className="text-[9px] font-bold uppercase tracking-[0.1em]">
               © 2026 MoviEats Feito com <span className="text-primary animate-pulse-heart">❤</span> no Brasil
             </p>
