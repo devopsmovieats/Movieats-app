@@ -604,7 +604,10 @@ export default function CategoriasPage() {
                     </td>
                   </tr>
                 ) : paginatedCategories.length > 0 ? paginatedCategories.map((category) => (
-                  <tr key={category.id} className={`hover:bg-white/[0.02] transition-colors group ${selectedIds.has(category.id as number) ? 'bg-primary/5' : ''}`}>
+                  <tr 
+                    key={category.id} 
+                    className={`border-b border-white/5 cursor-pointer transition-all duration-200 hover:bg-white/[0.03] group ${selectedIds.has(category.id as number) ? 'bg-primary/5' : ''}`}
+                  >
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-center">
                         <input 
