@@ -707,8 +707,9 @@ export default function CategoriasPage() {
                     disabled={currentPage === totalPages || totalPages === 0}
                     className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer disabled:text-zinc-600 disabled:cursor-not-allowed hover:text-primary"
                   >
-                    Próximo
-                               <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
+                  </div>
+
+                <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
                   Exibindo <span className="text-white">{startIndex + 1}</span>-
                   <span className="text-white">{Math.min(startIndex + itemsPerPage, totalItems)}</span> de 
                   <span className="text-white"> {totalItems}</span> categorias
@@ -717,7 +718,7 @@ export default function CategoriasPage() {
             )}
           </div>
         ) : !loading && (
-          /* EMPTY STATE VISUAL REFINADO V5 */
+          {/* ESTADO VAZIO CENTRALIZADO - LINHAS 719-734 */}
           <div className="flex flex-col items-center justify-center min-h-[400px] bg-[#141414]/50 border border-white/5 rounded-2xl animate-in fade-in zoom-in duration-700 shadow-2xl py-20 px-4 text-center">
             <FolderOpen size={80} className="text-white opacity-10 mb-8" />
             <h2 className="text-3xl font-black text-white mb-3 tracking-tight uppercase">Sua vitrine está vazia</h2>
