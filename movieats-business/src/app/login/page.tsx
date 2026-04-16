@@ -20,7 +20,9 @@ const Toast = Swal.mixin({
   color: "#fff",
   iconColor: "#ff6b00",
   customClass: {
-    popup: "rounded-xl border-none shadow-2xl",
+    popup: "rounded-xl border-none shadow-2xl p-3 w-auto",
+    title: "text-[11px] font-medium leading-tight",
+    icon: "text-xs scale-75"
   },
   didOpen: (toast) => {
     toast.addEventListener("mouseenter", Swal.stopTimer);
@@ -111,6 +113,18 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen w-full relative flex items-center justify-center font-body overflow-hidden" suppressHydrationWarning>
       
+      {/* Estilos para animação do coração */}
+      <style jsx global>{`
+        @keyframes pulse-heart {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.2); }
+        }
+        .animate-pulse-heart {
+          animation: pulse-heart 1.5s ease-in-out infinite;
+          display: inline-block;
+        }
+      `}</style>
+
       {/* Imagem de Fundo Fullscreen */}
       <div className="absolute inset-0 z-0">
         <img 
@@ -126,7 +140,7 @@ export default function LoginPage() {
       <div className="relative z-10 w-full max-w-[420px] px-6 animate-in fade-in zoom-in-95 duration-1000">
         
         {/* Modal Ultra Dark (Luxo Glassmorphism) */}
-        <div className="bg-[#0d0d0d]/85 backdrop-blur-[15px] rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] relative overflow-hidden border border-white/10">
+        <div className="bg-[#0d0d0d]/85 backdrop-blur-[15px] rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] relative overflow-hidden border border-white/5">
           
           {/* Branding */}
           <div className="flex flex-col items-center mb-6">
@@ -136,7 +150,7 @@ export default function LoginPage() {
               </div>
               <h1 className="font-headline text-3xl font-black tracking-tighter text-white">MOVIEATS</h1>
             </div>
-            <span className="text-[9px] mt-5 uppercase tracking-[0.5em] font-medium text-white/40 whitespace-nowrap">Portal do Estabelecimento</span>
+            <span className="text-[9px] mt-5 uppercase tracking-[0.5em] font-medium text-white/50 whitespace-nowrap">Portal do Estabelecimento</span>
           </div>
 
           {/* Welcome Text */}
@@ -158,7 +172,7 @@ export default function LoginPage() {
                 placeholder="seu@estabelecimento.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-12 bg-[#1a1a1a] border border-white/10 rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:border-primary/50 focus:ring-1 focus:ring-primary/20"
+                className="w-full h-12 bg-[#1a1a1a] border border-white/5 rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:border-primary/50 focus:ring-1 focus:ring-primary/20"
               />
             </div>
 
@@ -175,7 +189,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-12 bg-[#1a1a1a] border border-white/10 rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:border-primary/50 focus:ring-1 focus:ring-primary/20 pr-14"
+                  className="w-full h-12 bg-[#1a1a1a] border border-white/5 rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:border-primary/50 focus:ring-1 focus:ring-primary/20 pr-14"
                 />
                 <button 
                   type="button"
@@ -221,8 +235,8 @@ export default function LoginPage() {
 
           {/* Footer */}
           <div className="mt-8 text-center">
-            <p className="text-[9px] text-white/30 font-bold uppercase tracking-[0.4em]">
-              © 2026 MoviEats Feito com ❤ no Brasil
+            <p className="text-[9px] text-white/50 font-bold uppercase tracking-[0.1em]">
+              © 2026 MoviEats Feito com <span className="text-primary animate-pulse-heart">❤</span> no Brasil
             </p>
           </div>
         </div>
