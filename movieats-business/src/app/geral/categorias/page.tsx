@@ -1,3 +1,4 @@
+// VERSION 3.0 - FORCED EMPTY STATE
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -576,18 +577,7 @@ export default function CategoriasPage() {
         </div>
 
         {/* Empty State Estrito */}
-        {categories.length === 0 && !loading ? (
-          <div className="flex flex-col items-center justify-center py-20 animate-in fade-in zoom-in duration-500">
-            <FolderOpen className="w-24 h-24 text-white/10 mb-6" />
-            <h3 className="text-2xl font-black text-white mb-8 tracking-tight">Sua vitrine está vazia</h3>
-            <button 
-              onClick={openAddModal}
-              className="px-10 py-5 bg-[#FF6B00] hover:bg-orange-600 text-white rounded-lg font-black text-[12px] uppercase tracking-widest transition-all shadow-2xl shadow-orange-600/20 active:scale-95 cursor-pointer"
-            >
-              + Criar Minha Primeira Categoria
-            </button>
-          </div>
-        ) : (
+        {categories.length > 0 ? (
           <div className="glass border border-white/5 rounded-[8px] overflow-hidden shadow-2xl">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
@@ -624,6 +614,7 @@ export default function CategoriasPage() {
                     <tr 
                       key={category.id} 
                       className="category-row bg-transparent"
+                      style={{ cursor: 'pointer' }}
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-center">
@@ -745,6 +736,17 @@ export default function CategoriasPage() {
                 </div>
               </div>
             )}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-32 bg-[#1a1a1a]/50 border border-white/5 rounded-2xl animate-in fade-in zoom-in duration-500">
+            <FolderOpen className="w-24 h-24 text-white/5 mb-8" />
+            <h2 className="text-3xl font-black text-white mb-10 tracking-tight uppercase">Sua vitrine está vazia</h2>
+            <button 
+              onClick={openAddModal}
+              className="px-12 py-6 bg-[#FF6B00] hover:bg-orange-600 text-white rounded-xl font-black text-[14px] uppercase tracking-widest transition-all shadow-[0_20px_40px_-15px_rgba(255,107,0,0.4)] active:scale-95 cursor-pointer"
+            >
+              + CRIAR PRIMEIRA CATEGORIA
+            </button>
           </div>
         )}
 
