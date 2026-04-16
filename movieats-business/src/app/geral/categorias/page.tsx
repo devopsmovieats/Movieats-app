@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
+import { supabase } from "@/lib/supabase";
 import { 
   Plus, 
   Pencil, 
@@ -20,6 +21,9 @@ import {
   Loader2
 } from "lucide-react";
 import Swal from "sweetalert2";
+
+// ID Fixo para teste - Villa Gourmet
+const FIXED_ESTABLISHMENT_ID = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
 
 // Configuração do Toast elegante conforme o padrão Movieats
 const Toast = Swal.mixin({
@@ -40,7 +44,7 @@ const Toast = Swal.mixin({
 });
 
 interface Category {
-  id: number;
+  id: string | number;
   name: string;
   order: number;
   status: "ativo" | "inativo";
@@ -72,17 +76,10 @@ const initialCategories: Category[] = [
 ];
 
 export default function CategoriasPage() {
-  const [categories, setCategories] = useState<Category[]>(initialCategories);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("todos");
-  const [isStatusFilterOpen, setIsStatusFilterOpen] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
-  const [isImporting, setIsImporting] = useState(false);
-  const [importProgress, setImportProgress] = useState(0);
-  const [importStatus, setImportStatus] = useState("");
-  const [userRole, setUserRole] = useState<string>("ADMIN");
+  const [isSaving, setIsSaving] = useState(false);
   
   // Paginação
   const [currentPage, setCurrentPage] = useState(1);
@@ -91,29 +88,45 @@ export default function CategoriasPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const importFileRef = useRef<HTMLInputElement>(null);
 
-  // Carregar dados iniciais do localStorage
-  useEffect(() => {
-    const savedCategories = localStorage.getItem('movieats_categories');
-    const userSaved = localStorage.getItem("movieats_user");
-    
-    if (savedCategories) {
-      try {
-        setCategories(JSON.parse(savedCategories));
-      } catch (e) {
-        console.error("Erro ao carregar categorias do localStorage", e);
-      }
-    }
+  // Função para buscar categorias do Supabase
+  const fetchCategories = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('establishment_id', FIXED_ESTABLISHMENT_ID)
+        .order('order', { ascending: true });
 
+      if (error) throw error;
+
+      if (data) {
+        const formatted = data.map((cat: any) => ({
+          id: cat.id,
+          name: cat.name,
+          order: cat.order || 0,
+          status: cat.status === 'active' ? 'ativo' : 'inativo',
+          image: cat.image_url || ""
+        }));
+        setCategories(formatted);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar categorias:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+    
+    // Captura role se existir no local
+    const userSaved = localStorage.getItem("movieats_user");
     if (userSaved) {
       const user = JSON.parse(userSaved);
       if (user.role) setUserRole(user.role);
     }
   }, []);
-
-  // Salvar categorias no localStorage sempre que houver mudança
-  useEffect(() => {
-    localStorage.setItem('movieats_categories', JSON.stringify(categories));
-  }, [categories]);
 
   const filteredCategories = categories.filter(cat => {
     const matchesSearch = cat.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -156,7 +169,7 @@ export default function CategoriasPage() {
     if (selectedIds.size === filteredCategories.length && filteredCategories.length > 0) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(filteredCategories.map(cat => cat.id)));
+      setSelectedIds(new Set(filteredCategories.map(cat => cat.id as number)));
     }
   };
 
@@ -182,17 +195,27 @@ export default function CategoriasPage() {
         htmlContainer: "text-[11px] text-muted-foreground mb-4",
         icon: "scale-75 mb-0"
       }
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        setCategories(prev => {
-          const newState = prev.filter(c => c.id !== category.id);
-          localStorage.setItem('movieats_categories', JSON.stringify(newState));
-          return newState;
-        });
-        Toast.fire({
-          icon: "success",
-          title: "Categoria excluída com sucesso"
-        });
+        try {
+          const { error } = await supabase
+            .from('categories')
+            .delete()
+            .eq('id', category.id);
+
+          if (error) throw error;
+
+          fetchCategories();
+          Toast.fire({
+            icon: "success",
+            title: "Categoria excluída com sucesso"
+          });
+        } catch (error) {
+          Toast.fire({
+            icon: "error",
+            title: "Erro ao excluir categoria"
+          });
+        }
       }
     });
   };
@@ -311,39 +334,76 @@ export default function CategoriasPage() {
     }, intervalTime + 200);
   };
 
-  const handleSaveCategory = (e: React.FormEvent) => {
+  const handleSaveCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingCategory) return;
+    setIsSaving(true);
 
-    if (editingCategory.id !== 0) {
-      // Editar
-      setCategories(prev => {
-        const newState = prev.map(c => c.id === editingCategory.id ? editingCategory : c);
-        localStorage.setItem('movieats_categories', JSON.stringify(newState));
-        return newState;
-      });
-      Toast.fire({ icon: "success", title: "Alterações salvas com sucesso" });
-    } else {
-      // Adicionar
-      const newCategory: Category = {
-        ...editingCategory,
-        id: Date.now(), // Gera um ID real para o novo item
+    try {
+      const categoryData = {
+        name: editingCategory.name,
+        order: editingCategory.order,
+        status: editingCategory.status === 'ativo' ? 'active' : 'inactive',
+        image_url: editingCategory.image,
+        establishment_id: FIXED_ESTABLISHMENT_ID
       };
-      setCategories(prev => {
-        const newState = [...prev, newCategory];
-        localStorage.setItem('movieats_categories', JSON.stringify(newState));
-        return newState;
-      });
-      Toast.fire({ icon: "success", title: "Categoria criada com sucesso" });
+
+      if (editingCategory.id && editingCategory.id !== 0) {
+        // Editar
+        const { error } = await supabase
+          .from('categories')
+          .update(categoryData)
+          .eq('id', editingCategory.id);
+
+        if (error) throw error;
+        Toast.fire({ icon: "success", title: "Alterações salvas com sucesso" });
+      } else {
+        // Adicionar
+        const { error } = await supabase
+          .from('categories')
+          .insert([categoryData]);
+
+        if (error) throw error;
+        Toast.fire({ icon: "success", title: "Categoria criada com sucesso" });
+      }
+
+      setIsModalOpen(false);
+      fetchCategories();
+    } catch (error) {
+      console.error("Erro ao salvar categoria:", error);
+      Toast.fire({ icon: "error", title: "Erro ao salvar categoria" });
+    } finally {
+      setIsSaving(false);
     }
-    setIsModalOpen(false);
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const uploadImage = async (file: File) => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `categories/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('category-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('category-images')
+        .getPublicUrl(filePath);
+
+      return data.publicUrl;
+    } catch (error) {
+      console.error('Erro no upload da imagem:', error);
+      throw error;
+    }
+  };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validação de 2MB via Toast conforme solicitado
     if (file.size > 2 * 1024 * 1024) {
       Toast.fire({
         icon: "error",
@@ -353,23 +413,28 @@ export default function CategoriasPage() {
       return;
     }
 
-    // Simulação de upload (leitura local)
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64String = reader.result as string;
-      setEditingCategory(prev => prev ? { ...prev, image: base64String } : { 
+    try {
+      // Mostrar loading manual se desejar, mas vamos fazer direto
+      const publicUrl = await uploadImage(file);
+      
+      setEditingCategory(prev => prev ? { ...prev, image: publicUrl } : { 
         id: 0, 
         name: "", 
         order: categories.length + 1, 
         status: "ativo" as const, 
-        image: base64String 
+        image: publicUrl 
       });
+
       Toast.fire({
         icon: "success",
-        title: "Imagem selecionada com sucesso"
+        title: "Imagem enviada com sucesso"
       });
-    };
-    reader.readAsDataURL(file);
+    } catch (error) {
+      Toast.fire({
+        icon: "error",
+        title: "Erro ao enviar imagem"
+      });
+    }
   };
 
   return (
@@ -529,25 +594,38 @@ export default function CategoriasPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {paginatedCategories.map((category) => (
-                  <tr key={category.id} className={`hover:bg-white/[0.02] transition-colors group ${selectedIds.has(category.id) ? 'bg-primary/5' : ''}`}>
+                {loading ? (
+                  <tr>
+                    <td colSpan={6} className="py-20 text-center">
+                      <div className="flex flex-col items-center gap-4">
+                        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Sincronizando com Supabase...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : paginatedCategories.length > 0 ? paginatedCategories.map((category) => (
+                  <tr key={category.id} className={`hover:bg-white/[0.02] transition-colors group ${selectedIds.has(category.id as number) ? 'bg-primary/5' : ''}`}>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-center">
                         <input 
                           type="checkbox" 
-                          checked={selectedIds.has(category.id)}
-                          onChange={() => handleSelectOne(category.id)}
+                          checked={selectedIds.has(category.id as number)}
+                          onChange={() => handleSelectOne(category.id as number)}
                           className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
                         />
                       </div>
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <div className="w-12 h-12 rounded-full border-2 border-white/5 overflow-hidden shadow-inner group-hover:border-primary/30 transition-colors mx-auto">
-                        <img 
-                          src={category.image} 
-                          alt={category.name} 
-                          className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" 
-                        />
+                      <div className="w-12 h-12 rounded-full border-2 border-white/5 overflow-hidden shadow-inner group-hover:border-primary/30 transition-colors mx-auto bg-white/5 flex items-center justify-center">
+                        {category.image ? (
+                          <img 
+                            src={category.image} 
+                            alt={category.name} 
+                            className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" 
+                          />
+                        ) : (
+                          <ImageIcon className="w-5 h-5 text-white/10" />
+                        )}
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -555,7 +633,7 @@ export default function CategoriasPage() {
                         <span className="text-sm font-medium text-white group-hover:text-primary transition-colors tracking-tight uppercase">
                           {category.name}
                         </span>
-                        <span className="text-[9px] text-muted-foreground font-bold mt-0.5 uppercase tracking-widest opacity-50">ID: #{category.id.toString().padStart(4, '0')}</span>
+                        <span className="text-[9px] text-muted-foreground font-bold mt-0.5 uppercase tracking-widest opacity-50">ID: #{category.id.toString().slice(-4)}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-center">
@@ -596,7 +674,13 @@ export default function CategoriasPage() {
                       )}
                     </td>
                   </tr>
-                ))}
+                )) : (
+                  <tr>
+                    <td colSpan={6} className="py-20 text-center">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/30">Nenhuma categoria encontrada no banco</span>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -773,10 +857,17 @@ export default function CategoriasPage() {
                 </button>
                 <button 
                   type="submit"
-                  className="flex-1 h-10 bg-primary hover:bg-orange-600 text-white font-black text-[10px] uppercase tracking-widest rounded-lg transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center justify-center gap-2 group cursor-pointer"
+                  disabled={isSaving}
+                  className="flex-1 h-10 bg-primary hover:bg-orange-600 text-white font-black text-[10px] uppercase tracking-widest rounded-lg transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50"
                 >
-                  {editingCategory?.id ? "Salvar" : "Confirmar"}
-                  <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  {isSaving ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <>
+                      {editingCategory?.id ? "Salvar" : "Confirmar"}
+                      <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                    </>
+                  )}
                 </button>
               </div>
             </form>
