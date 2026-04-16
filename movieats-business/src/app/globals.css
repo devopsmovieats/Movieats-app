@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  
+  --font-body: var(--font-inter);
+  --font-headline: var(--font-manrope);
+  
+  --radius-lg: 0.375rem; /* Padrão Rounded-MD para visual mais sério */
+  --radius-md: 0.25rem;
+  --radius-sm: 0.125rem;
+}
+
+/* Elegant Light Mode (Soft Elite) */
+:root {
+  --background: #f8fafc; /* Slate 50 */
+  --foreground: #020617; /* Slate 950 */
+  --card: #ffffff;
+  --card-foreground: #020617;
+  --primary: #ff6b00;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #020617;
+  --muted: #f1f5f9;
+  --muted-foreground: #475569; /* Slate 600 para melhor leitura */
+  --accent: #f8fafc;
+  --accent-foreground: #020617;
+  --border: #e2e8f0;
+  --input: #ffffff;
+  --ring: #ff6b00;
+  
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(15, 23, 42, 0.08);
+}
+
+/* Dark Mode Overrides (All Black Premium) */
+.dark {
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #111111;
+  --card-foreground: #f8fafc;
+  --primary: #ff6b00;
+  --primary-foreground: #ffffff;
+  --secondary: #161616;
+  --secondary-foreground: #f8fafc;
+  --muted: #1a1a1a;
+  --muted-foreground: #cbd5e1; /* Cinza claro e nítido (Slate 300) */
+  --accent: #111111;
+  --accent-foreground: #ffffff;
+  --border: transparent; /* Remove bordas por padrão */
+  --input: #111111;
+  --ring: #ff6b00;
+
+  --glass-bg: rgba(17, 17, 17, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.03);
+}
+
+@theme {
+  --radius-lg: 1rem; /* Arredondamento maior para visual premium */
+  --radius-md: 0.75rem;
+  --radius-sm: 0.5rem;
+  
+  --shadow-premium: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 4px 10px -5px rgba(0, 0, 0, 0.5);
+}
+
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-manrope), sans-serif;
+  letter-spacing: -0.025em;
+  font-weight: 800;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Glassmorphism Dinâmico */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.03);
+}
+
+.dark .glass {
+  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.5);
+}
+
+/* Utilitários de Transição */
+.theme-transition {
+  transition: all 0.3s ease-in-out;
+}
