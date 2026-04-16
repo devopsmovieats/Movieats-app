@@ -9,6 +9,7 @@ import {
   Image as ImageIcon, 
   X, 
   ChevronRight,
+  ChevronLeft,
   Search,
   Layers,
   CheckCircle2,
@@ -82,6 +83,11 @@ export default function CategoriasPage() {
   const [importProgress, setImportProgress] = useState(0);
   const [importStatus, setImportStatus] = useState("");
   const [userRole, setUserRole] = useState<string>("ADMIN");
+  
+  // Paginação
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const importFileRef = useRef<HTMLInputElement>(null);
 
@@ -114,6 +120,17 @@ export default function CategoriasPage() {
     const matchesStatus = statusFilter === "todos" || cat.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  // Cálculo de Paginação
+  const totalItems = filteredCategories.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedCategories = filteredCategories.slice(startIndex, startIndex + itemsPerPage);
+
+  // Resetar página ao filtrar
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter]);
 
   const openAddModal = () => {
     setEditingCategory(null);
@@ -512,7 +529,7 @@ export default function CategoriasPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {filteredCategories.map((category) => (
+                {paginatedCategories.map((category) => (
                   <tr key={category.id} className={`hover:bg-white/[0.02] transition-colors group ${selectedIds.has(category.id) ? 'bg-primary/5' : ''}`}>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-center">
@@ -582,6 +599,56 @@ export default function CategoriasPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+
+        {/* Paginação Premium */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-4 px-2 animate-in fade-in slide-in-from-bottom-2 duration-1000">
+          {/* Info Texto (Esquerda) */}
+          <div className="flex items-center gap-3">
+            <div className="w-1 h-4 bg-primary rounded-full" />
+            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
+              Exibindo <span className="text-white">{Math.min(startIndex + 1, totalItems)}</span>-
+              <span className="text-white">{Math.min(startIndex + itemsPerPage, totalItems)}</span> de 
+              <span className="text-white"> {totalItems}</span> categorias
+            </span>
+          </div>
+
+          {/* Controles de Navegação (Direita) */}
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="flex items-center gap-2 px-4 py-2.5 bg-white/[0.03] border border-white/5 rounded-lg text-[9px] font-black text-muted-foreground uppercase tracking-widest hover:bg-white/5 hover:text-white transition-all disabled:opacity-20 disabled:cursor-not-allowed group cursor-pointer"
+            >
+              <ChevronLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
+              Anterior
+            </button>
+
+            <div className="flex items-center gap-1.5 px-4 h-10 bg-white/[0.02] border border-white/5 rounded-xl">
+              {[...Array(totalPages)].map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`min-w-[32px] h-7 flex items-center justify-center rounded-md text-[10px] font-black transition-all cursor-pointer ${
+                    currentPage === i + 1 
+                      ? "bg-primary text-white shadow-lg shadow-primary/30 scale-110" 
+                      : "text-muted-foreground/40 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  {String(i + 1).padStart(2, '0')}
+                </button>
+              ))}
+            </div>
+
+            <button 
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages || totalPages === 0}
+              className="flex items-center gap-2 px-4 py-2.5 bg-white/[0.03] border border-white/5 rounded-lg text-[9px] font-black text-muted-foreground uppercase tracking-widest hover:bg-white/5 hover:text-white transition-all disabled:opacity-20 disabled:cursor-not-allowed group cursor-pointer"
+            >
+              Próximo
+              <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+            </button>
           </div>
         </div>
 
