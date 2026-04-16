@@ -1,4 +1,3 @@
-// VERSION 4.0 - TESTE DE CONEXÃO V4
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -45,8 +44,8 @@ const Toast = Swal.mixin({
   }
 });
 
-// Gerador de ID curto Elite (Matemático)
-const generateShortId = () => Math.random().toString(36).substring(7).toUpperCase();
+// Gerador de ID curto Elite (6 caracteres)
+const generateShortId = () => Math.random().toString(36).substring(2, 8).toUpperCase();
 
 interface Category {
   id: string | number;
@@ -92,48 +91,6 @@ export default function CategoriasPage() {
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const importFileRef = useRef<HTMLInputElement>(null);
-
-  // VERSION 4.0 - EARLY RETURN LOGIC
-  if (categories.length === 0 && !loading) {
-    return (
-      <div style={{ 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        height: '100vh', 
-        backgroundColor: '#000',
-        textAlign: 'center',
-        padding: '20px'
-      }}>
-        <h1 style={{ color: '#ff0000', fontSize: '80px', fontWeight: '900', animation: 'pulse 1s infinite' }}>TESTE DE CONEXÃO V4</h1>
-        <h2 style={{ color: '#fff', fontSize: '30px', marginBottom: '40px', fontWeight: '900', textTransform: 'uppercase' }}>Sua vitrine está vazia</h2>
-        <button 
-          onClick={() => setIsModalOpen(true)}
-          style={{ 
-            backgroundColor: '#FF6B00', 
-            color: '#fff', 
-            padding: '24px 60px', 
-            borderRadius: '16px', 
-            border: 'none', 
-            fontWeight: '900', 
-            fontSize: '18px',
-            cursor: 'pointer',
-            boxShadow: '0 20px 40px rgba(255, 107, 0, 0.3)'
-          }}
-        >
-          CADASTRAR PRIMEIRA CATEGORIA
-        </button>
-        <style>{`
-          @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
-          }
-        `}</style>
-      </div>
-    );
-  }
 
   const fetchCategories = async () => {
     setLoading(true);
@@ -495,12 +452,9 @@ export default function CategoriasPage() {
               <div className="p-2 bg-primary/10 rounded-lg">
                 <Layers className="text-primary w-5 h-5" />
               </div>
-              <div className="flex flex-col">
-                <h2 className="text-2xl font-headline font-black text-white tracking-tight uppercase leading-none">
-                  Categorias
-                </h2>
-                <h1 className="text-4xl font-black text-red-600 animate-pulse bg-white p-2 mt-2 w-fit">TESTE DE CONEXÃO V4</h1>
-              </div>
+              <h2 className="text-2xl font-headline font-black text-white tracking-tight uppercase leading-none">
+                Categorias
+              </h2>
             </div>
             <p className="text-muted-foreground text-sm font-medium">
               Gerencie os grupos de produtos do seu cardápio digital.
@@ -620,8 +574,8 @@ export default function CategoriasPage() {
           </div>
         </div>
 
-        {/* Empty State Estrito */}
-        {categories.length > 0 ? (
+        {/* EXTERMÍNIO DA TABELA VAZIA - EXIBIÇÃO CONDICIONAL ESTRITA */}
+        {!loading && categories.length > 0 ? (
           <div className="glass border border-white/5 rounded-[8px] overflow-hidden shadow-2xl">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
@@ -645,19 +599,10 @@ export default function CategoriasPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {loading ? (
-                    <tr>
-                      <td colSpan={6} className="py-20 text-center">
-                        <div className="flex flex-col items-center gap-4">
-                          <Loader2 className="w-8 h-8 text-primary animate-spin" />
-                          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Sincronizando com Supabase...</span>
-                        </div>
-                      </td>
-                    </tr>
-                  ) : paginatedCategories.length > 0 ? paginatedCategories.map((category) => (
+                  {paginatedCategories.map((category) => (
                     <tr 
                       key={category.id} 
-                      className="category-row bg-transparent"
+                      className="category-row bg-transparent hover:bg-white/[0.02] border-b border-white/5 transition-colors"
                       style={{ cursor: 'pointer' }}
                     >
                       <td className="px-6 py-4">
@@ -733,11 +678,10 @@ export default function CategoriasPage() {
                 </tbody>
               </table>
             </div>
-            
-            {/* Nova Paginação Clean & Funcional */}
+
+            {/* Paginação condicional ao array real */}
             {categories.length > itemsPerPage && (
               <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-5 px-6 border-t border-white/5 bg-white/[0.01]">
-                {/* Controles de Navegação (Esquerda) */}
                 <div className="flex items-center gap-4">
                   <button 
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
@@ -746,23 +690,17 @@ export default function CategoriasPage() {
                   >
                     Anterior
                   </button>
-
                   <div className="flex items-center gap-2">
                     {[...Array(totalPages)].map((_, i) => (
                       <button
                         key={i}
                         onClick={() => setCurrentPage(i + 1)}
-                        className={`w-8 h-8 flex items-center justify-center rounded-lg text-[11px] font-black transition-all cursor-pointer border ${
-                          currentPage === i + 1 
-                            ? "bg-primary border-primary text-white" 
-                            : "bg-transparent border-white/10 text-white hover:border-white/30 hover:text-primary"
-                        }`}
+                        className={`w-8 h-8 flex items-center justify-center rounded-lg text-[11px] font-black transition-all cursor-pointer border ${currentPage === i + 1 ? "bg-primary border-primary text-white" : "bg-transparent border-white/10 text-white hover:border-white/30"}`}
                       >
                         {i + 1}
                       </button>
                     ))}
                   </div>
-
                   <button 
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages || totalPages === 0}
@@ -771,26 +709,32 @@ export default function CategoriasPage() {
                     Próximo
                   </button>
                 </div>
-
-                {/* Info Texto (Direita) */}
                 <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
-                  Exibindo <span className="text-white">{totalItems === 0 ? 0 : startIndex + 1}</span>-
+                  Exibindo <span className="text-white">{startIndex + 1}</span>-
                   <span className="text-white">{Math.min(startIndex + itemsPerPage, totalItems)}</span> de 
                   <span className="text-white"> {totalItems}</span> categorias
                 </div>
               </div>
             )}
           </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-32 bg-[#1a1a1a]/50 border border-white/5 rounded-2xl animate-in fade-in zoom-in duration-500">
-            <FolderOpen className="w-24 h-24 text-white/5 mb-8" />
-            <h2 className="text-3xl font-black text-white mb-10 tracking-tight uppercase">Sua vitrine está vazia</h2>
+        ) : !loading && (
+          <div className="flex flex-col items-center justify-center py-28 bg-[#141414] border border-white/5 rounded-2xl animate-in fade-in zoom-in duration-500 shadow-2xl">
+            <FolderOpen className="w-20 h-20 text-white/5 mb-6" />
+            <h2 className="text-2xl font-black text-white mb-8 tracking-tight uppercase">Sua vitrine está vazia</h2>
             <button 
               onClick={openAddModal}
-              className="px-12 py-6 bg-[#FF6B00] hover:bg-orange-600 text-white rounded-xl font-black text-[14px] uppercase tracking-widest transition-all shadow-[0_20px_40px_-15px_rgba(255,107,0,0.4)] active:scale-95 cursor-pointer"
+              className="px-10 py-5 bg-[#FF6B00] hover:bg-orange-600 text-white rounded-lg font-black text-[12px] uppercase tracking-widest transition-all shadow-xl shadow-orange-600/20 active:scale-95 cursor-pointer border-none outline-none"
             >
-              + CRIAR PRIMEIRA CATEGORIA
+              + CADASTRAR PRIMEIRA CATEGORIA
             </button>
+          </div>
+        )}
+
+        {/* Loading State fora da tabela se necessário */}
+        {loading && (
+          <div className="flex flex-col items-center justify-center py-32">
+            <Loader2 className="w-12 h-12 text-primary animate-spin mb-4 opacity-50" />
+            <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-50">Sincronizando com Supabase...</span>
           </div>
         )}
 
