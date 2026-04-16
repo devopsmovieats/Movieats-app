@@ -140,7 +140,7 @@ export default function LoginPage() {
       <div className="relative z-10 w-full max-w-[500px] px-6 animate-in fade-in zoom-in-95 duration-1000">
         
         {/* Modal Premium Horizontal (Largo e Compacto) */}
-        <div className="bg-[#0a0a0a]/85 backdrop-blur-[15px] rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] relative overflow-hidden border border-zinc-900 transition-all">
+        <div className="bg-[#0a0a0a]/85 backdrop-blur-[15px] rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] relative overflow-hidden transition-all">
           
           {/* Branding */}
           <div className="flex flex-col items-center mb-5">
@@ -172,13 +172,13 @@ export default function LoginPage() {
                 placeholder="seu@estabelecimento.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-12 bg-white/[0.05] border border-zinc-900 rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:bg-white/[0.08]"
+                className="w-full h-12 bg-white/[0.05] rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:bg-white/[0.08]"
               />
             </div>
 
             <div className="space-y-2">
               <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 ml-1 mb-2 block" htmlFor="password">
-                Senha Segura
+                Senha
               </label>
               <div className="relative group">
                 <input 
@@ -189,7 +189,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-12 bg-white/[0.05] border border-zinc-900 rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:bg-white/[0.08] pr-14"
+                  className="w-full h-12 bg-white/[0.05] rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:bg-white/[0.08] pr-14"
                 />
                 <button 
                   type="button"
@@ -205,7 +205,7 @@ export default function LoginPage() {
               <label className="flex items-center gap-3 cursor-pointer group">
                 <div className="relative">
                   <input type="checkbox" className="peer hidden" />
-                  <div className="w-4 h-4 rounded-md bg-white/5 border border-white/1 peer-checked:bg-primary transition-all flex items-center justify-center">
+                  <div className="w-4 h-4 rounded-md bg-white/5 peer-checked:bg-primary transition-all flex items-center justify-center">
                     <div className="w-2 h-2 rounded-full bg-white scale-0 peer-checked:scale-100 transition-transform" />
                   </div>
                 </div>
