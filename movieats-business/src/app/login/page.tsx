@@ -137,31 +137,31 @@ export default function LoginPage() {
       </div>
 
       {/* Conteúdo Centralizado (Modal) */}
-      <div className="relative z-10 w-full max-w-[420px] px-6 animate-in fade-in zoom-in-95 duration-1000">
+      <div className="relative z-10 w-full max-w-[400px] px-6 animate-in fade-in zoom-in-95 duration-1000">
         
-        {/* Modal Ultra Dark (Luxo Glassmorphism) */}
-        <div className="bg-[#0d0d0d]/85 backdrop-blur-[15px] rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] relative overflow-hidden border border-white/5">
+        {/* Modal Estilo Foto (Sólido e Minimalista) */}
+        <div className="bg-[#0a0a0a]/95 backdrop-blur-xl rounded-[2.5rem] p-10 shadow-[0_20px_60px_rgba(0,0,0,0.8)] relative overflow-hidden border-none">
           
           {/* Branding */}
-          <div className="flex flex-col items-center mb-6">
+          <div className="flex flex-col items-center mb-8">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-primary/10 rounded-xl">
                 <Flame className="text-primary w-8 h-8 fill-primary" />
               </div>
               <h1 className="font-headline text-3xl font-black tracking-tighter text-white">MOVIEATS</h1>
             </div>
-            <span className="text-[9px] mt-5 uppercase tracking-[0.5em] font-medium text-white/50 whitespace-nowrap">Portal do Estabelecimento</span>
+            <span className="text-[9px] mt-6 uppercase tracking-[0.5em] font-medium text-white/30 whitespace-nowrap">Portal do Estabelecimento</span>
           </div>
 
           {/* Welcome Text */}
-          <div className="mb-6 text-center">
+          <div className="mb-8 text-center">
             <h2 className="font-headline text-2xl font-black text-white tracking-tight">Acesse sua operação</h2>
           </div>
 
           {/* Form */}
           <form id="login-form-premium" onSubmit={handleLogin} className="space-y-4 flex flex-col">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 ml-1 mb-2 block" htmlFor="email">
+              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/20 ml-1 mb-2 block" htmlFor="email">
                 E-mail de Acesso
               </label>
               <input 
@@ -169,15 +169,15 @@ export default function LoginPage() {
                 type="email"
                 required
                 autoComplete="off"
-                placeholder="seu@estabelecimento.com"
+                placeholder="lojista@teste.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-12 bg-[#1a1a1a] border border-white/5 rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:border-primary/50 focus:ring-1 focus:ring-primary/20"
+                className="w-full h-14 bg-[#161616] border-none rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:bg-[#1c1c1c]"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 ml-1 mb-2 block" htmlFor="password">
+              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/20 ml-1 mb-2 block" htmlFor="password">
                 Senha Segura
               </label>
               <div className="relative group">
@@ -189,12 +189,12 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-12 bg-[#1a1a1a] border border-white/5 rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:border-primary/50 focus:ring-1 focus:ring-primary/20 pr-14"
+                  className="w-full h-14 bg-[#161616] border-none rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:bg-[#1c1c1c] pr-14"
                 />
                 <button 
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 hover:bg-white/5 rounded-lg text-white/40 hover:text-white transition-all cursor-pointer"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 hover:bg-white/5 rounded-lg text-white/20 hover:text-white transition-all cursor-pointer"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -205,16 +205,16 @@ export default function LoginPage() {
               <label className="flex items-center gap-3 cursor-pointer group">
                 <div className="relative">
                   <input type="checkbox" className="peer hidden" />
-                  <div className="w-4 h-4 rounded-md bg-[#1a1a1a] border border-white/10 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center">
+                  <div className="w-4 h-4 rounded-md bg-[#161616] border-none peer-checked:bg-primary transition-all flex items-center justify-center">
                     <div className="w-2 h-2 rounded-full bg-white scale-0 peer-checked:scale-100 transition-transform" />
                   </div>
                 </div>
-                <span className="text-[10px] text-white/40 group-hover:text-primary transition-colors font-bold uppercase tracking-widest">Lembrar</span>
+                <span className="text-[10px] text-white/20 group-hover:text-primary transition-colors font-bold uppercase tracking-widest">Lembrar</span>
               </label>
               <button 
                 type="button" 
                 onClick={handleRecoverPassword}
-                className="text-[10px] font-bold text-white/40 hover:text-primary tracking-widest uppercase transition-colors cursor-pointer"
+                className="text-[10px] font-bold text-white/20 hover:text-primary tracking-widest uppercase transition-colors cursor-pointer"
               >
                 Esqueci a Senha
               </button>
@@ -223,7 +223,7 @@ export default function LoginPage() {
             <button 
               type="submit"
               disabled={isLoading}
-              className="w-full max-w-[280px] mx-auto h-12 bg-primary hover:bg-orange-600 active:scale-[0.98] disabled:opacity-70 disabled:active:scale-100 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-xl shadow-xl shadow-primary/10 transition-all flex items-center justify-center cursor-pointer mt-2"
+              className="w-full h-14 bg-primary hover:bg-orange-600 active:scale-[0.98] disabled:opacity-70 disabled:active:scale-100 text-white font-black text-[12px] uppercase tracking-[0.2em] rounded-xl shadow-xl shadow-primary/10 transition-all flex items-center justify-center cursor-pointer mt-2"
             >
               {isLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
