@@ -116,8 +116,8 @@ export default function LoginPage() {
       {/* Estilos para animação do coração */}
       <style jsx global>{`
         @keyframes pulse-heart {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.2); }
+          0%, 100% { transform: scale(1.1); }
+          50% { transform: scale(1.4); }
         }
         .animate-pulse-heart {
           animation: pulse-heart 1.5s ease-in-out infinite;
@@ -236,7 +236,7 @@ export default function LoginPage() {
           {/* Footer */}
           <div className="mt-8 text-center text-white/50">
             <p className="text-[9px] font-bold uppercase tracking-[0.1em]">
-              © 2026 MoviEats Feito com <span className="text-primary animate-pulse-heart">❤</span> no Brasil
+              © 2026 MoviEats Feito com <span className="text-primary animate-pulse-heart mx-1">❤</span> no Brasil
             </p>
           </div>
         </div>
