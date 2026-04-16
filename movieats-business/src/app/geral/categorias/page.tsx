@@ -593,7 +593,7 @@ export default function CategoriasPage() {
                   <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-right">Ações</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody>
                 {loading ? (
                   <tr>
                     <td colSpan={6} className="py-20 text-center">
@@ -606,7 +606,7 @@ export default function CategoriasPage() {
                 ) : paginatedCategories.length > 0 ? paginatedCategories.map((category) => (
                   <tr 
                     key={category.id} 
-                    className={`border-b border-white/5 cursor-pointer transition-all duration-200 hover:bg-white/[0.03] group ${selectedIds.has(category.id as number) ? 'bg-primary/5' : ''}`}
+                    className="border-b border-white/5 cursor-pointer transition-colors duration-200 hover:bg-white/5 group"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-center">
