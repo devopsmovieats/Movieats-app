@@ -140,7 +140,7 @@ export default function LoginPage() {
       <div className="relative z-10 w-full max-w-[500px] px-6 animate-in fade-in zoom-in-95 duration-1000">
         
         {/* Modal Premium Horizontal (Largo e Compacto) */}
-        <div className="bg-[#0a0a0a]/85 backdrop-blur-[15px] rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] relative overflow-hidden border border-white/1 transition-all">
+        <div className="bg-[#0a0a0a]/85 backdrop-blur-[15px] rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] relative overflow-hidden border border-zinc-900 transition-all">
           
           {/* Branding */}
           <div className="flex flex-col items-center mb-5">
@@ -172,7 +172,7 @@ export default function LoginPage() {
                 placeholder="seu@estabelecimento.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-12 bg-white/[0.05] border border-white/1 rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:bg-white/[0.08]"
+                className="w-full h-12 bg-white/[0.05] border border-zinc-900 rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:bg-white/[0.08]"
               />
             </div>
 
@@ -189,7 +189,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-12 bg-white/[0.05] border border-white/1 rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:bg-white/[0.08] pr-14"
+                  className="w-full h-12 bg-white/[0.05] border border-zinc-900 rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:bg-white/[0.08] pr-14"
                 />
                 <button 
                   type="button"
