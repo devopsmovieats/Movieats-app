@@ -23,7 +23,7 @@ import {
 import Swal from "sweetalert2";
 
 // ID Fixo para teste - Villa Gourmet
-const FIXED_ESTABLISHMENT_ID = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
+const FIXED_ESTABLISHMENT_ID = '17db3a9f-f6c1-434d-8f4a-e40cd67035f2';
 
 // Configuração do Toast elegante conforme o padrão Movieats
 const Toast = Swal.mixin({
