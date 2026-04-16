@@ -707,9 +707,7 @@ export default function CategoriasPage() {
                     className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer disabled:text-zinc-600 disabled:cursor-not-allowed hover:text-primary"
                   >
                     Próximo
-                  </button>
-                </div>
-                <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
+                               <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
                   Exibindo <span className="text-white">{startIndex + 1}</span>-
                   <span className="text-white">{Math.min(startIndex + itemsPerPage, totalItems)}</span> de 
                   <span className="text-white"> {totalItems}</span> categorias
@@ -718,14 +716,18 @@ export default function CategoriasPage() {
             )}
           </div>
         ) : !loading && (
-          <div className="flex flex-col items-center justify-center py-28 bg-[#141414] border border-white/5 rounded-2xl animate-in fade-in zoom-in duration-500 shadow-2xl">
-            <FolderOpen className="w-20 h-20 text-white/5 mb-6" />
-            <h2 className="text-2xl font-black text-white mb-8 tracking-tight uppercase">Sua vitrine está vazia</h2>
+          /* EMPTY STATE VISUAL REFINADO V5 */
+          <div className="flex flex-col items-center justify-center min-h-[400px] bg-[#141414]/50 border border-white/5 rounded-2xl animate-in fade-in zoom-in duration-700 shadow-2xl py-20 px-4 text-center">
+            <FolderOpen size={80} className="text-white opacity-10 mb-8" />
+            <h2 className="text-3xl font-black text-white mb-3 tracking-tight uppercase">Sua vitrine está vazia</h2>
+            <p className="text-muted-foreground text-sm font-medium mb-10 max-w-sm">
+              Comece cadastrando sua primeira categoria para organizar seu cardápio.
+            </p>
             <button 
               onClick={openAddModal}
-              className="px-10 py-5 bg-[#FF6B00] hover:bg-orange-600 text-white rounded-lg font-black text-[12px] uppercase tracking-widest transition-all shadow-xl shadow-orange-600/20 active:scale-95 cursor-pointer border-none outline-none"
+              className="px-12 py-5 bg-[#FF6B00] hover:bg-orange-600 text-white rounded-xl font-black text-[14px] uppercase tracking-widest transition-all shadow-[0_20px_40px_-15px_rgba(255,107,0,0.4)] active:scale-95 cursor-pointer border-none outline-none"
             >
-              + CADASTRAR PRIMEIRA CATEGORIA
+              + ADICIONAR NOVA CATEGORIA
             </button>
           </div>
         )}
