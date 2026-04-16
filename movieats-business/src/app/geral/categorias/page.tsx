@@ -581,169 +581,191 @@ export default function CategoriasPage() {
           </div>
         </div>
 
-        {/* Categories Table Wrapper */}
-        <div className="glass border border-white/5 rounded-[8px] overflow-hidden shadow-2xl">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-white/[0.02] border-b border-white/5">
-                  <th className="px-6 py-5 w-10">
-                    <div className="flex items-center justify-center">
-                      <input 
-                        type="checkbox" 
-                        checked={filteredCategories.length > 0 && selectedIds.size === filteredCategories.length}
-                        onChange={handleSelectAll}
-                        className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
-                      />
-                    </div>
-                  </th>
-                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Imagem</th>
-                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Nome da Categoria</th>
-                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-center">Ordem</th>
-                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-center">Status</th>
-                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-right">Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan={6} className="py-20 text-center">
-                      <div className="flex flex-col items-center gap-4">
-                        <Loader2 className="w-8 h-8 text-primary animate-spin" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Sincronizando com Supabase...</span>
-                      </div>
-                    </td>
-                  </tr>
-                ) : paginatedCategories.length > 0 ? paginatedCategories.map((category) => (
-                  <tr 
-                    key={category.id} 
-                    className="category-row bg-transparent"
-                  >
-                    <td className="px-6 py-4">
+        {/* Categories Table Wrapper ou Empty State */}
+        {!loading && categories.length === 0 ? (
+          <div className="glass border border-white/5 rounded-3xl p-20 flex flex-col items-center justify-center text-center space-y-6 animate-in fade-in zoom-in duration-700">
+            <div className="relative">
+              <Layers className="w-24 h-24 text-white opacity-10" />
+              <div className="absolute inset-0 bg-primary/5 blur-3xl rounded-full" />
+            </div>
+            
+            <div className="space-y-2 max-w-md">
+              <h3 className="text-xl font-headline font-black text-white uppercase tracking-tight leading-none mb-1">
+                Nenhuma categoria encontrada
+              </h3>
+              <p className="text-sm text-muted-foreground/60 font-medium leading-relaxed">
+                Gerencie as categorias de produtos que seu estabelecimento oferece para organizar seu cardápio de forma profissional e intuitiva.
+              </p>
+            </div>
+
+            <button 
+              onClick={openAddModal}
+              className="px-8 py-4 bg-primary hover:bg-orange-600 text-white rounded-lg font-black text-[11px] uppercase tracking-[0.2em] transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center gap-3 group cursor-pointer"
+            >
+              <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
+              Adicionar Nova Categoria
+            </button>
+          </div>
+        ) : (
+          <div className="glass border border-white/5 rounded-[8px] overflow-hidden shadow-2xl">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-white/[0.02] border-b border-white/5">
+                    <th className="px-6 py-5 w-10">
                       <div className="flex items-center justify-center">
                         <input 
                           type="checkbox" 
-                          checked={selectedIds.has(category.id as number)}
-                          onChange={() => handleSelectOne(category.id as number)}
+                          checked={filteredCategories.length > 0 && selectedIds.size === filteredCategories.length}
+                          onChange={handleSelectAll}
                           className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
                         />
                       </div>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <div className="w-12 h-12 rounded-full border-2 border-white/5 overflow-hidden shadow-inner group-hover:border-primary/30 transition-colors mx-auto bg-white/5 flex items-center justify-center">
-                        {category.image ? (
-                          <img 
-                            src={category.image} 
-                            alt={category.name} 
-                            className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" 
+                    </th>
+                    <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Imagem</th>
+                    <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Nome da Categoria</th>
+                    <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-center">Ordem</th>
+                    <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-center">Status</th>
+                    <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-right">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td colSpan={6} className="py-20 text-center">
+                        <div className="flex flex-col items-center gap-4">
+                          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Sincronizando com Supabase...</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : paginatedCategories.length > 0 ? paginatedCategories.map((category) => (
+                    <tr 
+                      key={category.id} 
+                      className="category-row bg-transparent"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-center">
+                          <input 
+                            type="checkbox" 
+                            checked={selectedIds.has(category.id as number)}
+                            onChange={() => handleSelectOne(category.id as number)}
+                            className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
                           />
-                        ) : (
-                          <ImageIcon className="w-5 h-5 text-white/10" />
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium text-white group-hover:text-primary transition-colors tracking-tight uppercase">
-                          {category.name}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <div className="w-12 h-12 rounded-full border-2 border-white/5 overflow-hidden shadow-inner group-hover:border-primary/30 transition-colors mx-auto bg-white/5 flex items-center justify-center">
+                          {category.image ? (
+                            <img 
+                              src={category.image} 
+                              alt={category.name} 
+                              className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" 
+                            />
+                          ) : (
+                            <ImageIcon className="w-5 h-5 text-white/10" />
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium text-white group-hover:text-primary transition-colors tracking-tight uppercase">
+                            {category.name}
+                          </span>
+                          <span className="text-[9px] text-muted-foreground font-bold mt-0.5 uppercase tracking-widest opacity-50">ID: #{category.id.toString().slice(-4)}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="inline-flex items-center justify-center w-7 h-7 bg-white/5 border border-white/10 rounded-lg text-[11px] font-black text-white/60">
+                          {category.order}
                         </span>
-                        <span className="text-[9px] text-muted-foreground font-bold mt-0.5 uppercase tracking-widest opacity-50">ID: #{category.id.toString().slice(-4)}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="inline-flex items-center justify-center w-7 h-7 bg-white/5 border border-white/10 rounded-lg text-[11px] font-black text-white/60">
-                        {category.order}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex justify-center">
-                        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${
-                          category.status === "ativo" 
-                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" 
-                            : "bg-red-500/10 border-red-500/20 text-red-500"
-                        }`}>
-                          {category.status === "ativo" ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-                          <span className="text-[9px] font-black uppercase tracking-widest">{category.status}</span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex justify-center">
+                          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${
+                            category.status === "ativo" 
+                              ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" 
+                              : "bg-red-500/10 border-red-500/20 text-red-500"
+                          }`}>
+                            {category.status === "ativo" ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                            <span className="text-[9px] font-black uppercase tracking-widest">{category.status}</span>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      {userRole !== "ATENDENTE" ? (
-                        <div className="flex items-center justify-end gap-2">
-                          <button 
-                            onClick={() => openEditModal(category)}
-                            className="p-2.5 rounded-lg bg-white/5 hover:bg-primary/10 text-muted-foreground hover:text-primary border border-white/5 hover:border-primary/20 transition-all duration-300 cursor-pointer"
-                          >
-                            <Pencil className="w-3.5 h-3.5" />
-                          </button>
-                          <button 
-                            onClick={() => handleDelete(category)}
-                            className="p-2.5 rounded-lg bg-white/5 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 border border-white/5 hover:border-red-500/20 transition-all duration-300 cursor-pointer"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      ) : (
-                        <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-30 italic">Somente Leitura</span>
-                      )}
-                    </td>
-                  </tr>
-                )) : (
-                  <tr>
-                    <td colSpan={6} className="py-20 text-center">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/30">Nenhuma categoria encontrada no banco</span>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-          
-          {/* Nova Paginação Clean & Funcional */}
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-5 px-6 border-t border-white/5 bg-white/[0.01]">
-            {/* Controles de Navegação (Esquerda) */}
-            <div className="flex items-center gap-4">
-              <button 
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer disabled:text-zinc-600 disabled:cursor-not-allowed hover:text-primary"
-              >
-                Anterior
-              </button>
-
-              <div className="flex items-center gap-2">
-                {[...Array(totalPages)].map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentPage(i + 1)}
-                    className={`w-8 h-8 flex items-center justify-center rounded-lg text-[11px] font-black transition-all cursor-pointer border ${
-                      currentPage === i + 1 
-                        ? "bg-primary border-primary text-white" 
-                        : "bg-transparent border-white/10 text-white hover:border-white/30 hover:text-primary"
-                    }`}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        {userRole !== "ATENDENTE" ? (
+                          <div className="flex items-center justify-end gap-2">
+                            <button 
+                              onClick={() => openEditModal(category)}
+                              className="p-2.5 rounded-lg bg-white/5 hover:bg-primary/10 text-muted-foreground hover:text-primary border border-white/5 hover:border-primary/20 transition-all duration-300 cursor-pointer"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                            </button>
+                            <button 
+                              onClick={() => handleDelete(category)}
+                              className="p-2.5 rounded-lg bg-white/5 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 border border-white/5 hover:border-red-500/20 transition-all duration-300 cursor-pointer"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-30 italic">Somente Leitura</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            
+            {/* Nova Paginação Clean & Funcional */}
+            {categories.length > itemsPerPage && (
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-5 px-6 border-t border-white/5 bg-white/[0.01]">
+                {/* Controles de Navegação (Esquerda) */}
+                <div className="flex items-center gap-4">
+                  <button 
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer disabled:text-zinc-600 disabled:cursor-not-allowed hover:text-primary"
                   >
-                    {i + 1}
+                    Anterior
                   </button>
-                ))}
+
+                  <div className="flex items-center gap-2">
+                    {[...Array(totalPages)].map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setCurrentPage(i + 1)}
+                        className={`w-8 h-8 flex items-center justify-center rounded-lg text-[11px] font-black transition-all cursor-pointer border ${
+                          currentPage === i + 1 
+                            ? "bg-primary border-primary text-white" 
+                            : "bg-transparent border-white/10 text-white hover:border-white/30 hover:text-primary"
+                        }`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button 
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer disabled:text-zinc-600 disabled:cursor-not-allowed hover:text-primary"
+                  >
+                    Próximo
+                  </button>
+                </div>
+
+                {/* Info Texto (Direita) */}
+                <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
+                  Exibindo <span className="text-white">{totalItems === 0 ? 0 : startIndex + 1}</span>-
+                  <span className="text-white">{Math.min(startIndex + itemsPerPage, totalItems)}</span> de 
+                  <span className="text-white"> {totalItems}</span> categorias
+                </div>
               </div>
-
-              <button 
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages || totalPages === 0}
-                className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer disabled:text-zinc-600 disabled:cursor-not-allowed hover:text-primary"
-              >
-                Próximo
-              </button>
-            </div>
-
-            {/* Info Texto (Direita) */}
-            <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
-              Exibindo <span className="text-white">{totalItems === 0 ? 0 : startIndex + 1}</span>-
-              <span className="text-white">{Math.min(startIndex + itemsPerPage, totalItems)}</span> de 
-              <span className="text-white"> {totalItems}</span> categorias
-            </div>
+            )}
           </div>
-        </div>
+        )}
 
       </div>
 
