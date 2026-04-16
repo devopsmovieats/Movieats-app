@@ -43,6 +43,16 @@ const Toast = Swal.mixin({
   }
 });
 
+// Gerador de ID curto Elite (6 caracteres: Letras e Números)
+const generateShortId = () => {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let result = '';
+  for (let i = 0; i < 6; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
+
 interface Category {
   id: string | number;
   name: string;
@@ -358,10 +368,11 @@ export default function CategoriasPage() {
         if (error) throw error;
         Toast.fire({ icon: "success", title: "Alterações salvas com sucesso" });
       } else {
-        // Adicionar
+        // Adicionar com ID Curto (6 chars)
+        const shortId = generateShortId();
         const { error } = await supabase
           .from('categories')
-          .insert([categoryData]);
+          .insert([{ ...categoryData, id: shortId }]);
 
         if (error) throw error;
         Toast.fire({ icon: "success", title: "Categoria criada com sucesso" });
@@ -606,7 +617,7 @@ export default function CategoriasPage() {
                 ) : paginatedCategories.length > 0 ? paginatedCategories.map((category) => (
                   <tr 
                     key={category.id} 
-                    className="border-b border-white/5 cursor-pointer transition-colors duration-200 hover:bg-white/5 group"
+                    className="category-row bg-transparent"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-center">
@@ -916,6 +927,20 @@ export default function CategoriasPage() {
           </div>
         </div>
       )}
+
+      </div>
+
+      <style jsx global>{`
+        .category-row {
+          cursor: pointer !important;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+          transition: background-color 0.2s ease !important;
+        }
+        .category-row:hover {
+          background-color: rgba(255, 255, 255, 0.03) !important;
+        }
+        /* Ajuste para não ter borda na última linha se desejar, mas o usuário pediu em cada linha */
+      `}</style>
 
     </DashboardLayout>
   );
