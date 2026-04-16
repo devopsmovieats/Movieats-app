@@ -123,30 +123,29 @@ export default function LoginPage() {
       </div>
 
       {/* Conteúdo Centralizado (Modal) */}
-      <div className="relative z-10 w-full max-w-[380px] px-6 animate-in fade-in zoom-in-95 duration-1000">
+      <div className="relative z-10 w-full max-w-[420px] px-6 animate-in fade-in zoom-in-95 duration-1000">
         
-        {/* Modal Escuro (Fundo Sólido #000000 - Sem Bordas) */}
-        <div className="bg-[#000000] rounded-[2.5rem] p-10 shadow-[0_20px_60px_rgba(0,0,0,0.8)] relative overflow-hidden border-none ring-0 outline-none">
+        {/* Modal Escuro (Compacto e Translúcido) */}
+        <div className="bg-black/80 backdrop-blur-xl rounded-[2.5rem] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] relative overflow-hidden border border-white/10">
           
           {/* Branding */}
-          <div className="flex flex-col items-center mb-10">
+          <div className="flex flex-col items-center mb-6">
             <div className="flex items-center gap-3 mb-1">
               <div className="p-2 bg-primary/10 rounded-xl">
                 <Flame className="text-primary w-8 h-8 fill-primary" />
               </div>
               <h1 className="font-headline text-3xl font-black tracking-tighter text-white">MOVIEATS</h1>
             </div>
-            <span className="text-[10px] uppercase tracking-[0.5em] font-medium text-white/30">Portal do Estabelecimento</span>
+            <span className="text-[9px] uppercase tracking-[0.5em] font-medium text-white/30 whitespace-nowrap">Portal do Estabelecimento</span>
           </div>
 
           {/* Welcome Text */}
-          <div className="mb-8 text-center">
-            <h2 className="font-headline text-2xl font-black text-white mb-1 tracking-tight">Bem-vindo</h2>
-            <p className="text-[11px] text-white/50 font-medium uppercase tracking-widest">Gerencie sua unidade com eficiência</p>
+          <div className="mb-6 text-center">
+            <h2 className="font-headline text-2xl font-black text-white tracking-tight">Acesse sua operação</h2>
           </div>
 
           {/* Form */}
-          <form id="login-form-premium" onSubmit={handleLogin} className="space-y-6">
+          <form id="login-form-premium" onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 ml-1" htmlFor="email">
                 E-mail de Acesso
@@ -224,7 +223,7 @@ export default function LoginPage() {
           </form>
 
           {/* Footer */}
-          <div className="mt-12 text-center">
+          <div className="mt-8 text-center">
             <p className="text-[9px] text-white/30 font-bold uppercase tracking-[0.4em]">
               © 2026 MoviEats | Premium
             </p>
