@@ -18,7 +18,8 @@ import {
   Download,
   ChevronDown,
   Upload,
-  Loader2
+  Loader2,
+  FolderOpen
 } from "lucide-react";
 import Swal from "sweetalert2";
 
@@ -44,14 +45,7 @@ const Toast = Swal.mixin({
 });
 
 // Gerador de ID curto Elite (6 caracteres: Letras e Números)
-const generateShortId = () => {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let result = '';
-  for (let i = 0; i < 6; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-};
+const generateShortId = () => Math.random().toString(36).substring(2, 8).toUpperCase();
 
 interface Category {
   id: string | number;
@@ -581,29 +575,16 @@ export default function CategoriasPage() {
           </div>
         </div>
 
-        {/* Categories Table Wrapper ou Empty State */}
-        {!loading && categories.length === 0 ? (
-          <div className="glass border border-white/5 rounded-3xl p-24 flex flex-col items-center justify-center text-center space-y-7 animate-in fade-in zoom-in duration-700">
-            <div className="relative">
-              <Package className="w-24 h-24 text-white opacity-10" />
-              <div className="absolute inset-0 bg-primary/5 blur-[100px] rounded-full" />
-            </div>
-            
-            <div className="space-y-3 max-w-sm">
-              <h3 className="text-2xl font-headline font-black text-white uppercase tracking-tight leading-none">
-                Nenhuma categoria cadastrada
-              </h3>
-              <p className="text-[13px] text-muted-foreground font-medium leading-relaxed px-4">
-                Organize seu cardápio criando sua primeira categoria agora.
-              </p>
-            </div>
-
+        {/* Empty State Estrito */}
+        {categories.length === 0 && !loading ? (
+          <div className="flex flex-col items-center justify-center py-20 animate-in fade-in zoom-in duration-500">
+            <FolderOpen className="w-24 h-24 text-white/10 mb-6" />
+            <h3 className="text-2xl font-black text-white mb-8 tracking-tight">Sua vitrine está vazia</h3>
             <button 
               onClick={openAddModal}
-              className="px-10 py-4.5 bg-primary hover:bg-orange-600 text-white rounded-lg font-black text-[11px] uppercase tracking-[0.2em] transition-all shadow-2xl shadow-primary/30 active:scale-95 flex items-center gap-3 group cursor-pointer"
+              className="px-10 py-5 bg-[#FF6B00] hover:bg-orange-600 text-white rounded-lg font-black text-[12px] uppercase tracking-widest transition-all shadow-2xl shadow-orange-600/20 active:scale-95 cursor-pointer"
             >
-              <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
-              + Adicionar Nova Categoria
+              + Criar Minha Primeira Categoria
             </button>
           </div>
         ) : (
