@@ -1,3 +1,4 @@
+// FILE: CATEGORIAS - VERSION 6.0
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -44,7 +45,7 @@ const Toast = Swal.mixin({
   }
 });
 
-// Gerador de ID curto Elite (6 caracteres)
+// Gerador de ID curto Elite (6 caracteres aleatórios)
 const generateShortId = () => Math.random().toString(36).substring(2, 8).toUpperCase();
 
 interface Category {
