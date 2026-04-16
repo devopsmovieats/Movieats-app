@@ -86,7 +86,7 @@ export default function CategoriasPage() {
   
   // Paginação
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2; // Reduzido para 2 para forçar a existência de páginas e testar a lógica funcional
+  const itemsPerPage = 5; // Limite fixo conforme regra de negócio
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const importFileRef = useRef<HTMLInputElement>(null);
@@ -608,7 +608,7 @@ export default function CategoriasPage() {
               <button 
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="text-[10px] font-black text-white uppercase tracking-widest disabled:opacity-30 disabled:cursor-not-allowed hover:text-primary transition-colors cursor-pointer"
+                className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer disabled:text-zinc-600 disabled:cursor-not-allowed hover:text-primary"
               >
                 Anterior
               </button>
@@ -618,10 +618,10 @@ export default function CategoriasPage() {
                   <button
                     key={i}
                     onClick={() => setCurrentPage(i + 1)}
-                    className={`w-8 h-8 flex items-center justify-center rounded-[6px] text-[11px] font-black transition-all cursor-pointer border ${
+                    className={`w-8 h-8 flex items-center justify-center rounded-lg text-[11px] font-black transition-all cursor-pointer border ${
                       currentPage === i + 1 
                         ? "bg-primary border-primary text-white" 
-                        : "bg-transparent border-white/10 text-muted-foreground hover:border-white/30 hover:text-white"
+                        : "bg-transparent border-white/10 text-white hover:border-white/30 hover:text-primary"
                     }`}
                   >
                     {i + 1}
@@ -632,7 +632,7 @@ export default function CategoriasPage() {
               <button 
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages || totalPages === 0}
-                className="text-[10px] font-black text-white uppercase tracking-widest disabled:opacity-30 disabled:cursor-not-allowed hover:text-primary transition-colors cursor-pointer"
+                className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer disabled:text-zinc-600 disabled:cursor-not-allowed hover:text-primary"
               >
                 Próximo
               </button>
