@@ -125,8 +125,8 @@ export default function LoginPage() {
       {/* Conteúdo Centralizado (Modal) */}
       <div className="relative z-10 w-full max-w-[420px] px-6 animate-in fade-in zoom-in-95 duration-1000">
         
-        {/* Modal Premium Dark (Fundo Profundo e Translúcido) */}
-        <div className="bg-[#0a0a0a]/85 backdrop-blur-[12px] rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] relative overflow-hidden border border-white/10">
+        {/* Modal Ultra Dark (Luxo Glassmorphism) */}
+        <div className="bg-[#0d0d0d]/85 backdrop-blur-[15px] rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] relative overflow-hidden border border-white/[0.08]">
           
           {/* Branding */}
           <div className="flex flex-col items-center mb-6">
@@ -136,7 +136,7 @@ export default function LoginPage() {
               </div>
               <h1 className="font-headline text-3xl font-black tracking-tighter text-white">MOVIEATS</h1>
             </div>
-            <span className="text-[9px] mt-6 uppercase tracking-[0.5em] font-medium text-white/30 whitespace-nowrap">Portal do Estabelecimento</span>
+            <span className="text-[9px] mt-5 uppercase tracking-[0.5em] font-medium text-white whitespace-nowrap">Portal do Estabelecimento</span>
           </div>
 
           {/* Welcome Text */}
@@ -158,7 +158,7 @@ export default function LoginPage() {
                 placeholder="seu@estabelecimento.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:bg-white/[0.08] focus:border-primary/30"
+                className="w-full h-12 bg-[#1a1a1a] border border-white/5 rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:border-primary/50 focus:ring-1 focus:ring-primary/20"
               />
             </div>
 
@@ -175,7 +175,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:bg-white/[0.08] focus:border-primary/30 pr-14"
+                  className="w-full h-12 bg-[#1a1a1a] border border-white/5 rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:border-primary/50 focus:ring-1 focus:ring-primary/20 pr-14"
                 />
                 <button 
                   type="button"
@@ -191,7 +191,7 @@ export default function LoginPage() {
               <label className="flex items-center gap-3 cursor-pointer group">
                 <div className="relative">
                   <input type="checkbox" className="peer hidden" />
-                  <div className="w-4 h-4 rounded-md bg-white/5 border border-white/10 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center">
+                  <div className="w-4 h-4 rounded-md bg-[#1a1a1a] border border-white/10 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center">
                     <div className="w-2 h-2 rounded-full bg-white scale-0 peer-checked:scale-100 transition-transform" />
                   </div>
                 </div>
