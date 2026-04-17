@@ -437,10 +437,10 @@ export default function CategoriasPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Log de debug para o usuário conferir o tamanho exato se houver bloqueio indevido
+    // Log de debug para o usuário conferir o tamanho exato no console
     console.log("Arquivo selecionado - Tamanho em bytes:", file.size);
     
-    // 4MB exatos = 4,194,304 bytes
+    // 4MB exatos = 4 * 1024 * 1024 bytes (4194304)
     const MAX_SIZE = 4 * 1024 * 1024;
     
     if (file.size > MAX_SIZE) {
@@ -453,8 +453,21 @@ export default function CategoriasPage() {
     }
 
     try {
-      // Mostrar loading manual se desejar, mas vamos fazer direto
-      const publicUrl = await uploadImage(file);
+      // Agora chamando a nossa API de upload para o Cloudflare R2
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro no upload');
+      }
+
+      const { url: publicUrl } = await response.json();
       
       setEditingCategory(prev => prev ? { ...prev, image: publicUrl } : { 
         id: 0, 
@@ -466,12 +479,13 @@ export default function CategoriasPage() {
 
       Toast.fire({
         icon: "success",
-        title: "Imagem enviada com sucesso"
+        title: "Imagem enviada para R2"
       });
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Erro no upload:", error);
       Toast.fire({
         icon: "error",
-        title: "Erro ao enviar imagem"
+        title: error.message === "Unauthorized" ? "Configuração R2 pendente" : "Erro ao enviar imagem"
       });
     }
   };
@@ -789,11 +803,12 @@ export default function CategoriasPage() {
                         </div>
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center gap-1.5">
-                        <div className="p-1.5 bg-white/5 rounded-lg group-hover:scale-110 transition-transform">
-                          <ImageIcon className="w-4 h-4 text-white/20 group-hover:text-primary transition-colors" />
+                      <div className="flex flex-col items-center gap-1">
+                        <div className="p-1 bg-white/5 rounded-lg group-hover:scale-105 transition-transform">
+                          <ImageIcon className="w-3.5 h-3.5 text-white/20 group-hover:text-primary transition-colors" />
                         </div>
-                        <span className="text-[7px] font-black text-white/20 uppercase tracking-widest group-hover:text-white">Upload</span>
+                        <span className="text-[6.5px] font-black text-white/20 uppercase tracking-widest group-hover:text-white">Upload</span>
+                        <span className="text-[5.5px] font-bold text-white/10 uppercase tracking-tighter">Máx 4MB</span>
                       </div>
                     )}
                   </div>
@@ -817,21 +832,19 @@ export default function CategoriasPage() {
 
                     <div className="space-y-2">
                       <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1 block">Visibilidade</label>
-                      <label className="flex items-center gap-3 p-3 h-12 rounded-xl bg-white/[0.03] border border-white/[0.05] cursor-pointer group transition-all hover:bg-white/[0.06]">
-                        <div className="relative w-10 h-5.5">
-                          <input 
-                            type="checkbox" 
-                            className="sr-only peer" 
-                            checked={editingCategory?.status === 'ativo'}
-                            onChange={() => {
-                              setEditingCategory(prev => {
-                                if (!prev) return null;
-                                return { ...prev, status: prev.status === 'ativo' ? 'inativo' : 'ativo' };
-                              });
-                            }}
-                          />
-                          <div className="w-10 h-5.5 rounded-full bg-white/10 peer-checked:bg-primary transition-all duration-300" />
-                          <div className="absolute top-0.5 left-0.5 w-4.5 h-4.5 bg-white rounded-full transition-all duration-300 shadow-sm peer-checked:translate-x-4.5" />
+                        <div 
+                          className="relative w-10 h-5.5 cursor-pointer"
+                          onClick={() => {
+                            setEditingCategory(prev => {
+                              if (!prev) return null;
+                              return { ...prev, status: prev.status === 'ativo' ? 'inativo' : 'ativo' };
+                            });
+                          }}
+                        >
+                          {/* Track */}
+                          <div className={`w-10 h-5.5 rounded-full transition-all duration-300 border border-white/5 ${editingCategory?.status === 'ativo' ? 'bg-primary' : 'bg-white/10'}`} />
+                          {/* Ball (Slider) */}
+                          <div className={`absolute top-0.5 left-0.5 w-4.5 h-4.5 bg-white rounded-full transition-all duration-300 shadow-lg ${editingCategory?.status === 'ativo' ? 'translate-x-4.5' : 'translate-x-0'}`} />
                         </div>
                         <span className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${editingCategory?.status === 'ativo' ? 'text-primary' : 'text-white/20'}`}>
                           {editingCategory?.status === 'ativo' ? 'Ativo' : 'Inativo'}
