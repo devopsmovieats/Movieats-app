@@ -1,4 +1,4 @@
-// DEPLOY PRODUÇÃO - LOGÍSTICA R2 FINALIZADA
+// FINAL DEPLOY - R2 FOLDER STRUCTURE SYNCED
 import { NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
