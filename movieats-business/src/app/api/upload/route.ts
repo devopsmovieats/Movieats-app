@@ -1,3 +1,4 @@
+// Rota de API para upload seguro no Cloudflare R2 - Versão Produção
 import { NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
