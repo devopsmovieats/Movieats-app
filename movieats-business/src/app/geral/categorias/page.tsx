@@ -744,21 +744,16 @@ export default function CategoriasPage() {
             onClick={() => setIsModalOpen(false)}
           />
           
-          {/* Modal Container - Estilo Login (rounded-[32px]) */}
-          <div className="relative w-full max-w-lg bg-[#0a0a0a]/95 backdrop-blur-[15px] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden">
+          {/* Modal Container - Estilo Login (Suave e Moderno) */}
+          <div className="relative w-full max-w-xl bg-[#0a0a0a]/95 backdrop-blur-[15px] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden">
             
             {/* Modal Header Premium */}
             <div className="px-8 py-6 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01]">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-primary/10 rounded-2xl">
-                  {editingCategory?.id ? <Pencil className="text-primary w-5 h-5" /> : <Plus className="text-primary w-5 h-5" />}
-                </div>
-                <div className="flex flex-col">
-                  <h3 className="text-[14px] font-headline font-black text-white uppercase tracking-tight leading-loose">
-                    {editingCategory?.id ? `Editar Categoria` : "Nova Categoria"}
-                  </h3>
-                  <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest opacity-40">Gestão de Cardápio Digital</span>
-                </div>
+              <div className="flex flex-col">
+                <h3 className="text-[14px] font-headline font-black text-white uppercase tracking-tight leading-loose">
+                  {editingCategory?.id ? `Editar Categoria` : "Nova Categoria"}
+                </h3>
+                <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest opacity-40">Gestão de Cardápio Digital</span>
               </div>
               <button 
                 onClick={() => setIsModalOpen(false)}
@@ -819,18 +814,19 @@ export default function CategoriasPage() {
                       <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1 block">Visibilidade</label>
                       <div 
                         onClick={() => {
-                          if (editingCategory) {
-                            const newStatus = editingCategory.status === "ativo" ? "inativo" : "ativo";
-                            setEditingCategory({ ...editingCategory, status: newStatus });
-                          }
+                          setEditingCategory(prev => {
+                            if (!prev) return null;
+                            const newStatus = prev.status === "ativo" ? "inativo" : "ativo";
+                            return { ...prev, status: newStatus };
+                          });
                         }}
                         className={`flex items-center gap-3 p-3 h-12 rounded-xl bg-white/[0.03] border border-white/[0.05] cursor-pointer group transition-all hover:bg-white/[0.06]`}
                       >
                         <div className={`relative w-10 h-5.5 rounded-full transition-all duration-300 ${editingCategory?.status === 'ativo' ? 'bg-primary' : 'bg-white/10'}`}>
                           <div className={`absolute top-0.5 left-0.5 w-4.5 h-4.5 bg-white rounded-full transition-transform duration-300 shadow-sm ${editingCategory?.status === 'ativo' ? 'translate-x-4.5' : 'translate-x-0'}`} />
                         </div>
-                        <span className={`text-[10px] font-black uppercase tracking-widest ${editingCategory?.status === 'ativo' ? 'text-primary' : 'text-white/20'}`}>
-                          {editingCategory?.status === 'ativo' ? 'Ativo' : 'Offline'}
+                        <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${editingCategory?.status === 'ativo' ? 'text-primary' : 'text-white/20'}`}>
+                          {editingCategory?.status === 'ativo' ? 'Ativo' : 'Inativo'}
                         </span>
                       </div>
                     </div>
@@ -842,8 +838,12 @@ export default function CategoriasPage() {
                       <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1 block">Ordem</label>
                       <input 
                         type="number" 
+                        min="0"
                         value={editingCategory?.order || ""}
-                        onChange={(e) => setEditingCategory(prev => prev ? { ...prev, order: parseInt(e.target.value) || 0 } : { id: 0, name: "", order: parseInt(e.target.value) || 0, status: "ativo", image: "" })}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value);
+                          setEditingCategory(prev => prev ? { ...prev, order: isNaN(val) ? 0 : val } : { id: 0, name: "", order: isNaN(val) ? 0 : val, status: "ativo", image: "" });
+                        }}
                         placeholder="0"
                         className="w-full h-10 bg-white/[0.03] border border-white/[0.05] rounded-xl px-2 text-sm text-white focus:outline-none focus:border-primary/30 transition-all font-black text-center"
                         required
