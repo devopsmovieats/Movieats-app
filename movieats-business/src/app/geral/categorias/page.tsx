@@ -20,7 +20,8 @@ import {
   ChevronDown,
   Upload,
   Loader2,
-  FolderOpen
+  FolderOpen,
+  Camera
 } from "lucide-react";
 import Swal from "sweetalert2";
 
@@ -794,45 +795,50 @@ export default function CategoriasPage() {
 
                 {/* Campos Principais em Grid Compacto */}
                 <div className="flex-1 space-y-3">
-                  <div className="space-y-1.5">
-                    <label className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 block">Nome da Categoria</label>
-                    <input 
-                      type="text" 
-                      value={editingCategory?.name || ""}
-                      onChange={(e) => setEditingCategory(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, order: categories.length + 1, status: "ativo", image: "" })}
-                      placeholder="Ex: Pizzas Gourmet"
-                      className="w-full bg-white/[0.03] border border-white/5 rounded-lg h-9 px-3 text-[11px] text-white placeholder:text-muted-foreground/20 focus:outline-none focus:border-primary/50 transition-all font-medium"
-                      required
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                      <label className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 block">Ordem</label>
+                  <div className="grid grid-cols-12 gap-3">
+                    {/* Nome da Categoria (Maior parte) */}
+                    <div className="col-span-8 space-y-1.5">
+                      <label className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 block">Nome da Categoria</label>
                       <input 
-                        type="number" 
-                        value={editingCategory?.order || ""}
-                        onChange={(e) => setEditingCategory(prev => prev ? { ...prev, order: parseInt(e.target.value) || 0 } : { id: 0, name: "", order: parseInt(e.target.value) || 0, status: "ativo", image: "" })}
-                        placeholder="0"
-                        className="w-full bg-white/[0.03] border border-white/5 rounded-lg h-9 px-3 text-[11px] text-white focus:outline-none focus:border-primary/50 transition-all font-black text-center"
+                        type="text" 
+                        value={editingCategory?.name || ""}
+                        onChange={(e) => setEditingCategory(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, order: categories.length + 1, status: "ativo", image: "" })}
+                        placeholder="Ex: Pizzas"
+                        className="w-full bg-white/[0.03] border border-white/5 rounded-lg h-9 px-3 text-[11px] text-white placeholder:text-muted-foreground/20 focus:outline-none focus:border-primary/50 transition-all font-medium"
                         required
                       />
                     </div>
-                    {/* Switch de Status embutido no grid para economizar espaço */}
-                    <div className="space-y-1.5">
-                      <label className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 block">Visibilidade</label>
-                      <div 
+                    {/* Status Compacto Lado a Lado */}
+                    <div className="col-span-4 space-y-1.5">
+                      <label className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 block">Status</label>
+                      <button 
+                        type="button"
                         onClick={() => {
                           if (editingCategory) {
                             const newStatus = editingCategory.status === "ativo" ? "inativo" : "ativo";
                             setEditingCategory({ ...editingCategory, status: newStatus });
                           }
                         }}
-                        className={`w-full h-9 rounded-lg border flex items-center justify-center gap-1.5 cursor-pointer transition-all ${editingCategory?.status === 'ativo' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-white/5 border-white/10 text-white/20'}`}
+                        className={`w-full h-9 rounded-lg border flex items-center justify-center gap-1.5 transition-all ${editingCategory?.status === 'ativo' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-red-500/10 border-red-500/20 text-red-500 font-bold'}`}
                       >
                         {editingCategory?.status === 'ativo' ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-                        <span className="text-[9px] font-black uppercase tracking-widest">{editingCategory?.status || 'ativo'}</span>
-                      </div>
+                        <span className="text-[9px] font-black uppercase tracking-widest">{editingCategory?.status === 'ativo' ? 'On' : 'Off'}</span>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-1.5">
+                    <label className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 block">Exibição no Cardápio (Ordem)</label>
+                    <div className="flex items-center gap-3">
+                      <input 
+                        type="number" 
+                        value={editingCategory?.order || ""}
+                        onChange={(e) => setEditingCategory(prev => prev ? { ...prev, order: parseInt(e.target.value) || 0 } : { id: 0, name: "", order: parseInt(e.target.value) || 0, status: "ativo", image: "" })}
+                        placeholder="0"
+                        className="w-24 bg-white/[0.03] border border-white/5 rounded-lg h-9 px-3 text-[11px] text-white focus:outline-none focus:border-primary/50 transition-all font-black text-center"
+                        required
+                      />
+                      <span className="text-[8px] text-muted-foreground font-medium uppercase tracking-widest opacity-40">Define a posição na vitrine digital</span>
                     </div>
                   </div>
                 </div>
