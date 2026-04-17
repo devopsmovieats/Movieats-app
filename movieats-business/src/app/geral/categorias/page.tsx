@@ -437,7 +437,13 @@ export default function CategoriasPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 4 * 1024 * 1024) {
+    // Log de debug para o usuário conferir o tamanho exato se houver bloqueio indevido
+    console.log("Arquivo selecionado - Tamanho em bytes:", file.size);
+    
+    // 4MB exatos = 4,194,304 bytes
+    const MAX_SIZE = 4 * 1024 * 1024;
+    
+    if (file.size > MAX_SIZE) {
       Toast.fire({
         icon: "error",
         title: "Tamanho excedido (Máx 4MB)"
@@ -779,15 +785,15 @@ export default function CategoriasPage() {
                       <div className="relative w-full h-full">
                         <img src={editingCategory.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="" />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <Camera className="w-6 h-6 text-white" />
+                          <Camera className="w-4 h-4 text-white" />
                         </div>
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="p-2 bg-white/5 rounded-xl group-hover:scale-110 transition-transform">
-                          <ImageIcon className="w-6 h-6 text-white/20 group-hover:text-primary transition-colors" />
+                      <div className="flex flex-col items-center gap-1.5">
+                        <div className="p-1.5 bg-white/5 rounded-lg group-hover:scale-110 transition-transform">
+                          <ImageIcon className="w-4 h-4 text-white/20 group-hover:text-primary transition-colors" />
                         </div>
-                        <span className="text-[8px] font-black text-white/20 uppercase tracking-widest group-hover:text-white">Upload</span>
+                        <span className="text-[7px] font-black text-white/20 uppercase tracking-widest group-hover:text-white">Upload</span>
                       </div>
                     )}
                   </div>
