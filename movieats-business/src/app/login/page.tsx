@@ -94,9 +94,15 @@ export default function LoginPage() {
       }
     } catch (error: any) {
       setIsLoading(false);
+      
+      let errorMessage = error.message || "Erro ao realizar login";
+      if (errorMessage === "Invalid login credentials") {
+        errorMessage = "E-mail ou senha incorretos";
+      }
+
       Toast.fire({
         icon: "error",
-        title: error.message || "Erro ao realizar login",
+        title: errorMessage,
       });
     }
   };

@@ -248,7 +248,7 @@ export default function GruposAdicionaisPage() {
     }
     
     const csvContent = [
-      ["ID", "Nome", "Tipo", "Mínimo", "Máximo", "Status", "Total Itens"],
+      ["ID", "Nome", "Tipo", "Mínimo", "Máximo", "Status", "Total de Itens"],
       ...groupsToExport.map(g => [g.id, g.name, g.type, g.minChoices, g.maxChoices, g.status, g.items.length])
     ].map(e => e.join(",")).join("\n");
 

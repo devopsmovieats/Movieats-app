@@ -587,7 +587,7 @@ export default function ProdutosPage() {
           <div className="h-8 w-[1px] bg-white/10 mx-2 hidden md:block" />
 
           <div className="flex items-center gap-2 px-4 py-3 bg-white/[0.03] border border-white/5 rounded-lg text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-            Total itens: <span className="text-white ml-1">{products.length}</span>
+            Total de itens: <span className="text-white ml-1">{products.length}</span>
           </div>
         </div>
 
