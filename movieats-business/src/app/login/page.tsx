@@ -58,7 +58,7 @@ export default function LoginPage() {
     // Simulação de delay para efeito visual premium
     await new Promise(resolve => setTimeout(resolve, 1200));
 
-    if (email === "lojista@teste.com" && password === "lojista123") {
+    if (email === "lojista@teste.com" && password === "Lojista@123") {
       const userData = { email, role: "ADMIN", name: "Lojista Master" };
       localStorage.setItem("movieats_user", JSON.stringify(userData));
       Cookies.set("auth_token", "movieats-store-session", { expires: 1 });

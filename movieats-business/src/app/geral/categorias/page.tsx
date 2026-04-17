@@ -97,7 +97,7 @@ export default function CategoriasPage() {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('categories')
+        .from('bd_categorias')
         .select('*')
         .eq('establishment_id', FIXED_ESTABLISHMENT_ID)
         .order('order', { ascending: true });
@@ -203,7 +203,7 @@ export default function CategoriasPage() {
       if (result.isConfirmed) {
         try {
           const { error } = await supabase
-            .from('categories')
+            .from('bd_categorias')
             .delete()
             .eq('id', category.id);
 
@@ -355,7 +355,7 @@ export default function CategoriasPage() {
       if (editingCategory.id && editingCategory.id !== 0) {
         // Editar
         const { error } = await supabase
-          .from('categories')
+          .from('bd_categorias')
           .update(categoryData)
           .eq('id', editingCategory.id);
 
@@ -365,7 +365,7 @@ export default function CategoriasPage() {
         // Adicionar com ID Curto (6 chars)
         const shortId = generateShortId();
         const { error } = await supabase
-          .from('categories')
+          .from('bd_categorias')
           .insert([{ ...categoryData, id: shortId }]);
 
         if (error) throw error;

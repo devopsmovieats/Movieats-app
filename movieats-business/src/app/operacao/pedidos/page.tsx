@@ -113,7 +113,7 @@ export default function PedidosPage() {
   useEffect(() => {
     const fetchOrders = async () => {
       const { data, error } = await supabase
-        .from('orders')
+        .from('bd_pedidos')
         .select('*')
         .order('created_at', { ascending: false });
       
@@ -144,7 +144,7 @@ export default function PedidosPage() {
 
     const channel = supabase
       .channel('orders-db')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, (payload: any) => {
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'bd_pedidos' }, (payload: any) => {
         const newO = payload.new;
         Toast.fire({ icon: 'info', title: '🍔 NOVO PEDIDO RECEBIDO!', text: `Cliente: ${newO.customer_name}` });
         
@@ -181,7 +181,7 @@ export default function PedidosPage() {
     // @ts-ignore
     if (order?.dbId) {
        await supabase
-         .from('orders')
+         .from('bd_pedidos')
          .update({ 
             status: newStatus === 'Pendente' ? 'PENDENTE' : 
                     newStatus === 'Preparo' ? 'PREPARO' :

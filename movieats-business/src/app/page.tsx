@@ -31,13 +31,13 @@ export default function Home() {
 
         // 1. Pedidos hoje
         const { count: ordersCount } = await supabase
-          .from('orders')
+          .from('bd_pedidos')
           .select('*', { count: 'exact', head: true })
           .gte('created_at', today.toISOString());
 
         // 2. Total de vendas hoje
         const { data: salesData } = await supabase
-          .from('orders')
+          .from('bd_pedidos')
           .select('total')
           .gte('created_at', today.toISOString())
           .not('status', 'eq', 'CANCELADO');
@@ -47,13 +47,13 @@ export default function Home() {
 
         // 3. Itens pausados
         const { count: pausedCount } = await supabase
-          .from('products')
+          .from('bd_produtos')
           .select('*', { count: 'exact', head: true })
           .eq('status', 'inativo');
 
         // 4. Últimos pedidos
         const { data: recent } = await supabase
-          .from('orders')
+          .from('bd_pedidos')
           .select('*')
           .order('created_at', { ascending: false })
           .limit(5);

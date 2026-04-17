@@ -124,12 +124,12 @@ export default function ProdutosPage() {
 
     const fetchProducts = async () => {
       const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('order', { ascending: true });
-
       if (!error && data) {
-        setProducts(data);
+        const formatted = data.map((p: any) => ({
+          ...p,
+          image: p.image_url || ""
+        }));
+        setProducts(formatted);
       } else {
         // Se a tabela estiver vazia ou houver erro, tenta carregar do localStorage como fallback (ou seed)
         const savedProducts = localStorage.getItem('movieats_products');
@@ -248,7 +248,7 @@ export default function ProdutosPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const { error } = await supabase
-          .from('products')
+          .from('bd_produtos')
           .delete()
           .eq('id', product.id);
 
@@ -267,22 +267,24 @@ export default function ProdutosPage() {
     if (editingProduct) {
       if (editingProduct.id === 0) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, ...productToInsert } = editingProduct;
+        const { id, image, ...productToInsert } = editingProduct;
         const { data, error } = await supabase
-          .from('products')
-          .insert([productToInsert])
+          .from('bd_produtos')
+          .insert([{ ...productToInsert, image_url: image }])
           .select();
 
         if (!error && data) {
-          setProducts(prev => [...prev, data[0]]);
+          const newProduct = { ...data[0], image: data[0].image_url };
+          setProducts(prev => [...prev, newProduct]);
           Toast.fire({ icon: "success", title: "Produto criado com sucesso" });
         } else {
           Toast.fire({ icon: "error", title: "Erro ao criar produto" });
         }
       } else {
+        const { image, ...productToUpdate } = editingProduct;
         const { error } = await supabase
-          .from('products')
-          .update(editingProduct)
+          .from('bd_produtos')
+          .update({ ...productToUpdate, image_url: image })
           .eq('id', editingProduct.id);
 
         if (!error) {
