@@ -718,15 +718,9 @@ export default function CategoriasPage() {
           <div className="flex flex-col items-center justify-center min-h-[400px] bg-[#141414]/50 border border-white/5 rounded-2xl animate-in fade-in zoom-in duration-700 shadow-2xl py-20 px-4 text-center">
             <FolderOpen size={80} className="text-white opacity-10 mb-8" />
             <h2 className="text-2xl font-black text-white mb-3 tracking-tight uppercase">Sua vitrine está vazia</h2>
-            <p className="text-muted-foreground text-sm font-medium mb-10 max-w-sm">
+            <p className="text-muted-foreground text-sm font-medium max-w-sm">
               Comece cadastrando sua primeira categoria para organizar seu cardápio.
             </p>
-            <button 
-              onClick={openAddModal}
-              className="px-12 py-5 bg-[#FF6B00] hover:bg-orange-600 text-white rounded-xl font-black text-[14px] uppercase tracking-widest transition-all shadow-xl shadow-orange-600/20 active:scale-95 cursor-pointer border-none outline-none"
-            >
-              + ADICIONAR NOVA CATEGORIA
-            </button>
           </div>
         )}
 
