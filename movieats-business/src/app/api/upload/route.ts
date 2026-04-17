@@ -27,9 +27,10 @@ export async function POST(request: Request) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
     const establishmentId = formData.get('establishmentId') || 'unknown';
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
-    const filePath = `${establishmentId}/categorias/${fileName}`;
+    
+    // Sanitização básica do nome do arquivo para evitar caracteres problemáticos
+    const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const filePath = `${establishmentId}/categorias/${sanitizedFileName}`;
 
     const uploadParams = {
       Bucket: process.env.R2_BUCKET_NAME,
