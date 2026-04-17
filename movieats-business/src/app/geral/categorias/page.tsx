@@ -575,8 +575,8 @@ export default function CategoriasPage() {
           </div>
         </div>
 
-        {/* EXTERMÍNIO DA TABELA VAZIA - EXIBIÇÃO CONDICIONAL ESTRITA */}
-        {!loading && categories.length > 0 ? (
+        {/* EXTERMÍNIO DA TABELA VAZIA - SUBSTITUIÇÃO FORÇADA NUCLEAR */}
+        {categories.length > 0 ? (
           <div className="glass border border-white/5 rounded-[8px] overflow-hidden shadow-2xl">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
@@ -619,11 +619,7 @@ export default function CategoriasPage() {
                       <td className="px-6 py-4 text-center">
                         <div className="w-12 h-12 rounded-full border-2 border-white/5 overflow-hidden shadow-inner group-hover:border-primary/30 transition-colors mx-auto bg-white/5 flex items-center justify-center">
                           {category.image ? (
-                            <img 
-                              src={category.image} 
-                              alt={category.name} 
-                              className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" 
-                            />
+                            <img src={category.image} alt={category.name} className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" />
                           ) : (
                             <ImageIcon className="w-5 h-5 text-white/10" />
                           )}
@@ -634,7 +630,7 @@ export default function CategoriasPage() {
                           <span className="text-sm font-medium text-white group-hover:text-primary transition-colors tracking-tight uppercase">
                             {category.name}
                           </span>
-                          <span className="text-[9px] text-muted-foreground font-bold mt-0.5 uppercase tracking-widest opacity-50">ID: #{category.id.toString().slice(-4)}</span>
+                          <span className="text-[9px] text-muted-foreground font-bold mt-0.5 uppercase tracking-widest opacity-50">ID: #{category.id}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-center">
@@ -644,35 +640,21 @@ export default function CategoriasPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center">
-                          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${
-                            category.status === "ativo" 
-                              ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" 
-                              : "bg-red-500/10 border-red-500/20 text-red-500"
-                          }`}>
+                          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${category.status === "ativo" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" : "bg-red-500/10 border-red-500/20 text-red-500"}`}>
                             {category.status === "ativo" ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
                             <span className="text-[9px] font-black uppercase tracking-widest">{category.status}</span>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        {userRole !== "ATENDENTE" ? (
-                          <div className="flex items-center justify-end gap-2">
-                            <button 
-                              onClick={() => openEditModal(category)}
-                              className="p-2.5 rounded-lg bg-white/5 hover:bg-primary/10 text-muted-foreground hover:text-primary border border-white/5 hover:border-primary/20 transition-all duration-300 cursor-pointer"
-                            >
-                              <Pencil className="w-3.5 h-3.5" />
-                            </button>
-                            <button 
-                              onClick={() => handleDelete(category)}
-                              className="p-2.5 rounded-lg bg-white/5 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 border border-white/5 hover:border-red-500/20 transition-all duration-300 cursor-pointer"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        ) : (
-                          <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-30 italic">Somente Leitura</span>
-                        )}
+                        <div className="flex items-center justify-end gap-2">
+                          <button onClick={() => openEditModal(category)} className="p-2.5 rounded-lg bg-white/5 hover:bg-primary/10 text-muted-foreground hover:text-primary border border-white/5 hover:border-primary/20 transition-all duration-300 cursor-pointer">
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          <button onClick={() => handleDelete(category)} className="p-2.5 rounded-lg bg-white/5 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 border border-white/5 hover:border-red-500/20 transition-all duration-300 cursor-pointer">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -680,54 +662,41 @@ export default function CategoriasPage() {
               </table>
             </div>
 
-            {/* Paginação condicional ao array real */}
+            {/* Paginação Estrita */}
             {categories.length > itemsPerPage && (
               <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-5 px-6 border-t border-white/5 bg-white/[0.01]">
                 <div className="flex items-center gap-4">
-                  <button 
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                    className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer disabled:text-zinc-600 disabled:cursor-not-allowed hover:text-primary"
-                  >
+                  <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1} className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer disabled:text-zinc-600 disabled:cursor-not-allowed hover:text-primary">
                     Anterior
                   </button>
                   <div className="flex items-center gap-2">
                     {[...Array(totalPages)].map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setCurrentPage(i + 1)}
-                        className={`w-8 h-8 flex items-center justify-center rounded-lg text-[11px] font-black transition-all cursor-pointer border ${currentPage === i + 1 ? "bg-primary border-primary text-white" : "bg-transparent border-white/10 text-white hover:border-white/30"}`}
-                      >
+                      <button key={i} onClick={() => setCurrentPage(i + 1)} className={`w-8 h-8 flex items-center justify-center rounded-lg text-[11px] font-black transition-all cursor-pointer border ${currentPage === i + 1 ? "bg-primary border-primary text-white" : "bg-transparent border-white/10 text-white hover:border-white/30"}`}>
                         {i + 1}
                       </button>
                     ))}
                   </div>
-                  <button 
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages || totalPages === 0}
-                    className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer disabled:text-zinc-600 disabled:cursor-not-allowed hover:text-primary"
-                  >
-                  </div>
-
+                  <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages || totalPages === 0} className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer disabled:text-zinc-600 disabled:cursor-not-allowed hover:text-primary">
+                    Próximo
+                  </button>
+                </div>
                 <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
-                  Exibindo <span className="text-white">{startIndex + 1}</span>-
-                  <span className="text-white">{Math.min(startIndex + itemsPerPage, totalItems)}</span> de 
-                  <span className="text-white"> {totalItems}</span> categorias
+                  Exibindo <span className="text-white">{startIndex + 1}</span>-<span className="text-white">{Math.min(startIndex + itemsPerPage, categories.length)}</span> de <span className="text-white">{categories.length}</span> categorias
                 </div>
               </div>
             )}
           </div>
-        ) : !loading && (
-          {/* ESTADO VAZIO CENTRALIZADO - LINHAS 719-734 */}
+        ) : (
+          /* ESTADO VAZIO LIMPO E CENTRALIZADO */
           <div className="flex flex-col items-center justify-center min-h-[400px] bg-[#141414]/50 border border-white/5 rounded-2xl animate-in fade-in zoom-in duration-700 shadow-2xl py-20 px-4 text-center">
             <FolderOpen size={80} className="text-white opacity-10 mb-8" />
-            <h2 className="text-3xl font-black text-white mb-3 tracking-tight uppercase">Sua vitrine está vazia</h2>
+            <h2 className="text-2xl font-black text-white mb-3 tracking-tight uppercase">Sua vitrine está vazia</h2>
             <p className="text-muted-foreground text-sm font-medium mb-10 max-w-sm">
               Comece cadastrando sua primeira categoria para organizar seu cardápio.
             </p>
             <button 
               onClick={openAddModal}
-              className="px-12 py-5 bg-[#FF6B00] hover:bg-orange-600 text-white rounded-xl font-black text-[14px] uppercase tracking-widest transition-all shadow-[0_20px_40px_-15px_rgba(255,107,0,0.4)] active:scale-95 cursor-pointer border-none outline-none"
+              className="px-12 py-5 bg-[#FF6B00] hover:bg-orange-600 text-white rounded-xl font-black text-[14px] uppercase tracking-widest transition-all shadow-xl shadow-orange-600/20 active:scale-95 cursor-pointer border-none outline-none"
             >
               + ADICIONAR NOVA CATEGORIA
             </button>
