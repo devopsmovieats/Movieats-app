@@ -1,4 +1,4 @@
-// DEPLOY PRODUÇÃO R2 - BYPASS TOTAL ENV CHECK
+// DEPLOY PRODUÇÃO R2 - ESTRUTURA FINALIZADA (FORCE PUSH)
 import { NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
