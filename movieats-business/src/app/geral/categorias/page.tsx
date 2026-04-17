@@ -437,10 +437,10 @@ export default function CategoriasPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 2 * 1024 * 1024) {
+    if (file.size > 4 * 1024 * 1024) {
       Toast.fire({
         icon: "error",
-        title: "Tamanho excedido (Máx 2MB)"
+        title: "Tamanho excedido (Máx 4MB)"
       });
       if (fileInputRef.current) fileInputRef.current.value = "";
       return;
@@ -809,26 +809,28 @@ export default function CategoriasPage() {
                       />
                     </div>
 
-                    {/* Novo Toggle de Status Premium */}
                     <div className="space-y-2">
                       <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1 block">Visibilidade</label>
-                      <div 
-                        onClick={() => {
-                          setEditingCategory(prev => {
-                            if (!prev) return null;
-                            const newStatus = prev.status === "ativo" ? "inativo" : "ativo";
-                            return { ...prev, status: newStatus };
-                          });
-                        }}
-                        className={`flex items-center gap-3 p-3 h-12 rounded-xl bg-white/[0.03] border border-white/[0.05] cursor-pointer group transition-all hover:bg-white/[0.06]`}
-                      >
-                        <div className={`relative w-10 h-5.5 rounded-full transition-all duration-300 ${editingCategory?.status === 'ativo' ? 'bg-primary' : 'bg-white/10'}`}>
-                          <div className={`absolute top-0.5 left-0.5 w-4.5 h-4.5 bg-white rounded-full transition-transform duration-300 shadow-sm ${editingCategory?.status === 'ativo' ? 'translate-x-4.5' : 'translate-x-0'}`} />
+                      <label className="flex items-center gap-3 p-3 h-12 rounded-xl bg-white/[0.03] border border-white/[0.05] cursor-pointer group transition-all hover:bg-white/[0.06]">
+                        <div className="relative w-10 h-5.5">
+                          <input 
+                            type="checkbox" 
+                            className="sr-only peer" 
+                            checked={editingCategory?.status === 'ativo'}
+                            onChange={() => {
+                              setEditingCategory(prev => {
+                                if (!prev) return null;
+                                return { ...prev, status: prev.status === 'ativo' ? 'inativo' : 'ativo' };
+                              });
+                            }}
+                          />
+                          <div className="w-10 h-5.5 rounded-full bg-white/10 peer-checked:bg-primary transition-all duration-300" />
+                          <div className="absolute top-0.5 left-0.5 w-4.5 h-4.5 bg-white rounded-full transition-all duration-300 shadow-sm peer-checked:translate-x-4.5" />
                         </div>
                         <span className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${editingCategory?.status === 'ativo' ? 'text-primary' : 'text-white/20'}`}>
                           {editingCategory?.status === 'ativo' ? 'Ativo' : 'Inativo'}
                         </span>
-                      </div>
+                      </label>
                     </div>
                   </div>
 
