@@ -1,25 +1,18 @@
-// DEPLOY PRODUÇÃO R2 - ESTRUTURA FINALIZADA
+// DEPLOY PRODUÇÃO R2 - BYPASS TOTAL ENV CHECK
 import { NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
-// Configuração do cliente S3 para Cloudflare R2
-const s3Client = new S3Client({
-  region: 'auto',
-  endpoint: process.env.R2_ENDPOINT,
-  credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
-  },
-});
-
 export async function POST(request: Request) {
   try {
-    // Verificamos se as chaves existem (Comentado temporariamente para evitar erro de deploy)
-    /*
-    if (!process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    */
+    // Configuração do cliente S3 para Cloudflare R2 movida para dentro da função (Bypass Build Check)
+    const s3Client = new S3Client({
+      region: 'auto',
+      endpoint: process.env.R2_ENDPOINT,
+      credentials: {
+        accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
+      },
+    });
 
     const formData = await request.formData();
     const file = formData.get('file') as File;
