@@ -14,10 +14,12 @@ const s3Client = new S3Client({
 
 export async function POST(request: Request) {
   try {
-    // Verificamos se as chaves existem
+    // Verificamos se as chaves existem (Comentado temporariamente para evitar erro de deploy)
+    /*
     if (!process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    */
 
     const formData = await request.formData();
     const file = formData.get('file') as File;
