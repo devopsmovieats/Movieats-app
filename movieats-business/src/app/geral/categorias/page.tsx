@@ -456,6 +456,9 @@ export default function CategoriasPage() {
       // Agora chamando a nossa API de upload para o Cloudflare R2
       const formData = new FormData();
       formData.append('file', file);
+      if (establishmentId) {
+        formData.append('establishmentId', establishmentId);
+      }
 
       const response = await fetch('/api/upload', {
         method: 'POST',
