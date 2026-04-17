@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 import { Flame, ArrowRight, Eye, EyeOff, Loader2 } from "lucide-react";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
@@ -55,29 +56,47 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulação de delay para efeito visual premium
-    await new Promise(resolve => setTimeout(resolve, 1200));
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (email === "lojista@teste.com" && password === "Lojista@123") {
-      const userData = { email, role: "ADMIN", name: "Lojista Master" };
-      localStorage.setItem("movieats_user", JSON.stringify(userData));
-      Cookies.set("auth_token", "movieats-store-session", { expires: 1 });
-      router.push("/");
-    } else if (email === "gerente@teste.com" && password === "gerente123") {
-      const userData = { email, role: "GERENTE", name: "Gerente Operacional" };
-      localStorage.setItem("movieats_user", JSON.stringify(userData));
-      Cookies.set("auth_token", "movieats-store-session", { expires: 1 });
-      router.push("/");
-    } else if (email === "atendente@teste.com" && password === "atendente123") {
-      const userData = { email, role: "ATENDENTE", name: "Atendente Comercial" };
-      localStorage.setItem("movieats_user", JSON.stringify(userData));
-      Cookies.set("auth_token", "movieats-store-session", { expires: 1 });
-      router.push("/operacao/pedidos"); 
-    } else {
+      if (error) {
+        throw error;
+      }
+
+      if (data?.user) {
+        // Define o papel (role) baseado no email ou em metadados se existirem
+        let role = "ADMIN";
+        let name = "Lojista Master";
+        let redirectPath = "/";
+
+        if (email.includes("gerente")) {
+          role = "GERENTE";
+          name = "Gerente Operacional";
+        } else if (email.includes("atendente")) {
+          role = "ATENDENTE";
+          name = "Atendente Comercial";
+          redirectPath = "/operacao/pedidos";
+        }
+
+        const userData = { email, role, name, id: data.user.id };
+        localStorage.setItem("movieats_user", JSON.stringify(userData));
+        Cookies.set("auth_token", "movieats-store-session", { expires: 1 });
+        
+        Toast.fire({
+          icon: "success",
+          title: `Bem-vindo, ${name}!`,
+        });
+
+        router.push(redirectPath);
+      }
+    } catch (error: any) {
       setIsLoading(false);
       Toast.fire({
         icon: "error",
-        title: "E-mail ou senha incorretos",
+        title: error.message || "Erro ao realizar login",
       });
     }
   };

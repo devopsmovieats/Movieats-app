@@ -104,72 +104,95 @@ export default function PedidosPage() {
   const [statusFilter, setStatusFilter] = useState<OrderStatus | "Todos">("Todos");
   const [isStatusFilterOpen, setIsStatusFilterOpen] = useState(false);
   const [isStoreOpen, setIsStoreOpen] = useState(true);
+  const [establishmentId, setEstablishmentId] = useState<string | null>(null);
   
   // Detalhes do Pedido (Modal)
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [viewingOrder, setViewingOrder] = useState<Order | null>(null);
 
-  // Carregar Pedidos Iniciais e Configurar Realtime
+  // Carregar sessão e configurar Realtime
   useEffect(() => {
-    const fetchOrders = async () => {
-      const { data, error } = await supabase
-        .from('bd_pedidos')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (!error && data) {
-        setOrders(data.map((o: any) => ({
-          id: o.id.substring(0,4).toUpperCase(),
-          dbId: o.id,
-          clientName: o.customer_name,
-          clientPhone: o.customer_whatsapp,
-          items: o.items.map((i: any) => ({
-             name: i.name,
-             price: i.price,
-             quantity: i.quantity,
-             additions: i.selectedAddOns?.map((a: any) => a.name) || [],
-             obs: i.observation
-          })),
-          total: o.total,
-          status: o.status === 'PENDENTE' ? 'Pendente' : 
-                  o.status === 'PREPARO' ? 'Preparo' :
-                  o.status === 'ENTREGA' ? 'Entrega' : 'Finalizado',
-          timestamp: new Date(o.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          paymentMethod: "WhatsApp / Pix"
-        })));
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.id) {
+        setEstablishmentId(session.user.id);
       }
     };
-
-    fetchOrders();
-
-    const channel = supabase
-      .channel('orders-db')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'bd_pedidos' }, (payload: any) => {
-        const newO = payload.new;
-        Toast.fire({ icon: 'info', title: '🍔 NOVO PEDIDO RECEBIDO!', text: `Cliente: ${newO.customer_name}` });
-        
-        setOrders(prev => [{
-           id: newO.id.substring(0,4).toUpperCase(),
-           dbId: newO.id,
-           clientName: newO.customer_name,
-           clientPhone: newO.customer_whatsapp,
-           items: newO.items.map((i: any) => ({
-              name: i.name,
-              price: i.price,
-              quantity: i.quantity,
-              additions: i.selectedAddOns?.map((a: any) => a.name) || [],
-              obs: i.observation
-           })),
-           total: newO.total,
-           status: 'Pendente',
-           timestamp: new Date(newO.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-           paymentMethod: "WhatsApp / Pix"
-        }, ...prev]);
-      })
-      .subscribe();
-
-    return () => { supabase.removeChannel(channel); };
+    getSession();
   }, []);
+
+  const fetchOrders = async () => {
+    if (!establishmentId) return;
+    const { data, error } = await supabase
+      .from('bd_pedidos')
+      .select('*')
+      .eq('establishment_id', establishmentId)
+      .order('created_at', { ascending: false });
+    
+    if (!error && data) {
+      setOrders(data.map((o: any) => ({
+        id: o.id.substring(0,4).toUpperCase(),
+        dbId: o.id,
+        clientName: o.customer_name,
+        clientPhone: o.customer_whatsapp,
+        items: o.items.map((i: any) => ({
+           name: i.name,
+           price: i.price,
+           quantity: i.quantity,
+           additions: i.selectedAddOns?.map((a: any) => a.name) || [],
+           obs: i.observation
+        })),
+        total: o.total,
+        status: o.status === 'PENDENTE' ? 'Pendente' : 
+                o.status === 'PREPARO' ? 'Preparo' :
+                o.status === 'ENTREGA' ? 'Entrega' : 'Finalizado',
+        timestamp: new Date(o.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        paymentMethod: "WhatsApp / Pix"
+      })));
+    }
+  };
+
+  useEffect(() => {
+    if (establishmentId) {
+      fetchOrders();
+
+      const channel = supabase
+        .channel('orders-db')
+        .on('postgres_changes', 
+          { 
+            event: 'INSERT', 
+            schema: 'public', 
+            table: 'bd_pedidos',
+            filter: `establishment_id=eq.${establishmentId}`
+          }, 
+          (payload: any) => {
+            const newO = payload.new;
+            Toast.fire({ icon: 'info', title: '🍔 NOVO PEDIDO RECEBIDO!', text: `Cliente: ${newO.customer_name}` });
+            
+            setOrders(prev => [{
+               id: newO.id.substring(0,4).toUpperCase(),
+               dbId: newO.id,
+               clientName: newO.customer_name,
+               clientPhone: newO.customer_whatsapp,
+               items: newO.items.map((i: any) => ({
+                  name: i.name,
+                  price: i.price,
+                  quantity: i.quantity,
+                  additions: i.selectedAddOns?.map((a: any) => a.name) || [],
+                  obs: i.observation
+               })),
+               total: newO.total,
+               status: 'Pendente',
+               timestamp: new Date(newO.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+               paymentMethod: "WhatsApp / Pix"
+            }, ...prev]);
+          }
+        )
+        .subscribe();
+
+      return () => { supabase.removeChannel(channel); };
+    }
+  }, [establishmentId]);
 
   const updateOrderStatus = async (orderId: string, newStatus: OrderStatus) => {
     const order = orders.find(o => o.id === orderId);

@@ -25,7 +25,7 @@ import {
 import Swal from "sweetalert2";
 
 // ID Fixo para teste - Villa Gourmet
-const FIXED_ESTABLISHMENT_ID = '17db3a9f-f6c1-434d-8f4a-e40cd67035f2';
+// const FIXED_ESTABLISHMENT_ID = '17db3a9f-f6c1-434d-8f4a-e40cd67035f2';
 
 // Configuração do Toast elegante conforme o padrão Movieats
 const Toast = Swal.mixin({
@@ -85,6 +85,16 @@ export default function CategoriasPage() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [establishmentId, setEstablishmentId] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string>("ADMIN");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("todos");
+  const [isStatusFilterOpen, setIsStatusFilterOpen] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const [importProgress, setImportProgress] = useState(0);
+  const [importStatus, setImportStatus] = useState("");
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string | number>>(new Set());
   
   // Paginação
   const [currentPage, setCurrentPage] = useState(1);
@@ -94,12 +104,13 @@ export default function CategoriasPage() {
   const importFileRef = useRef<HTMLInputElement>(null);
 
   const fetchCategories = async () => {
+    if (!establishmentId) return;
     setLoading(true);
     try {
       const { data, error } = await supabase
         .from('bd_categorias')
         .select('*')
-        .eq('establishment_id', FIXED_ESTABLISHMENT_ID)
+        .eq('establishment_id', establishmentId)
         .order('order', { ascending: true });
 
       if (error) throw error;
@@ -122,8 +133,18 @@ export default function CategoriasPage() {
   };
 
   useEffect(() => {
-    fetchCategories();
-    
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.id) {
+        setEstablishmentId(session.user.id);
+      } else {
+        // Fallback para login de teste se não houver sessão ativa
+        // Em produção, isso redirecionaria para o login
+        console.warn("Nenhuma sessão ativa encontrada.");
+      }
+    };
+    getSession();
+
     // Captura role se existir no local
     const userSaved = localStorage.getItem("movieats_user");
     if (userSaved) {
@@ -131,6 +152,12 @@ export default function CategoriasPage() {
       if (user.role) setUserRole(user.role);
     }
   }, []);
+
+  useEffect(() => {
+    if (establishmentId) {
+      fetchCategories();
+    }
+  }, [establishmentId]);
 
   const filteredCategories = categories.filter(cat => {
     const matchesSearch = cat.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -349,7 +376,7 @@ export default function CategoriasPage() {
         order: editingCategory.order,
         status: editingCategory.status === 'ativo' ? 'active' : 'inactive',
         image_url: editingCategory.image,
-        establishment_id: FIXED_ESTABLISHMENT_ID
+        establishment_id: establishmentId
       };
 
       if (editingCategory.id && editingCategory.id !== 0) {
@@ -893,7 +920,7 @@ export default function CategoriasPage() {
         </div>
       )}
 
-      </div>
+
 
       <style jsx global>{`
         .category-row {

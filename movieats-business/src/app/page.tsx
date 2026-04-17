@@ -21,9 +21,21 @@ export default function Home() {
   });
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [establishmentId, setEstablishmentId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.id) {
+        setEstablishmentId(session.user.id);
+      }
+    };
+    getSession();
+  }, []);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
+      if (!establishmentId) return;
       setLoading(true);
       try {
         const today = new Date();
@@ -33,12 +45,14 @@ export default function Home() {
         const { count: ordersCount } = await supabase
           .from('bd_pedidos')
           .select('*', { count: 'exact', head: true })
+          .eq('establishment_id', establishmentId)
           .gte('created_at', today.toISOString());
 
         // 2. Total de vendas hoje
         const { data: salesData } = await supabase
           .from('bd_pedidos')
           .select('total')
+          .eq('establishment_id', establishmentId)
           .gte('created_at', today.toISOString())
           .not('status', 'eq', 'CANCELADO');
 
@@ -49,12 +63,14 @@ export default function Home() {
         const { count: pausedCount } = await supabase
           .from('bd_produtos')
           .select('*', { count: 'exact', head: true })
+          .eq('establishment_id', establishmentId)
           .eq('status', 'inativo');
 
         // 4. Últimos pedidos
         const { data: recent } = await supabase
           .from('bd_pedidos')
           .select('*')
+          .eq('establishment_id', establishmentId)
           .order('created_at', { ascending: false })
           .limit(5);
 
@@ -68,7 +84,6 @@ export default function Home() {
 
       } catch (error) {
         console.error('ERRO DETALHADO NO DASHBOARD:', error);
-        // Garante que o estado seja 0 em caso de erro
         setStats({
           ordersCount: 0,
           totalSales: 0,
@@ -81,25 +96,37 @@ export default function Home() {
       }
     };
 
-    fetchDashboardData();
+    if (establishmentId) {
+      fetchDashboardData();
+    }
 
     // Inscrição Realtime para novos pedidos - Envolvido em try/catch para não quebrar a UI
     try {
-      const channel = supabase
-        .channel('schema-db-changes')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, () => {
-          fetchDashboardData();
-        })
-        .subscribe();
+      if (establishmentId) {
+        const channel = supabase
+          .channel('schema-db-changes')
+          .on('postgres_changes', 
+            { 
+              event: 'INSERT', 
+              schema: 'public', 
+              table: 'bd_pedidos',
+              filter: `establishment_id=eq.${establishmentId}`
+            }, 
+            () => {
+              fetchDashboardData();
+            }
+          )
+          .subscribe();
 
-      return () => {
-        supabase.removeChannel(channel);
-      };
+        return () => {
+          supabase.removeChannel(channel);
+        };
+      }
     } catch (realtimeError) {
       console.warn('Realtime indisponível:', realtimeError);
     }
 
-  }, []);
+  }, [establishmentId]);
 
   const metrics = [
     { 

@@ -107,41 +107,20 @@ export default function ProdutosPage() {
   const [importStatus, setImportStatus] = useState("");
   const [ingredientInput, setIngredientInput] = useState("");
   const [userRole, setUserRole] = useState<string>("ADMIN");
+  const [establishmentId, setEstablishmentId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const importFileRef = useRef<HTMLInputElement>(null);
 
-  // Carregar Categorias e Produtos ao montar
+  // Carregar sessão, Categorias e Produtos ao montar
   useEffect(() => {
-    // Categorias reais (ainda no localStorage por enquanto ou pode vir do banco se houver tabela)
-    const savedCategories = localStorage.getItem('movieats_categories');
-    if (savedCategories) {
-      try {
-        setCategories(JSON.parse(savedCategories));
-      } catch (e) {
-        console.error("Erro ao carregar categorias", e);
-      }
-    }
-
-    const fetchProducts = async () => {
-      const { data, error } = await supabase
-      if (!error && data) {
-        const formatted = data.map((p: any) => ({
-          ...p,
-          image: p.image_url || ""
-        }));
-        setProducts(formatted);
-      } else {
-        // Se a tabela estiver vazia ou houver erro, tenta carregar do localStorage como fallback (ou seed)
-        const savedProducts = localStorage.getItem('movieats_products');
-        if (savedProducts) {
-          setProducts(JSON.parse(savedProducts));
-        } else {
-          setProducts(initialProducts);
-        }
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.id) {
+        setEstablishmentId(session.user.id);
       }
     };
-
-    fetchProducts();
+    getSession();
 
     const userSaved = localStorage.getItem("movieats_user");
     if (userSaved) {
@@ -149,6 +128,51 @@ export default function ProdutosPage() {
       if (user.role) setUserRole(user.role);
     }
   }, []);
+
+  const fetchCategories = async () => {
+    if (!establishmentId) return;
+    const { data, error } = await supabase
+      .from('bd_categorias')
+      .select('id, name')
+      .eq('establishment_id', establishmentId)
+      .eq('status', 'active')
+      .order('order', { ascending: true });
+
+    if (!error && data) {
+      setCategories(data);
+    }
+  };
+
+  const fetchProducts = async () => {
+    if (!establishmentId) return;
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('bd_produtos')
+        .select('*')
+        .eq('establishment_id', establishmentId)
+        .order('order', { ascending: true });
+
+      if (!error && data) {
+        const formatted = data.map((p: any) => ({
+          ...p,
+          image: p.image_url || ""
+        }));
+        setProducts(formatted);
+      }
+    } catch (err) {
+      console.error("Erro ao buscar produtos:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (establishmentId) {
+      fetchCategories();
+      fetchProducts();
+    }
+  }, [establishmentId]);
 
   // Remoção do salvamento automático em localStorage, agora via Supabase nas ações
 
@@ -270,7 +294,7 @@ export default function ProdutosPage() {
         const { id, image, ...productToInsert } = editingProduct;
         const { data, error } = await supabase
           .from('bd_produtos')
-          .insert([{ ...productToInsert, image_url: image }])
+          .insert([{ ...productToInsert, image_url: image, establishment_id: establishmentId }])
           .select();
 
         if (!error && data) {
