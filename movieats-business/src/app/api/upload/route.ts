@@ -29,9 +29,8 @@ export async function POST(request: Request) {
     const buffer = Buffer.from(await file.arrayBuffer());
     const establishmentId = formData.get('establishmentId') || 'unknown';
     
-    // Sanitização básica do nome do arquivo para evitar caracteres problemáticos
-    const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-    const filePath = `${establishmentId}/categorias/${sanitizedFileName}`;
+    // Caminho direto solicitado pelo lojista: {id}/categorias/{filename}
+    const filePath = `${establishmentId}/categorias/${file.name}`;
 
     const uploadParams = {
       Bucket: process.env.R2_BUCKET_NAME,
