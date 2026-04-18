@@ -410,36 +410,12 @@ export default function CategoriasPage() {
     }
   };
 
-  const uploadImage = async (file: File) => {
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `categories/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from('category-images')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage
-        .from('category-images')
-        .getPublicUrl(filePath);
-
-      return data.publicUrl;
-    } catch (error) {
-      console.error('Erro no upload da imagem:', error);
-      throw error;
-    }
-  };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Log de debug para o usuário conferir o tamanho exato no console
-    console.log("Arquivo selecionado - Tamanho em bytes:", file.size);
-    
     // 4MB exatos = 4 * 1024 * 1024 bytes (4194304)
     const MAX_SIZE = 4 * 1024 * 1024;
     
@@ -457,7 +433,8 @@ export default function CategoriasPage() {
       const formData = new FormData();
       formData.append('file', file);
       if (establishmentId) {
-        formData.append('establishmentId', establishmentId);
+        // Enviando como establishment_id para casar com a rota da API
+        formData.append('establishment_id', establishmentId);
       }
 
       const response = await fetch('/api/upload', {
@@ -472,6 +449,7 @@ export default function CategoriasPage() {
 
       const { url: publicUrl } = await response.json();
       
+      // Atualiza o estado da categoria em edição. O salvamento no Supabase DB ocorrerá no submit.
       setEditingCategory(prev => prev ? { ...prev, image: publicUrl } : { 
         id: 0, 
         name: "", 
@@ -485,10 +463,10 @@ export default function CategoriasPage() {
         title: "Imagem enviada para R2"
       });
     } catch (error: any) {
-      console.error("Erro no upload:", error);
+      console.error("Erro no upload R2:", error);
       Toast.fire({
         icon: "error",
-        title: error.message === "Unauthorized" ? "Configuração R2 pendente" : "Erro ao enviar imagem"
+        title: "Erro ao enviar imagem"
       });
     }
   };
