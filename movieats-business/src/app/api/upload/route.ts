@@ -22,12 +22,14 @@ export async function POST(request: Request) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const establishmentId = formData.get('establishmentId') || 'unknown';
     
-    // Caminho direto solicitado pelo lojista: {id}/categorias/{filename}
-    const filePath = `${establishmentId}/categorias/${file.name}`;
+    // R2 Path: {establishment_id}/categorias/{filename}
+    const establishment_id = formData.get('establishmentId') || 'unknown';
+    const filename = file.name;
+    const filePath = `${establishment_id}/categorias/${filename}`;
 
     const uploadParams = {
+      // Bypass: Variáveis de ambiente são acessadas diretamente sem validação de bloqueio de build
       Bucket: process.env.R2_BUCKET_NAME,
       Key: filePath,
       Body: buffer,
@@ -36,7 +38,7 @@ export async function POST(request: Request) {
 
     await s3Client.send(new PutObjectCommand(uploadParams));
 
-    // A URL pública depende de como o bucket está configurado (domínio customizado ou gateway público)
+    // A URL pública depende de como o bucket está configurado
     const publicUrl = `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${filePath}`;
 
     return NextResponse.json({ url: publicUrl });
