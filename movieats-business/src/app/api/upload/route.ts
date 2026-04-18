@@ -7,10 +7,10 @@ export async function POST(request: Request) {
     // Configuração do cliente S3 para Cloudflare R2 movida para dentro da função (Bypass Build Check)
     const s3Client = new S3Client({
       region: 'auto',
-      endpoint: process.env.R2_ENDPOINT,
+      endpoint: process.env.R2_ENDPOINT!,
       credentials: {
-        accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
+        accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
       },
     });
 
@@ -29,8 +29,7 @@ export async function POST(request: Request) {
     const filePath = `${establishment_id}/categorias/${filename}`;
 
     const uploadParams = {
-      // Bypass: Variáveis de ambiente são acessadas diretamente sem validação de bloqueio de build
-      Bucket: process.env.R2_BUCKET_NAME,
+      Bucket: process.env.R2_BUCKET_NAME!,
       Key: filePath,
       Body: buffer,
       ContentType: file.type,
@@ -38,8 +37,8 @@ export async function POST(request: Request) {
 
     await s3Client.send(new PutObjectCommand(uploadParams));
 
-    // A URL pública depende de como o bucket está configurado
-    const publicUrl = `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${filePath}`;
+    // URL pública construída com a variável de ambiente necessária
+    const publicUrl = `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL!}/${filePath}`;
 
     return NextResponse.json({ url: publicUrl });
   } catch (error: any) {

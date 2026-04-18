@@ -830,7 +830,6 @@ export default function CategoriasPage() {
                         <span className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${editingCategory?.status === 'ativo' ? 'text-primary' : 'text-white/20'}`}>
                           {editingCategory?.status === 'ativo' ? 'Ativo' : 'Inativo'}
                         </span>
-                      </label>
                     </div>
                   </div>
 
