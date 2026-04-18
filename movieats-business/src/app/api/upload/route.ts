@@ -22,10 +22,30 @@ export async function POST(request: Request) {
     });
 
     const formData = await request.formData();
+    
+    // Log detalhado do FormData para depuração exaustiva
+    console.log('--- DEBUG UPLOAD: DADOS RECEBIDOS ---');
+    const formDataEntries = Array.from(formData.entries());
+    formDataEntries.forEach(([key, value]) => {
+      if (value instanceof File) {
+        console.log(`Campo: ${key} | Tipo: Arquivo | Nome: ${value.name} | Tamanho: ${value.size} bytes`);
+      } else {
+        console.log(`Campo: ${key} | Valor: ${value}`);
+      }
+    });
+
+    // Verificação de presença de variáveis de ambiente no Runtime
+    console.log('--- DEBUG UPLOAD: AMBIENTE ---');
+    console.log('R2_ENDPOINT presente:', !!process.env.R2_ENDPOINT);
+    console.log('R2_ACCESS_KEY_ID presente:', !!process.env.R2_ACCESS_KEY_ID);
+    console.log('R2_SECRET_ACCESS_KEY presente:', !!process.env.R2_SECRET_ACCESS_KEY);
+    console.log('R2_BUCKET_NAME presente:', !!process.env.R2_BUCKET_NAME);
+    console.log('NEXT_PUBLIC_R2_PUBLIC_URL presente:', !!process.env.NEXT_PUBLIC_R2_PUBLIC_URL);
+
     const file = formData.get('file') as File;
 
     if (!file) {
-      console.error('Erro Upload: Arquivo não encontrado no FormData');
+      console.error('ERRO: Campo "file" não encontrado no FormData');
       return NextResponse.json({ error: 'Nenhum arquivo enviado' }, { status: 400 });
     }
 
@@ -36,10 +56,7 @@ export async function POST(request: Request) {
     const filename = file.name;
     const filePath = `${establishment_id}/categorias/${filename}`;
 
-    console.log('--- Processando Upload R2 ---');
-    console.log('ID Estabelecimento:', establishment_id);
-    console.log('Arquivo:', filename);
-    console.log('Caminho Final:', filePath);
+    console.log('Caminho Final no R2:', filePath);
 
     const bucketName = process.env.R2_BUCKET_NAME || 'movieats-prod';
 
