@@ -769,12 +769,12 @@ export default function CategoriasPage() {
               
               <div className="flex gap-6 items-start">
                 {/* Upload Lateral Estilo Login */}
-                <div className="w-24 shrink-0">
+                <div className="w-16 shrink-0">
                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1 mb-2.5 block">Imagem</label>
                   <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
                   <div 
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-24 h-24 bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-primary/40 rounded-2xl flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden"
+                    className="w-16 h-16 bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-primary/40 rounded-2xl flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden"
                   >
                     {editingCategory?.image ? (
                       <div className="relative w-full h-full">
