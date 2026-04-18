@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     const buffer = Buffer.from(await file.arrayBuffer());
     
     // R2 Path: {establishment_id}/categorias/{filename}
-    const establishment_id = formData.get('establishmentId') || 'unknown';
+    const establishment_id = formData.get('establishment_id') || formData.get('establishmentId') || 'unknown';
     const filename = file.name;
     const filePath = `${establishment_id}/categorias/${filename}`;
 
