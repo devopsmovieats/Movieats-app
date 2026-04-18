@@ -41,21 +41,30 @@ export async function POST(request: Request) {
     console.log('Arquivo:', filename);
     console.log('Caminho Final:', filePath);
 
+    const bucketName = process.env.R2_BUCKET_NAME || 'movieats-prod';
+
     const uploadParams = {
-      Bucket: process.env.R2_BUCKET_NAME!,
+      Bucket: bucketName!,
       Key: filePath,
       Body: buffer,
       ContentType: file.type,
     };
 
     try {
+      console.log(`Tentando upload para o bucket: ${bucketName}`);
       await s3Client.send(new PutObjectCommand(uploadParams));
     } catch (s3Error: any) {
-      console.error('--- CLOUDFLARE R2 ERROR ---');
+      console.error('--- ERRO CRÍTICO CLOUDFLARE R2 ---');
+      console.error('Bucket Tentado:', bucketName);
       console.error('Mensagem:', s3Error.message);
-      console.error('Código S3:', s3Error.Code || s3Error.name);
-      console.error('Detalhes:', JSON.stringify(s3Error, null, 2));
-      throw s3Error;
+      console.error('Código:', s3Error.Code || s3Error.name);
+      console.error('Detalhes Completos:', JSON.stringify(s3Error, null, 2));
+      
+      return NextResponse.json({ 
+        error: 'R2 rejection', 
+        details: s3Error.message,
+        code: s3Error.Code || s3Error.name 
+      }, { status: 500 });
     }
 
     // URL pública construída com a variável de ambiente necessária
@@ -63,9 +72,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ url: publicUrl });
   } catch (error: any) {
-    console.error('Erro Crítico no Upload R2:', error);
+    console.error('Erro de Processamento API:', error);
     return NextResponse.json({ 
-      error: 'Erro interno ao processar upload',
+      error: 'Internal Server Error',
       details: error.message 
     }, { status: 500 });
   }
