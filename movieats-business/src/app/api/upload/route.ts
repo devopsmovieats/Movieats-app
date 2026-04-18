@@ -4,12 +4,17 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 export async function POST(request: Request) {
   try {
-    // Configuração do cliente S3 para Cloudflare R2 movida para dentro da função (Bypass Build Check)
-    // Validação de variáveis de ambiente básicas para log
-    if (!process.env.R2_ENDPOINT || !process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY || !process.env.R2_BUCKET_NAME) {
-      console.error('--- R2 CONFIG ERROR ---');
-      console.error('Variáveis de ambiente do R2 estão incompletas no runtime.');
-      return NextResponse.json({ error: 'Configuração do servidor incompleta' }, { status: 500 });
+    // Verificação estrita de Nomes de Variáveis conforme solicitado (Vercel Dashboard)
+    const requiredEnvs = ['R2_ENDPOINT', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY', 'R2_BUCKET_NAME'];
+    const missingEnvs = requiredEnvs.filter(env => !process.env[env]);
+
+    if (missingEnvs.length > 0) {
+      console.error('--- ERRO DE CONFIGURAÇÃO VERCEL ---');
+      console.error('Variáveis ausentes:', missingEnvs.join(', '));
+      return NextResponse.json({ 
+        error: 'Variáveis de ambiente do R2 estão incompletas',
+        missing: missingEnvs 
+      }, { status: 500 });
     }
 
     const s3Client = new S3Client({

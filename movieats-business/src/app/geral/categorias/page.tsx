@@ -416,13 +416,14 @@ export default function CategoriasPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // 4MB exatos = 4 * 1024 * 1024 bytes (4194304)
-    const MAX_SIZE = 4 * 1024 * 1024;
+    // Limite estrito de 4MB (4 * 1024 * 1024 bytes)
+    const MAX_SIZE = 4194304; 
     
     if (file.size > MAX_SIZE) {
       Toast.fire({
-        icon: "error",
-        title: "Tamanho excedido (Máx 4MB)"
+        icon: "warning",
+        title: "Arquivo muito grande",
+        text: "O limite máximo permitido é de 4MB."
       });
       if (fileInputRef.current) fileInputRef.current.value = "";
       return;
@@ -768,13 +769,13 @@ export default function CategoriasPage() {
             <form onSubmit={handleSaveCategory} className="p-8 pt-6 space-y-6">
               
               <div className="flex gap-6 items-start">
-                {/* Upload Lateral Estilo Login */}
-                <div className="w-20 shrink-0">
+                {/* Upload Lateral Compacto (Max 80px, usando 64px para elegância) */}
+                <div className="w-16 shrink-0">
                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1 mb-2.5 block">Imagem</label>
                   <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
                   <div 
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-20 h-20 bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-primary/40 rounded-2xl flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden"
+                    className="w-16 h-16 bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-primary/40 rounded-2xl flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden"
                   >
                     {editingCategory?.image ? (
                       <div className="relative w-full h-full">
