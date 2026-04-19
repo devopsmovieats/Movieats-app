@@ -1,5 +1,6 @@
 // DEPLOY PRODUÇÃO R2 - ESTRUTURA FINALIZADA (FORCE PUSH)
 import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 export async function POST(request: Request) {
@@ -19,10 +20,10 @@ export async function POST(request: Request) {
 
     const s3Client = new S3Client({
       region: 'auto',
-      endpoint: process.env.R2_ENDPOINT!,
+      endpoint: process.env['R2_ENDPOINT']!,
       credentials: {
-        accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+        accessKeyId: process.env['R2_ACCESS_KEY_ID']!,
+        secretAccessKey: process.env['R2_SECRET_ACCESS_KEY']!,
       },
     });
 
@@ -41,11 +42,11 @@ export async function POST(request: Request) {
 
     // Verificação de presença de variáveis de ambiente no Runtime
     console.log('--- DEBUG UPLOAD: AMBIENTE ---');
-    console.log('R2_ENDPOINT presente:', !!process.env.R2_ENDPOINT);
-    console.log('R2_ACCESS_KEY_ID presente:', !!process.env.R2_ACCESS_KEY_ID);
-    console.log('R2_SECRET_ACCESS_KEY presente:', !!process.env.R2_SECRET_ACCESS_KEY);
-    console.log('Bucket configurado:', !!process.env['R2_BUCKET_NAME']);
-    console.log('NEXT_PUBLIC_R2_PUBLIC_URL presente:', !!process.env.NEXT_PUBLIC_R2_PUBLIC_URL);
+    console.log('R2_ENDPOINT:', !!process.env['R2_ENDPOINT']);
+    console.log('R2_ACCESS_KEY_ID:', !!process.env['R2_ACCESS_KEY_ID']);
+    console.log('R2_SECRET_ACCESS_KEY:', !!process.env['R2_SECRET_ACCESS_KEY']);
+    console.log('Bucket:', process.env['R2_BUCKET_NAME'] ? "OK" : "VAZIO");
+    console.log('NEXT_PUBLIC_R2_PUBLIC_URL:', !!process.env['NEXT_PUBLIC_R2_PUBLIC_URL']);
 
     const file = formData.get('file') as File;
 
@@ -90,7 +91,7 @@ export async function POST(request: Request) {
     }
 
     // URL pública construída com a variável de ambiente necessária
-    const publicUrl = `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL!}/${filePath}`;
+    const publicUrl = `${process.env['NEXT_PUBLIC_R2_PUBLIC_URL']!}/${filePath}`;
 
     return NextResponse.json({ url: publicUrl });
   } catch (error: any) {
