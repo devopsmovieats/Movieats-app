@@ -22,6 +22,7 @@ export async function POST(request: Request) {
     const s3Client = new S3Client({
       region: 'auto',
       endpoint: process.env['R2_ENDPOINT']!,
+      forcePathStyle: false,
       credentials: {
         accessKeyId: process.env['R2_ACCESS_KEY_ID']!,
         secretAccessKey: process.env['R2_SECRET_ACCESS_KEY']!,
@@ -79,10 +80,10 @@ export async function POST(request: Request) {
       await s3Client.send(new PutObjectCommand(uploadParams));
     } catch (s3Error: any) {
       console.error('--- ERRO CRÍTICO CLOUDFLARE R2 ---');
+      console.error('R2 Error Details:', s3Error);
       console.error('Bucket Tentado:', bucketName);
       console.error('Mensagem:', s3Error.message);
       console.error('Código:', s3Error.Code || s3Error.name);
-      console.error('Detalhes Completos:', JSON.stringify(s3Error, null, 2));
       
       return NextResponse.json({ 
         error: 'R2 rejection', 
