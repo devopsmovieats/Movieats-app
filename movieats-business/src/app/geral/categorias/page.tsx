@@ -383,7 +383,6 @@ export default function CategoriasPage() {
       // Se houver um novo arquivo selecionado, faz o upload para o R2 primeiro
       if (selectedFile) {
         setImportStatus("Fazendo upload da imagem...");
-        console.log("Iniciando upload para R2...");
         
         const formData = new FormData();
         formData.append('file', selectedFile);
@@ -403,8 +402,10 @@ export default function CategoriasPage() {
 
         const { url: publicUrl } = await uploadResponse.json();
         finalImageUrl = publicUrl;
-        console.log("Upload concluído. URL:", finalImageUrl);
       }
+
+      // Log específico solicitado para audição de URL
+      console.log('URL para o banco:', finalImageUrl);
 
       const categoryData = {
         name: editingCategory.name,
@@ -415,7 +416,7 @@ export default function CategoriasPage() {
       };
 
       if (editingCategory.id && editingCategory.id !== 0) {
-        // Editar
+        // Editar: Aguarda resposta do Supabase
         const { error } = await supabase
           .from('bd_categorias')
           .update(categoryData)
@@ -424,7 +425,7 @@ export default function CategoriasPage() {
         if (error) throw error;
         Toast.fire({ icon: "success", title: "Alterações salvas com sucesso" });
       } else {
-        // Adicionar com ID Curto (6 chars)
+        // Adicionar: Aguarda resposta do Supabase com ID Curto (6 chars)
         const shortId = generateShortId();
         const { error } = await supabase
           .from('bd_categorias')
@@ -434,19 +435,21 @@ export default function CategoriasPage() {
         Toast.fire({ icon: "success", title: "Categoria criada com sucesso" });
       }
 
-      // Limpeza de estados de preview
+      // LIMPEZA DE ESTADOS: Somente após sucesso confirmado pelo Supabase (não deu catch)
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl);
       }
       setSelectedFile(null);
       setPreviewUrl("");
       setIsModalOpen(false);
-      fetchCategories();
+      
+      // Atualiza lista local
+      await fetchCategories();
     } catch (error: any) {
-      console.error("Erro ao salvar categoria:", error);
+      console.error("Erro crítico no fluxo de salvamento:", error);
       Toast.fire({ 
         icon: "error", 
-        title: "Erro ao salvar",
+        title: "Erro ao gravar categoria",
         text: error.message 
       });
     } finally {
