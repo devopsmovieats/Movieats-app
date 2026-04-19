@@ -96,6 +96,8 @@ export default function CategoriasPage() {
   const [importStatus, setImportStatus] = useState("");
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string | number>>(new Set());
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
   
   // Paginação
   const [currentPage, setCurrentPage] = useState(1);
@@ -179,11 +181,15 @@ export default function CategoriasPage() {
 
   const openAddModal = () => {
     setEditingCategory(null);
+    setSelectedFile(null);
+    setPreviewUrl("");
     setIsModalOpen(true);
   };
 
   const openEditModal = (category: Category) => {
     setEditingCategory(category);
+    setSelectedFile(null);
+    setPreviewUrl("");
     setIsModalOpen(true);
   };
 
@@ -372,11 +378,39 @@ export default function CategoriasPage() {
     setIsSaving(true);
 
     try {
+      let finalImageUrl = editingCategory.image;
+
+      // Se houver um novo arquivo selecionado, faz o upload para o R2 primeiro
+      if (selectedFile) {
+        setImportStatus("Fazendo upload da imagem...");
+        console.log("Iniciando upload para R2...");
+        
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        if (establishmentId) {
+          formData.append('establishment_id', establishmentId);
+        }
+
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!uploadResponse.ok) {
+          const errorData = await uploadResponse.json();
+          throw new Error(errorData.error || 'Erro no upload para R2');
+        }
+
+        const { url: publicUrl } = await uploadResponse.json();
+        finalImageUrl = publicUrl;
+        console.log("Upload concluído. URL:", finalImageUrl);
+      }
+
       const categoryData = {
         name: editingCategory.name,
         order: editingCategory.order,
         status: editingCategory.status === 'ativo' ? 'active' : 'inactive',
-        image_url: editingCategory.image,
+        image_url: finalImageUrl,
         establishment_id: establishmentId
       };
 
@@ -400,11 +434,21 @@ export default function CategoriasPage() {
         Toast.fire({ icon: "success", title: "Categoria criada com sucesso" });
       }
 
+      // Limpeza de estados de preview
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      setSelectedFile(null);
+      setPreviewUrl("");
       setIsModalOpen(false);
       fetchCategories();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao salvar categoria:", error);
-      Toast.fire({ icon: "error", title: "Erro ao salvar categoria" });
+      Toast.fire({ 
+        icon: "error", 
+        title: "Erro ao salvar",
+        text: error.message 
+      });
     } finally {
       setIsSaving(false);
     }
@@ -412,13 +456,12 @@ export default function CategoriasPage() {
 
 
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Limite estrito de 4MB (4 * 1024 * 1024 bytes)
+    // Limite estrito de 4MB
     const MAX_SIZE = 4194304; 
-    
     if (file.size > MAX_SIZE) {
       Toast.fire({
         icon: "warning",
@@ -429,47 +472,15 @@ export default function CategoriasPage() {
       return;
     }
 
-    try {
-      // Agora chamando a nossa API de upload para o Cloudflare R2
-      const formData = new FormData();
-      formData.append('file', file);
-      if (establishmentId) {
-        // Enviando como establishment_id para casar com a rota da API
-        formData.append('establishment_id', establishmentId);
-      }
-
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Erro no upload');
-      }
-
-      const { url: publicUrl } = await response.json();
-      
-      // Atualiza o estado da categoria em edição. O salvamento no Supabase DB ocorrerá no submit.
-      setEditingCategory(prev => prev ? { ...prev, image: publicUrl } : { 
-        id: 0, 
-        name: "", 
-        order: categories.length + 1, 
-        status: "ativo" as const, 
-        image: publicUrl 
-      });
-
-      Toast.fire({
-        icon: "success",
-        title: "Imagem enviada para R2"
-      });
-    } catch (error: any) {
-      console.error("Erro no upload R2:", error);
-      Toast.fire({
-        icon: "error",
-        title: "Erro ao enviar imagem"
-      });
+    // Gerar Preview Local IMEDIATO
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
     }
+    const localUrl = URL.createObjectURL(file);
+    setPreviewUrl(localUrl);
+    setSelectedFile(file);
+
+    console.log("Preview local gerado:", localUrl);
   };
 
   return (
@@ -777,9 +788,13 @@ export default function CategoriasPage() {
                     onClick={() => fileInputRef.current?.click()}
                     className="w-16 h-16 bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-primary/40 rounded-2xl flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden"
                   >
-                    {editingCategory?.image ? (
-                      <div className="relative w-full h-full">
-                        <img src={editingCategory.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="" />
+                    {(previewUrl || editingCategory?.image) ? (
+                      <div className="relative w-full h-full flex items-center justify-center">
+                        <img 
+                          src={previewUrl || editingCategory?.image} 
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                          alt="Preview" 
+                        />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                           <Camera className="w-4 h-4 text-white" />
                         </div>
