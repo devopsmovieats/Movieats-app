@@ -5,18 +5,19 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 export async function POST(request: Request) {
   try {
-    // Verificação estrita de Nomes de Variáveis conforme solicitado (Vercel Dashboard)
-    const requiredEnvs = ['R2_ENDPOINT', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY', 'R2_BUCKET_NAME'];
-    const missingEnvs = requiredEnvs.filter(env => !process.env[env]);
+    // Auditoria de Variáveis R2 (Snapshots para Depuração)
+    const mask = (val: string | undefined) => {
+      if (!val) return 'AUSENTE';
+      if (val.length < 8) return 'DEFINIDA (Curta)';
+      return `${val.substring(0, 4)}...${val.substring(val.length - 4)}`;
+    };
 
-    if (missingEnvs.length > 0) {
-      console.error('--- ERRO DE CONFIGURAÇÃO VERCEL ---');
-      console.error('Variáveis ausentes:', missingEnvs.join(', '));
-      return NextResponse.json({ 
-        error: 'Variáveis de ambiente do R2 estão incompletas',
-        missing: missingEnvs 
-      }, { status: 500 });
-    }
+    console.log('--- AUDITORIA DE VARIÁVEIS R2 ---');
+    console.log('R2_ENDPOINT:', mask(process.env['R2_ENDPOINT']));
+    console.log('R2_ACCESS_KEY_ID:', mask(process.env['R2_ACCESS_KEY_ID']));
+    console.log('R2_SECRET_ACCESS_KEY:', mask(process.env['R2_SECRET_ACCESS_KEY']));
+    console.log('R2_BUCKET_NAME:', mask(process.env['R2_BUCKET_NAME']));
+    console.log('NEXT_PUBLIC_R2_PUBLIC_URL:', mask(process.env['NEXT_PUBLIC_R2_PUBLIC_URL']));
 
     const s3Client = new S3Client({
       region: 'auto',
@@ -95,10 +96,12 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ url: publicUrl });
   } catch (error: any) {
-    console.error('Erro de Processamento API:', error);
+    console.error('--- ERRO FATAL API UPLOAD ---', error);
     return NextResponse.json({ 
-      error: 'Internal Server Error',
-      details: error.message 
+      error: 'API_UPLOAD_ERROR',
+      message: error.message,
+      code: error.Code || error.name || '500',
+      details: error.stack
     }, { status: 500 });
   }
 }
