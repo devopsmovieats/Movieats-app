@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     console.log('R2_ENDPOINT presente:', !!process.env.R2_ENDPOINT);
     console.log('R2_ACCESS_KEY_ID presente:', !!process.env.R2_ACCESS_KEY_ID);
     console.log('R2_SECRET_ACCESS_KEY presente:', !!process.env.R2_SECRET_ACCESS_KEY);
-    console.log('R2_BUCKET_NAME presente:', !!process.env.R2_BUCKET_NAME);
+    console.log('Bucket configurado:', !!process.env['R2_BUCKET_NAME']);
     console.log('NEXT_PUBLIC_R2_PUBLIC_URL presente:', !!process.env.NEXT_PUBLIC_R2_PUBLIC_URL);
 
     const file = formData.get('file') as File;
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
 
     console.log('Caminho Final no R2:', filePath);
 
-    const bucketName = process.env.R2_BUCKET_NAME || 'movieats-prod';
+    const bucketName = process.env['R2_BUCKET_NAME'] || 'movieats-prod';
 
     const uploadParams = {
       Bucket: bucketName!,
