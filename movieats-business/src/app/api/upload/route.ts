@@ -12,15 +12,17 @@ export async function POST(request: Request) {
       return `${val.substring(0, 4)}...${val.substring(val.length - 4)}`;
     };
 
-    console.log('--- AUDITORIA DE VARIÁVEIS R2 ---');
-    console.log('R2_ENDPOINT:', mask(process.env['R2_ENDPOINT']));
-    console.log('R2_ACCESS_KEY_ID:', mask(process.env['R2_ACCESS_KEY_ID']));
-    console.log('R2_SECRET_ACCESS_KEY:', mask(process.env['R2_SECRET_ACCESS_KEY']));
-    console.log('R2_BUCKET_NAME:', mask(process.env['R2_BUCKET_NAME']));
     console.log('NEXT_PUBLIC_R2_PUBLIC_URL:', mask(process.env['NEXT_PUBLIC_R2_PUBLIC_URL']));
+    
+    // Log específico solicitado para conferência rápida na Vercel
+    console.log('R2 Config Check:', { 
+      endpoint: !!process.env['R2_ENDPOINT'], 
+      bucket: !!process.env['R2_BUCKET_NAME'], 
+      key: !!process.env['R2_ACCESS_KEY_ID'] 
+    });
 
     const s3Client = new S3Client({
-      region: 'auto',
+      region: 'auto', // Forçado como literal conforme exigência do R2 SDK
       endpoint: process.env['R2_ENDPOINT']!,
       forcePathStyle: false,
       credentials: {
