@@ -18,7 +18,8 @@ import {
   ChevronDown,
   Upload,
   Loader2,
-  Tag
+  Tag,
+  FolderOpen
 } from "lucide-react";
 import Swal from "sweetalert2";
 
@@ -591,12 +592,13 @@ export default function ProdutosPage() {
           </div>
         </div>
 
-        {/* Products Table */}
-        <div className="glass border border-white/5 rounded-[8px] overflow-hidden shadow-2xl">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-white/[0.02] border-b border-white/5">
+        {/* Products Table or Empty State */}
+        {products.length > 0 ? (
+          <div className="glass border border-white/5 rounded-[8px] overflow-hidden shadow-2xl">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-white/[0.02] border-b border-white/5">
                   <th className="px-6 py-5 w-10">
                     <div className="flex items-center justify-center">
                       <input 
@@ -686,6 +688,16 @@ export default function ProdutosPage() {
             </table>
           </div>
         </div>
+        ) : (
+          /* ESTADO VAZIO LIMPO E CENTRALIZADO */
+          <div className="flex flex-col items-center justify-center min-h-[400px] bg-[#1f2937]/50 border border-white/5 rounded-2xl animate-in fade-in zoom-in duration-700 shadow-2xl py-20 px-4 text-center">
+            <FolderOpen size={80} className="text-white opacity-10 mb-8" />
+            <h2 className="text-2xl font-black text-white mb-3 tracking-tight uppercase">Sua vitrine de produtos está vazia</h2>
+            <p className="text-muted-foreground text-sm font-medium max-w-sm">
+              Clique no botão acima para adicionar seu primeiro produto e organizar seu cardápio.
+            </p>
+          </div>
+        )}
 
       </div>
 
