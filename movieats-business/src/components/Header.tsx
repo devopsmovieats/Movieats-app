@@ -36,12 +36,14 @@ function StatusSwitch({ isOpen, onToggle, label, icon: Icon }: StatusSwitchProps
         <Icon className="w-3.5 h-3.5" />
       </div>
       <div className="flex flex-col items-start text-left">
-        <span className="text-[10px] font-black text-slate-900 dark:text-white leading-tight uppercase tracking-tight">{label}</span>
+        <span className="text-[11px] font-semibold text-slate-900 dark:text-white/50 leading-tight tracking-tight">
+          {label.charAt(0).toUpperCase() + label.slice(1).toLowerCase()}
+        </span>
         <div className="flex items-center gap-1.5">
           <div className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${
             isOpen ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]'
           }`} />
-          <span className={`text-[8px] font-black uppercase tracking-wider ${isOpen ? 'text-emerald-500' : 'text-red-500'}`}>
+          <span className={`text-[9px] font-bold tracking-wider ${isOpen ? 'text-emerald-500' : 'text-red-500'}`}>
             {isOpen ? 'Ativo' : 'Inativo'}
           </span>
         </div>

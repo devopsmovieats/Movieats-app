@@ -509,10 +509,10 @@ export default function CategoriasPage() {
           {userRole !== "ATENDENTE" && (
             <button 
               onClick={openAddModal}
-              className="flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-orange-600 text-white rounded-[8px] font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-primary/20 active:scale-95 group cursor-pointer"
+              className="flex items-center gap-2.5 px-5 py-2.5 bg-primary hover:bg-orange-600 text-white rounded-lg font-bold text-sm transition-all shadow-sm border border-white/5 active:scale-95 group cursor-pointer"
             >
-              <Plus className="w-3.5 h-3.5 transition-transform group-hover:rotate-90" />
-              Adicionar Nova Categoria
+              <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
+              Nova Categoria
             </button>
           )}
         </div>

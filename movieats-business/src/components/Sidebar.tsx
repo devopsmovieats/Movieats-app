@@ -159,7 +159,7 @@ export default function Sidebar() {
 
   return (
     <aside 
-      className={`bg-white dark:bg-[#1f2937] border-none h-screen sticky top-0 flex flex-col z-50 overflow-y-auto overflow-x-hidden theme-transition uppercase transition-all duration-300 ease-in-out shadow-[10px_0_30px_-15px_rgba(0,0,0,0.5)]
+      className={`bg-white dark:bg-[#1f2937] border-none h-screen sticky top-0 flex flex-col z-50 overflow-y-auto overflow-x-hidden theme-transition transition-all duration-300 ease-in-out shadow-[10px_0_30px_-15px_rgba(0,0,0,0.5)]
         ${isCollapsed ? "w-20" : "w-[270px]"}
       `}
     >
@@ -175,11 +175,11 @@ export default function Sidebar() {
           </div>
           {!isCollapsed && (
             <div className="flex flex-col min-w-0 animate-in fade-in duration-500">
-              <span className="text-[13px] font-black tracking-tight text-slate-900 dark:text-white leading-tight truncate">
+              <span className="text-sm font-bold tracking-tight text-slate-900 dark:text-white leading-tight truncate">
                 {brand.name}
               </span>
-              <span className="text-[9px] font-black text-orange-600 tracking-[0.2em] uppercase mt-1 opacity-90">
-                {userRole === "ATENDENTE" ? "ATENDIMENTO" : userRole === "GERENTE" ? "GESTÃO OPERACIONAL" : "PORTAL DO ESTABELECIMENTO"}
+              <span className="text-[10px] font-medium text-white/40 tracking-wider mt-0.5 opacity-90">
+                {userRole === "ATENDENTE" ? "Atendimento" : userRole === "GERENTE" ? "Gestão Operacional" : "Portal do Estabelecimento"}
               </span>
             </div>
           )}
@@ -233,8 +233,8 @@ export default function Sidebar() {
             return (
               <div key={group.title} className="space-y-4">
                 {!isCollapsed && (
-                  <h3 className="px-4 text-[9px] font-black text-slate-400 dark:text-zinc-700 tracking-[0.3em] uppercase">
-                    {group.title}
+                  <h3 className="px-4 text-[11px] font-semibold text-white/20 tracking-wider">
+                    {group.title.charAt(0) + group.title.slice(1).toLowerCase()}
                   </h3>
                 )}
                 
@@ -254,19 +254,19 @@ export default function Sidebar() {
                           toggleSubmenu(item.label);
                         }
                       }}
-                      className={`flex items-center gap-3 py-3.5 rounded-xl transition-all duration-200 outline-none
+                      className={`flex items-center gap-3 py-3 rounded-xl transition-all duration-200 outline-none
                         ${isActive 
-                          ? "bg-orange-600 text-white font-black shadow-[0_10px_20px_-5px_rgba(234,88,12,0.4)]" 
-                          : "text-slate-600 dark:text-zinc-500 hover:bg-slate-50 dark:hover:bg-[#374151] hover:text-slate-900 dark:hover:text-white"
+                          ? "bg-white/10 text-white font-semibold" 
+                          : "text-white/60 hover:bg-white/5 hover:text-white"
                         } 
                         ${isCollapsed ? "justify-center w-11 h-11 px-0" : "px-4 w-full"}
                       `}
                     >
-                      <item.icon className={`transition-transform shrink-0 ${isActive ? "text-white" : "text-slate-400 dark:text-zinc-600"} ${isCollapsed ? "w-5 h-5" : "w-4 h-4"}`} />
+                      <item.icon className={`transition-transform shrink-0 ${isActive ? "text-white" : "text-white/40"} ${isCollapsed ? "w-5 h-5" : "w-4 h-4"}`} />
                       
                       {!isCollapsed && (
                         <div className="flex items-center justify-between flex-1 min-w-0 animate-in fade-in duration-300">
-                          <span className="text-[10px] uppercase tracking-widest font-black leading-none truncate">
+                          <span className="text-sm font-medium leading-none truncate">
                             {item.label}
                           </span>
                           {hasSubItems && (
@@ -285,11 +285,8 @@ export default function Sidebar() {
                               key={sub.href}
                               href={sub.href}
                               className={`flex items-center gap-3 py-2 text-[9px] uppercase tracking-[0.2em] font-black transition-all relative outline-none
-                                ${isSubActive ? "text-orange-600" : "text-slate-500 dark:text-zinc-600 hover:text-slate-900 dark:hover:text-white"}
-                              `}
-                            >
                               {isSubActive && (
-                                <div className="absolute -left-3.5 w-1 h-1 rounded-full bg-orange-600" />
+                                <div className="absolute -left-3.5 w-1 h-1 rounded-full bg-white" />
                               )}
                               {sub.label}
                             </Link>
@@ -310,11 +307,11 @@ export default function Sidebar() {
       <div className={`py-10 px-6 border-none text-center bg-transparent mt-auto flex flex-col items-center justify-center`}>
         {!isCollapsed ? (
           <div className="animate-in fade-in duration-500 w-full">
-            <p className="text-[9.5px] text-slate-500 dark:text-white/60 font-black leading-relaxed tracking-[0.2em] uppercase mb-2">
+            <p className="text-[10px] text-white/30 font-medium leading-relaxed tracking-wider mb-2">
               © 2026 MoviEats
             </p>
-            <span className="flex items-center justify-center gap-2 text-[8.5px] font-black text-slate-400 dark:text-white/40 uppercase tracking-[0.3em]">
-              Feito com <Heart className="w-3 h-3 text-orange-600 fill-orange-600 animate-pulse" /> no Brasil
+            <span className="flex items-center justify-center gap-2 text-[9px] font-medium text-white/20 tracking-wider">
+              Feito com <Heart className="w-3 h-3 text-white/20 fill-white/10" /> no Brasil
             </span>
           </div>
         ) : (
