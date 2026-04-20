@@ -35,7 +35,7 @@ const Toast = Swal.mixin({
   showConfirmButton: false,
   timer: 2000,
   timerProgressBar: true,
-  background: "#141414",
+  background: "#1f2937",
   color: "#fff",
   customClass: {
     popup: "rounded-xl border border-white/5 shadow-2xl shadow-black/50"
@@ -220,7 +220,7 @@ export default function CategoriasPage() {
       showCancelButton: true,
       confirmButtonText: "Excluir",
       cancelButtonText: "Cancelar",
-      background: "#1a1a1a",
+      background: "#1f2937",
       color: "#fff",
       confirmButtonColor: "#ff6b00",
       cancelButtonColor: "#2a2a2a",
@@ -363,7 +363,7 @@ export default function CategoriasPage() {
         title: "Importação Finalizada",
         text: `${newItems.length} categorias importadas com sucesso!`,
         icon: "success",
-        background: "#1a1a1a",
+        background: "#1f2937",
         color: "#fff",
         confirmButtonColor: "#ff6b00",
         timer: 3000,
@@ -554,7 +554,7 @@ export default function CategoriasPage() {
                   className="fixed inset-0 z-[60]" 
                   onClick={() => setIsStatusFilterOpen(false)}
                 />
-                <div className="absolute top-full left-0 mt-2 w-full bg-[#1a1a1a] border border-white/10 rounded-[8px] shadow-2xl z-[70] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute top-full left-0 mt-2 w-full bg-[#1f2937] border border-white/10 rounded-[8px] shadow-2xl z-[70] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                   <div className="flex flex-col py-1">
                     {[
                       { value: "todos", label: "Todos" },
@@ -732,7 +732,7 @@ export default function CategoriasPage() {
           </div>
         ) : (
           /* ESTADO VAZIO LIMPO E CENTRALIZADO */
-          <div className="flex flex-col items-center justify-center min-h-[400px] bg-[#141414]/50 border border-white/5 rounded-2xl animate-in fade-in zoom-in duration-700 shadow-2xl py-20 px-4 text-center">
+          <div className="flex flex-col items-center justify-center min-h-[400px] bg-[#1f2937]/50 border border-white/5 rounded-2xl animate-in fade-in zoom-in duration-700 shadow-2xl py-20 px-4 text-center">
             <FolderOpen size={80} className="text-white opacity-10 mb-8" />
             <h2 className="text-2xl font-black text-white mb-3 tracking-tight uppercase">Sua vitrine está vazia</h2>
             <p className="text-muted-foreground text-sm font-medium max-w-sm">
@@ -756,12 +756,12 @@ export default function CategoriasPage() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 overflow-hidden">
           {/* Backdrop Blur Premium */}
           <div 
-            className="absolute inset-0 bg-[#0a0a0a]/90 backdrop-blur-xl animate-in fade-in duration-500"
+            className="absolute inset-0 bg-[#111827]/90 backdrop-blur-xl animate-in fade-in duration-500"
             onClick={() => setIsModalOpen(false)}
           />
           
           {/* Modal Container - Estilo Login (Suave e Moderno) */}
-          <div className="relative w-full max-w-xl bg-[#0a0a0a]/95 backdrop-blur-[15px] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden">
+          <div className="relative w-full max-w-xl bg-[#111827]/95 backdrop-blur-[15px] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden">
             
             {/* Modal Header Premium */}
             <div className="px-8 py-6 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01]">

@@ -30,7 +30,7 @@ function StatusSwitch({ isOpen, onToggle, label, icon: Icon }: StatusSwitchProps
   return (
     <button 
       onClick={onToggle}
-      className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border-none bg-white dark:bg-[#111111] shadow-premium hover:bg-slate-100 dark:hover:bg-white/5 transition-all group cursor-pointer outline-none"
+      className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border-none bg-white dark:bg-[#1f2937] shadow-premium hover:bg-slate-100 dark:hover:bg-white/5 transition-all group cursor-pointer outline-none"
     >
       <div className={`p-1.5 rounded-md transition-colors ${isOpen ? 'bg-orange-600/10 text-orange-600' : 'bg-slate-200 dark:bg-muted text-slate-500 dark:text-muted-foreground'}`}>
         <Icon className="w-3.5 h-3.5" />
@@ -130,7 +130,7 @@ export default function Header() {
         {/* Theme Toggle */}
         <button 
           onClick={toggleTheme}
-          className="p-2.5 rounded-xl border-none bg-white dark:bg-[#111111] text-slate-500 dark:text-slate-400 hover:text-orange-600 transition-all hover:scale-105 active:scale-95 shadow-premium cursor-pointer outline-none"
+          className="p-2.5 rounded-xl border-none bg-white dark:bg-[#1f2937] text-slate-500 dark:text-slate-400 hover:text-orange-600 transition-all hover:scale-105 active:scale-95 shadow-premium cursor-pointer outline-none"
         >
           {isDark ? <Moon className="w-5 h-5 text-blue-400" /> : <Sun className="w-5 h-5 text-yellow-500" />}
         </button>
@@ -140,7 +140,7 @@ export default function Header() {
           <button 
             onClick={() => setShowNotifications(!showNotifications)}
             className={`relative p-2.5 rounded-xl border-none transition-all cursor-pointer outline-none shadow-premium ${
-              showNotifications ? 'bg-orange-600 text-white' : 'bg-white dark:bg-[#111111] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              showNotifications ? 'bg-orange-600 text-white' : 'bg-white dark:bg-[#1f2937] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <Bell className="w-5 h-5" />
@@ -186,7 +186,7 @@ export default function Header() {
              Cookies.remove("auth_token");
              router.push("/login");
           }}
-          className="flex items-center gap-3 p-1.5 pr-4 bg-white dark:bg-[#111111] rounded-xl border-none hover:bg-slate-100 dark:hover:bg-[#161616] transition-all group cursor-pointer shadow-premium outline-none"
+          className="flex items-center gap-3 p-1.5 pr-4 bg-white dark:bg-[#1f2937] rounded-xl border-none hover:bg-slate-100 dark:hover:bg-[#374151] transition-all group cursor-pointer shadow-premium outline-none"
         >
           <div className="w-9 h-9 rounded-md bg-gradient-to-tr from-orange-600 to-orange-400 p-[1px]">
             <div className="w-full h-full rounded-[2.5px] bg-background overflow-hidden relative">

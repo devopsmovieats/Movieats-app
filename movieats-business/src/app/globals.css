@@ -47,26 +47,25 @@
   --glass-border: rgba(15, 23, 42, 0.08);
 }
 
-/* Dark Mode Overrides (All Black Premium) */
+/* Dark Mode Overrides (Professional Slate/Gray Blue) */
 .dark {
-  --background: #000000;
+  --background: #111827;
   --foreground: #ffffff;
-  --card: #111111;
+  --card: #1f2937;
   --card-foreground: #f8fafc;
   --primary: #ff6b00;
   --primary-foreground: #ffffff;
-  --secondary: #161616;
+  --secondary: #1f2937;
   --secondary-foreground: #f8fafc;
-  --muted: #1a1a1a;
-  --muted-foreground: #cbd5e1; /* Cinza claro e nítido (Slate 300) */
-  --accent: #111111;
+  --muted: #1f2937;
+  --muted-foreground: #cbd5e1;
+  --accent: #111827;
   --accent-foreground: #ffffff;
-  --border: transparent; /* Remove bordas por padrão */
-  --input: #111111;
-  --ring: #ff6b00;
+  --border: #374151;
+  --input: #1f2937;
 
-  --glass-bg: rgba(17, 17, 17, 0.8);
-  --glass-border: rgba(255, 255, 255, 0.03);
+  --glass-bg: rgba(31, 41, 55, 0.82);
+  --glass-border: rgba(255, 255, 255, 0.05);
 }
 
 @theme {

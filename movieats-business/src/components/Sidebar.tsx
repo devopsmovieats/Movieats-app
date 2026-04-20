@@ -159,14 +159,14 @@ export default function Sidebar() {
 
   return (
     <aside 
-      className={`bg-white dark:bg-[#111111] border-none h-screen sticky top-0 flex flex-col z-50 overflow-y-auto overflow-x-hidden theme-transition uppercase transition-all duration-300 ease-in-out shadow-[10px_0_30px_-15px_rgba(0,0,0,0.5)]
+      className={`bg-white dark:bg-[#1f2937] border-none h-screen sticky top-0 flex flex-col z-50 overflow-y-auto overflow-x-hidden theme-transition uppercase transition-all duration-300 ease-in-out shadow-[10px_0_30px_-15px_rgba(0,0,0,0.5)]
         ${isCollapsed ? "w-20" : "w-[270px]"}
       `}
     >
       {/* Top Branding & Toggle Button */}
       <div className={`px-5 py-9 flex items-center transition-all duration-300 ${isCollapsed ? "justify-center" : "justify-between gap-4"}`}>
         <div className="flex items-center gap-3 min-w-0">
-          <div className={`p-2 bg-slate-50 dark:bg-[#161616] border-none rounded-xl flex items-center justify-center shrink-0 w-11 h-11 shadow-premium transition-all duration-300`}>
+          <div className={`p-2 bg-slate-50 dark:bg-[#111827] border-none rounded-xl flex items-center justify-center shrink-0 w-11 h-11 shadow-premium transition-all duration-300`}>
             {brand.logo ? (
               <img src={brand.logo} alt="Logo" className="w-full h-full object-cover rounded-md" />
             ) : (
@@ -257,7 +257,7 @@ export default function Sidebar() {
                       className={`flex items-center gap-3 py-3.5 rounded-xl transition-all duration-200 outline-none
                         ${isActive 
                           ? "bg-orange-600 text-white font-black shadow-[0_10px_20px_-5px_rgba(234,88,12,0.4)]" 
-                          : "text-slate-600 dark:text-zinc-500 hover:bg-slate-50 dark:hover:bg-[#161616] hover:text-slate-900 dark:hover:text-white"
+                          : "text-slate-600 dark:text-zinc-500 hover:bg-slate-50 dark:hover:bg-[#374151] hover:text-slate-900 dark:hover:text-white"
                         } 
                         ${isCollapsed ? "justify-center w-11 h-11 px-0" : "px-4 w-full"}
                       `}
