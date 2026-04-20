@@ -226,24 +226,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between pb-1">
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <div className="relative">
-                  <input type="checkbox" className="peer hidden" />
-                  <div className="w-4 h-4 rounded-md bg-white/5 peer-checked:bg-primary transition-all flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-full bg-white scale-0 peer-checked:scale-100 transition-transform" />
-                  </div>
-                </div>
-                <span className="text-[10px] text-white/40 group-hover:text-[#ff6b00] transition-colors font-bold uppercase tracking-widest">Lembrar</span>
-              </label>
-              <button 
-                type="button" 
-                onClick={handleRecoverPassword}
-                className="text-[10px] font-bold text-white/40 hover:text-[#ff6b00] tracking-widest uppercase transition-colors cursor-pointer"
-              >
-                Esqueci a Senha
-              </button>
-            </div>
+            <div className="h-2" />
 
             <button 
               type="submit"
@@ -257,15 +240,7 @@ export default function LoginPage() {
               )}
             </button>
 
-            {/* Botão Criar Conta - Link Externo */}
-            <a 
-              href="https://wa.me/5511999999999?text=Ol%C3%A1%2C%20gostaria%20de%20criar%20uma%20conta%20no%20Movieats!"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full h-12 border border-[#ff6b00]/30 hover:border-[#ff6b00] hover:bg-[#ff6b00]/5 text-[#ff6b00] font-black text-[11px] uppercase tracking-[0.2em] rounded-xl transition-all flex items-center justify-center cursor-pointer"
-            >
-              CRIAR CONTA
-            </a>
+
           </form>
 
           {/* Footer */}
