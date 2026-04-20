@@ -882,9 +882,9 @@ export default function ProdutosPage() {
                 </button>
                 <button 
                   type="submit" 
-                  className="flex-1 h-10 bg-primary hover:bg-orange-600 text-white font-black text-[10px] uppercase tracking-widest rounded-lg shadow-xl shadow-primary/20 transition-all flex items-center justify-center gap-2 group cursor-pointer active:scale-95"
+                  className="flex-1 h-10 bg-orange-600 hover:bg-orange-500 text-white font-bold text-sm rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 group cursor-pointer active:scale-95"
                 >
-                  {editingProduct?.id ? "Salvar" : "Confirmar"}
+                  {editingProduct?.id ? "Salvar Produto" : "Confirmar Produto"}
                   <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>

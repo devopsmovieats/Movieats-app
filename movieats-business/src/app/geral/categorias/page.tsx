@@ -888,13 +888,13 @@ export default function CategoriasPage() {
                 <button 
                   type="submit"
                   disabled={isSaving}
-                  className="flex-1 px-6 py-3 bg-primary hover:bg-orange-600 text-white font-bold text-sm uppercase tracking-wider rounded-lg transition-all shadow-lg shadow-primary/20 active:scale-95 flex items-center justify-center gap-3 group cursor-pointer disabled:opacity-50"
+                  className="flex-1 px-6 py-3 bg-orange-600 hover:bg-orange-500 text-white font-bold text-sm uppercase tracking-wider rounded-lg transition-all shadow-sm active:scale-95 flex items-center justify-center gap-3 group cursor-pointer disabled:opacity-50"
                 >
                   {isSaving ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
                   ) : (
                     <>
-                      {editingCategory?.id ? "Salvar Alterações" : "Criar Categoria"}
+                      {editingCategory?.id ? "Salvar Categoria" : "Confirmar Categoria"}
                     </>
                   )}
                 </button>
