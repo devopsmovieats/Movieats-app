@@ -31,17 +31,17 @@
   --foreground: #020617; /* Slate 950 */
   --card: #ffffff;
   --card-foreground: #020617;
-  --primary: #ff6b00;
-  --primary-foreground: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: #020617;
   --secondary: #f1f5f9;
   --secondary-foreground: #020617;
   --muted: #f1f5f9;
   --muted-foreground: #475569; /* Slate 600 para melhor leitura */
-  --accent: #f8fafc;
+  --accent: #ffffff;
   --accent-foreground: #020617;
   --border: #e2e8f0;
   --input: #ffffff;
-  --ring: #ff6b00;
+  --ring: #020617;
   
   --glass-bg: rgba(255, 255, 255, 0.9);
   --glass-border: rgba(15, 23, 42, 0.08);
@@ -53,16 +53,17 @@
   --foreground: #ffffff;
   --card: #1f2937;
   --card-foreground: #f8fafc;
-  --primary: #ff6b00;
-  --primary-foreground: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: #111827;
   --secondary: #1f2937;
   --secondary-foreground: #f8fafc;
   --muted: #1f2937;
   --muted-foreground: #cbd5e1;
-  --accent: #111827;
-  --accent-foreground: #ffffff;
+  --accent: #ffffff;
+  --accent-foreground: #111827;
   --border: #374151;
   --input: #1f2937;
+  --ring: #ffffff;
 
   --glass-bg: rgba(31, 41, 55, 0.82);
   --glass-border: rgba(255, 255, 255, 0.05);

@@ -13,12 +13,12 @@ import {
   ChevronRight,
   ChevronLeft,
   Search,
-  Layers,
+  Tag,
   CheckCircle2,
   XCircle,
   Download,
-  ChevronDown,
   Upload,
+  ChevronDown,
   Loader2,
   FolderOpen,
   Camera
@@ -494,10 +494,10 @@ export default function CategoriasPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <Layers className="text-primary w-5 h-5" />
+              <div className="p-2 bg-white/10 rounded-lg">
+                <Tag className="text-white w-5 h-5" />
               </div>
-              <h2 className="text-2xl font-headline font-black text-white tracking-tight uppercase leading-none">
+              <h2 className="text-2xl font-headline font-black text-white tracking-tight leading-none">
                 Categorias
               </h2>
             </div>
@@ -509,7 +509,7 @@ export default function CategoriasPage() {
           {userRole !== "ATENDENTE" && (
             <button 
               onClick={openAddModal}
-              className="flex items-center gap-2.5 px-5 py-2.5 bg-primary hover:bg-orange-600 text-white rounded-lg font-bold text-sm transition-all shadow-sm border border-white/5 active:scale-95 group cursor-pointer"
+              className="flex items-center gap-2.5 px-5 py-2.5 bg-white hover:bg-slate-100 text-slate-900 rounded-lg font-bold text-sm transition-all shadow-sm border border-white/5 active:scale-95 group cursor-pointer"
             >
               <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
               Nova Categoria
@@ -521,13 +521,13 @@ export default function CategoriasPage() {
         <div className="glass border border-white/5 rounded-[8px] p-4 flex flex-col md:flex-row gap-4 items-center">
           {/* Search Field */}
           <div className="relative w-full max-w-xs group cursor-text">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white opacity-40 group-focus-within:opacity-100 transition-opacity" />
             <input 
               type="text" 
               placeholder="Buscar categoria..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/[0.03] border border-white/5 rounded-lg py-3 pl-11 pr-4 text-xs text-white placeholder:text-muted-foreground/30 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium"
+              className="w-full bg-white/[0.03] border border-white/5 rounded-lg py-3 pl-11 pr-4 text-xs text-white placeholder:text-white/20 focus:outline-none focus:border-white/20 focus:ring-4 focus:ring-white/5 transition-all font-medium"
             />
           </div>
 
@@ -535,16 +535,16 @@ export default function CategoriasPage() {
           <div className="relative group/dropdown">
             <button 
               onClick={() => setIsStatusFilterOpen(!isStatusFilterOpen)}
-              className="flex items-center bg-white/[0.03] border border-white/5 rounded-lg py-3 pl-20 pr-10 text-xs text-white font-bold focus:outline-none focus:border-primary/50 transition-all cursor-pointer uppercase tracking-tight relative min-w-[160px] text-left"
+              className="flex items-center bg-white/[0.03] border border-white/5 rounded-lg py-3 pl-20 pr-10 text-xs text-white font-bold focus:outline-none focus:border-white/20 transition-all cursor-pointer relative min-w-[160px] text-left"
             >
               <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2 border-r border-white/10 pr-3 pointer-events-none">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(255,107,0,0.5)]" />
-                <span className="text-[9px] font-black text-muted-foreground uppercase tracking-wider">Status:</span>
+                <div className="w-1.5 h-1.5 rounded-full bg-white opacity-40" />
+                <span className="text-[9px] font-bold text-white opacity-40 uppercase tracking-wider">Status:</span>
               </div>
               
               {statusFilter === "todos" ? "Todos" : statusFilter === "ativo" ? "Ativo" : "Inativo"}
               
-              <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none transition-transform ${isStatusFilterOpen ? 'rotate-180 text-white' : ''}`} />
+              <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white opacity-40 pointer-events-none transition-transform ${isStatusFilterOpen ? 'rotate-180 opacity-100' : ''}`} />
             </button>
 
             {/* Dropdown Menu */}
@@ -568,7 +568,7 @@ export default function CategoriasPage() {
                           setIsStatusFilterOpen(false);
                         }}
                         className={`w-full text-left px-5 py-3 text-[11px] font-bold uppercase tracking-wider transition-colors cursor-pointer
-                          ${statusFilter === option.value ? 'bg-primary/10 text-primary' : 'text-white hover:bg-[#ff6b00] hover:text-white'}
+                          ${statusFilter === option.value ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'}
                         `}
                       >
                         {option.label}

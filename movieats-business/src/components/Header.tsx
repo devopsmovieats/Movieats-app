@@ -32,7 +32,7 @@ function StatusSwitch({ isOpen, onToggle, label, icon: Icon }: StatusSwitchProps
       onClick={onToggle}
       className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border-none bg-white dark:bg-[#1f2937] shadow-premium hover:bg-slate-100 dark:hover:bg-white/5 transition-all group cursor-pointer outline-none"
     >
-      <div className={`p-1.5 rounded-md transition-colors ${isOpen ? 'bg-orange-600/10 text-orange-600' : 'bg-slate-200 dark:bg-muted text-slate-500 dark:text-muted-foreground'}`}>
+      <div className={`p-1.5 rounded-md transition-colors ${isOpen ? 'bg-white/10 text-white' : 'bg-slate-200 dark:bg-muted text-slate-500 dark:text-muted-foreground'}`}>
         <Icon className="w-3.5 h-3.5" />
       </div>
       <div className="flex flex-col items-start text-left">
@@ -132,7 +132,7 @@ export default function Header() {
         {/* Theme Toggle */}
         <button 
           onClick={toggleTheme}
-          className="p-2.5 rounded-xl border-none bg-white dark:bg-[#1f2937] text-slate-500 dark:text-slate-400 hover:text-orange-600 transition-all hover:scale-105 active:scale-95 shadow-premium cursor-pointer outline-none"
+          className="p-2.5 rounded-xl border-none bg-white dark:bg-[#1f2937] text-slate-500 dark:text-slate-400 hover:text-white transition-all hover:scale-105 active:scale-95 shadow-premium cursor-pointer outline-none"
         >
           {isDark ? <Moon className="w-5 h-5 text-blue-400" /> : <Sun className="w-5 h-5 text-yellow-500" />}
         </button>
@@ -142,11 +142,11 @@ export default function Header() {
           <button 
             onClick={() => setShowNotifications(!showNotifications)}
             className={`relative p-2.5 rounded-xl border-none transition-all cursor-pointer outline-none shadow-premium ${
-              showNotifications ? 'bg-orange-600 text-white' : 'bg-white dark:bg-[#1f2937] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              showNotifications ? 'bg-white text-slate-900' : 'bg-white dark:bg-[#1f2937] text-slate-500 dark:text-slate-400 hover:text-white'
             }`}
           >
             <Bell className="w-5 h-5" />
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-600 text-white text-[9px] font-black flex items-center justify-center rounded-full border-2 border-background">
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-white text-slate-900 text-[9px] font-bold flex items-center justify-center rounded-full border-2 border-[#111827]">
               3
             </span>
           </button>
@@ -155,27 +155,27 @@ export default function Header() {
             <div className="absolute right-0 mt-3 w-80 bg-white dark:bg-card rounded-md border border-border shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
               <div className="p-4 border-b border-border bg-muted/30 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Package className="w-4 h-4 text-orange-600" />
-                  <span className="text-sm font-black text-slate-900 dark:text-white tracking-tight uppercase">Pedidos Pendentes</span>
+                  <Package className="w-4 h-4 text-white opacity-40" />
+                  <span className="text-sm font-bold text-white tracking-tight">Pedidos Pendentes</span>
                 </div>
-                <span className="text-[10px] font-bold text-orange-600 px-2 py-0.5 bg-orange-600/10 rounded-full font-black">3 NOVOS</span>
+                <span className="text-[10px] font-bold text-white px-2 py-0.5 bg-white/10 rounded-full">3 NOVOS</span>
               </div>
               <div className="max-h-[350px] overflow-y-auto">
                 {fakeNotifications.map((notif) => (
-                  <div key={notif.id} className="p-4 border-b border-border hover:bg-slate-100 dark:hover:bg-muted transition-colors cursor-pointer group">
+                  <div key={notif.id} className="p-4 border-b border-border hover:bg-slate-100 dark:hover:bg-white/5 transition-colors cursor-pointer group">
                     <div className="flex justify-between items-start mb-1">
-                      <span className="text-xs font-black text-slate-900 dark:text-white group-hover:text-orange-600 transition-colors uppercase">{notif.customer}</span>
-                      <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold">{notif.time}</span>
+                      <span className="text-xs font-bold text-white group-hover:text-white transition-colors">{notif.customer}</span>
+                      <span className="text-[10px] text-white opacity-30 font-semibold">{notif.time}</span>
                     </div>
-                    <p className="text-[11px] text-slate-600 dark:text-slate-400 mb-2 line-clamp-1 uppercase font-bold">{notif.items}</p>
+                    <p className="text-[11px] text-white opacity-40 mb-2 line-clamp-1 font-semibold">{notif.items}</p>
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-black text-slate-900 dark:text-white">{notif.total}</span>
-                      <button className="text-[10px] font-black text-orange-600 uppercase tracking-widest hover:underline">Ver Detalhes</button>
+                      <span className="text-xs font-bold text-white">{notif.total}</span>
+                      <button className="text-[10px] font-bold text-white opacity-60 hover:opacity-100 transition-opacity">Ver Detalhes</button>
                     </div>
                   </div>
                 ))}
               </div>
-              <button className="w-full p-4 text-[11px] font-black text-slate-500 dark:text-slate-400 hover:text-orange-600 uppercase tracking-[0.25em] transition-colors border-t border-border bg-muted/10 cursor-pointer">
+              <button className="w-full p-4 text-[11px] font-bold text-white opacity-40 hover:opacity-100 transition-opacity border-t border-border bg-muted/10 cursor-pointer">
                 Ver Todos os Pedidos
               </button>
             </div>
@@ -200,8 +200,8 @@ export default function Header() {
             </div>
           </div>
           <div className="flex flex-col">
-            <span className="text-[11px] font-black text-slate-900 dark:text-white group-hover:text-orange-600 transition-colors uppercase">Villa Gourmet</span>
-            <span className="text-[9px] text-slate-500 dark:text-slate-400 font-black group-hover:text-red-500 flex items-center gap-1 uppercase transition-colors">
+            <span className="text-[11px] font-bold text-white group-hover:text-white transition-colors">Villa Gourmet</span>
+            <span className="text-[9px] text-white opacity-30 font-bold group-hover:text-red-500 flex items-center gap-1 transition-colors">
               Sair <LogOut className="w-2.5 h-2.5" />
             </span>
           </div>

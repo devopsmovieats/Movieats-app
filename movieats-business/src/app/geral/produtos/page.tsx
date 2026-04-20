@@ -478,10 +478,10 @@ export default function ProdutosPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <Box className="text-primary w-5 h-5" />
+              <div className="p-2 bg-white/10 rounded-lg">
+                <Box className="text-white w-5 h-5" />
               </div>
-              <h2 className="text-2xl font-headline font-black text-white tracking-tight uppercase leading-none">
+              <h2 className="text-2xl font-headline font-black text-white tracking-tight leading-none">
                 Produtos
               </h2>
             </div>
@@ -493,10 +493,10 @@ export default function ProdutosPage() {
           {userRole !== "ATENDENTE" && (
             <button 
               onClick={openAddModal}
-              className="flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-orange-600 text-white rounded-[8px] font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-primary/20 active:scale-95 group cursor-pointer"
+              className="flex items-center gap-2.5 px-5 py-2.5 bg-white hover:bg-slate-100 text-slate-900 rounded-lg font-bold text-sm transition-all shadow-sm border border-white/5 active:scale-95 group cursor-pointer"
             >
-              <Plus className="w-3.5 h-3.5 transition-transform group-hover:rotate-90" />
-              Adicionar Novo Produto
+              <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
+              Novo Produto
             </button>
           )}
         </div>
@@ -505,13 +505,13 @@ export default function ProdutosPage() {
         <div className="glass border border-white/5 rounded-[8px] p-4 flex flex-col md:flex-row gap-4 items-center">
           {/* Search Field */}
           <div className="relative w-full max-w-xs group cursor-text">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white opacity-40 group-focus-within:opacity-100 transition-opacity" />
             <input 
               type="text" 
               placeholder="Buscar produto..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/[0.03] border border-white/5 rounded-lg py-3 pl-11 pr-4 text-xs text-white placeholder:text-muted-foreground/30 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium"
+              className="w-full bg-white/[0.03] border border-white/5 rounded-lg py-3 pl-11 pr-4 text-xs text-white placeholder:text-white/20 focus:outline-none focus:border-white/20 focus:ring-4 focus:ring-white/5 transition-all font-medium"
             />
           </div>
 
@@ -519,26 +519,26 @@ export default function ProdutosPage() {
           <div className="relative group/dropdown">
             <button 
               onClick={() => setIsCategoryFilterOpen(!isCategoryFilterOpen)}
-              className="flex items-center bg-white/[0.03] border border-white/5 rounded-lg py-3 pl-20 pr-10 text-xs text-white font-bold focus:outline-none focus:border-primary/50 transition-all cursor-pointer uppercase tracking-tight relative min-w-[200px] text-left"
+              className="flex items-center bg-white/[0.03] border border-white/5 rounded-lg py-3 pl-20 pr-10 text-xs text-white font-bold focus:outline-none focus:border-white/20 transition-all cursor-pointer relative min-w-[200px] text-left"
             >
               <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2 border-r border-white/10 pr-3 pointer-events-none">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(255,107,0,0.5)]" />
-                <span className="text-[9px] font-black text-muted-foreground uppercase tracking-wider">Cat:</span>
+                <div className="w-1.5 h-1.5 rounded-full bg-white opacity-40" />
+                <span className="text-[9px] font-bold text-white opacity-40 uppercase tracking-wider">Cat:</span>
               </div>
               {categoryFilter === "todas" ? "Todas" : categoryFilter}
-              <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none transition-transform ${isCategoryFilterOpen ? 'rotate-180 text-white' : ''}`} />
+              <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white opacity-40 pointer-events-none transition-transform ${isCategoryFilterOpen ? 'rotate-180 opacity-100' : ''}`} />
             </button>
 
             {/* Dropdown Menu */}
             {isCategoryFilterOpen && (
               <>
                 <div className="fixed inset-0 z-[60]" onClick={() => setIsCategoryFilterOpen(false)} />
-                <div className="absolute top-full left-0 mt-2 w-full bg-[#1a1a1a] border border-white/10 rounded-[8px] shadow-2xl z-[70] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute top-full left-0 mt-2 w-full bg-[#1f2937] border border-white/10 rounded-[8px] shadow-2xl z-[70] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                   <div className="flex flex-col py-1 max-h-60 overflow-y-auto">
                     <button 
                       onClick={() => { setCategoryFilter("todas"); setIsCategoryFilterOpen(false); }} 
                       className={`w-full text-left px-5 py-3 text-[11px] font-bold uppercase tracking-wider transition-colors cursor-pointer
-                        ${categoryFilter === "todas" ? 'bg-primary/10 text-primary' : 'text-white hover:bg-[#ff6b00] hover:text-white'}
+                        ${categoryFilter === "todas" ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'}
                       `}
                     >
                       Todas
@@ -548,7 +548,7 @@ export default function ProdutosPage() {
                         key={cat.id} 
                         onClick={() => { setCategoryFilter(cat.name); setIsCategoryFilterOpen(false); }} 
                         className={`w-full text-left px-5 py-3 text-[11px] font-bold uppercase tracking-wider transition-colors cursor-pointer
-                          ${categoryFilter === cat.name ? 'bg-primary/10 text-primary' : 'text-white hover:bg-[#ff6b00] hover:text-white'}
+                          ${categoryFilter === cat.name ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'}
                         `}
                       >
                         {cat.name}
@@ -568,7 +568,7 @@ export default function ProdutosPage() {
               <input type="file" ref={importFileRef} onChange={handleFileImport} accept=".csv, .xlsx" className="hidden" />
               <button 
                 onClick={handleImportClick}
-                className="flex items-center gap-2 px-5 py-3 glass border-white/10 hover:border-primary/30 hover:bg-white/5 rounded-lg text-[10px] font-black text-white hover:text-primary uppercase tracking-[0.15em] transition-all cursor-pointer active:scale-95 group"
+                className="flex items-center gap-2 px-5 py-3 glass border-white/10 hover:border-white/30 hover:bg-white/5 rounded-lg text-[10px] font-bold text-white uppercase tracking-wider transition-all cursor-pointer active:scale-95 group"
               >
                 <Upload className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
                 Importar
@@ -576,7 +576,7 @@ export default function ProdutosPage() {
 
               <button 
                 onClick={handleExport}
-                className="flex items-center gap-2 px-5 py-3 glass border-white/10 hover:border-primary/30 hover:bg-primary/5 rounded-lg text-[10px] font-black text-white hover:text-primary uppercase tracking-[0.15em] transition-all cursor-pointer active:scale-95 group"
+                className="flex items-center gap-2 px-5 py-3 glass border-white/10 hover:border-white/30 hover:bg-white/5 rounded-lg text-[10px] font-bold text-white uppercase tracking-wider transition-all cursor-pointer active:scale-95 group"
               >
                 <Download className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
                 {selectedIds.size > 0 ? `Exportar (${selectedIds.size})` : "Exportar"}
@@ -586,8 +586,8 @@ export default function ProdutosPage() {
 
           <div className="h-8 w-[1px] bg-white/10 mx-2 hidden md:block" />
 
-          <div className="flex items-center gap-2 px-4 py-3 bg-white/[0.03] border border-white/5 rounded-lg text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-            Total de itens: <span className="text-white ml-1">{products.length}</span>
+          <div className="flex items-center gap-2 px-4 py-3 bg-white/[0.03] border border-white/5 rounded-lg text-[10px] font-bold text-white opacity-40 uppercase tracking-wider">
+            Total de itens: <span className="text-white ml-1 opacity-100">{products.length}</span>
           </div>
         </div>
 
@@ -607,11 +607,11 @@ export default function ProdutosPage() {
                       />
                     </div>
                   </th>
-                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Imagem</th>
-                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Produto</th>
-                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Categoria</th>
-                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-center">Preço</th>
-                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-right">Ações</th>
+                  <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Imagem</th>
+                  <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Produto</th>
+                  <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Categoria</th>
+                  <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-center">Preço</th>
+                  <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-right">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -650,7 +650,7 @@ export default function ProdutosPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <span className="text-sm font-black text-primary tracking-tighter">
+                      <span className="text-sm font-bold text-white tracking-tighter">
                         R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </span>
                     </td>
