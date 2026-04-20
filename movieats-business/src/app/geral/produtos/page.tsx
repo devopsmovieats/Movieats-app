@@ -711,7 +711,7 @@ export default function ProdutosPage() {
           />
           
           {/* Modal Container - Estilo Login (Suave e Moderno) */}
-          <div className="relative w-full max-w-3xl bg-[#1f2937] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden">
+          <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-[#1f2937] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 custom-scrollbar">
             
             {/* Modal Header Premium */}
             <div className="px-8 py-6 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01]">
@@ -748,7 +748,7 @@ export default function ProdutosPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Coluna 1: Nome e Categoria */}
                 <div className="space-y-5">
                   <div className="space-y-2">
