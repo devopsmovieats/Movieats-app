@@ -766,7 +766,7 @@ export default function CategoriasPage() {
             {/* Modal Header Premium */}
             <div className="px-8 py-6 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01]">
               <div className="flex flex-col">
-                <h3 className="text-sm font-headline font-black text-white uppercase tracking-tight leading-loose">
+                <h3 className="text-base font-headline font-black text-white uppercase tracking-tight leading-loose">
                   {editingCategory?.id ? `Editar Categoria` : "Nova Categoria"}
                 </h3>
                 <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest opacity-40">Gestão de Cardápio Digital</span>
@@ -785,7 +785,7 @@ export default function CategoriasPage() {
               <div className="flex gap-6 items-start">
                 {/* Upload Lateral Compacto (Max 80px, usando 64px para elegância) */}
                 <div className="w-16 shrink-0">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1 mb-2.5 block">Imagem</label>
+                  <label className="text-xs font-semibold uppercase tracking-wider text-white/30 ml-1 mb-2 block">Imagem</label>
                   <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
                   <div 
                     onClick={() => fileInputRef.current?.click()}
@@ -819,19 +819,19 @@ export default function CategoriasPage() {
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:items-end">
                     {/* Nome da Categoria */}
                     <div className="space-y-2">
-                      <label className="text-sm font-black uppercase tracking-[0.2em] text-white/30 ml-1 block">Nome da Categoria</label>
+                      <label className="text-xs font-semibold uppercase tracking-wider text-white/30 ml-1 block">Nome da Categoria</label>
                       <input 
                         type="text" 
                         value={editingCategory?.name || ""}
                         onChange={(e) => setEditingCategory(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, order: categories.length + 1, status: "ativo", image: "" })}
                         placeholder="Ex: Pizzas"
-                        className="w-full h-12 bg-white/[0.05] border border-white/[0.05] rounded-xl px-5 text-sm text-white placeholder:text-white/10 outline-none transition-all focus:bg-white/[0.08] focus:border-primary/20 font-medium"
+                        className="w-full h-10 bg-white/[0.03] border border-white/5 rounded-lg px-4 text-xs text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium"
                         required
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-black uppercase tracking-[0.2em] text-white/30 ml-1 block">Visibilidade</label>
+                      <label className="text-xs font-semibold uppercase tracking-wider text-white/30 ml-1 block">Visibilidade</label>
                         <div 
                           className="relative w-10 h-5.5 cursor-pointer"
                           onClick={() => {
@@ -855,7 +855,7 @@ export default function CategoriasPage() {
                   {/* Ordem e Texto Informativo */}
                   <div className="grid grid-cols-1 md:grid-cols-[100px_1fr] gap-4 items-center">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1 block">Ordem</label>
+                      <label className="text-xs font-semibold uppercase tracking-wider text-white/30 ml-1 block">Ordem</label>
                       <input 
                         type="number" 
                         min="0"
@@ -865,7 +865,7 @@ export default function CategoriasPage() {
                           setEditingCategory(prev => prev ? { ...prev, order: isNaN(val) ? 0 : val } : { id: 0, name: "", order: isNaN(val) ? 0 : val, status: "ativo", image: "" });
                         }}
                         placeholder="0"
-                        className="w-full h-10 bg-white/[0.03] border border-white/[0.05] rounded-xl px-2 text-sm text-white focus:outline-none focus:border-primary/30 transition-all font-black text-center"
+                        className="w-full h-10 bg-white/[0.03] border border-white/5 rounded-lg px-4 text-xs text-white focus:outline-none focus:border-primary/50 transition-all font-medium text-center"
                         required
                       />
                     </div>
@@ -881,14 +881,14 @@ export default function CategoriasPage() {
                 <button 
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-8 py-2 bg-white/5 hover:bg-white/10 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all border border-white/5 active:scale-95 cursor-pointer"
+                  className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white font-semibold text-sm uppercase tracking-wider rounded-lg transition-all border border-white/5 active:scale-95 cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button 
                   type="submit"
                   disabled={isSaving}
-                  className="flex-1 py-2 bg-primary hover:bg-orange-600 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all shadow-[0_10px_30px_rgba(255,107,0,0.3)] active:scale-95 flex items-center justify-center gap-3 group cursor-pointer disabled:opacity-50"
+                  className="flex-1 px-4 py-2 bg-primary hover:bg-orange-600 text-white font-semibold text-sm uppercase tracking-wider rounded-lg transition-all shadow-lg shadow-primary/20 active:scale-95 flex items-center justify-center gap-3 group cursor-pointer disabled:opacity-50"
                 >
                   {isSaving ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
