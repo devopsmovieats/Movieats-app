@@ -356,7 +356,7 @@ export default function GruposAdicionaisPage() {
             className="flex items-center gap-2 px-4 py-2.5 bg-orange-600 hover:bg-orange-500 text-white rounded-[8px] font-bold text-[10px] uppercase tracking-widest transition-all shadow-sm active:scale-95 group cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5 transition-transform group-hover:rotate-90" />
-            + Novo Adicional
+            + Novo Grupo
           </button>
         </div>
 
@@ -506,7 +506,7 @@ export default function GruposAdicionaisPage() {
       {isModalOpen && editingGroup && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 overflow-hidden">
           <div className="absolute inset-0 bg-[#0a0a0a]/95 backdrop-blur-xl animate-in fade-in duration-500" onClick={() => setIsModalOpen(false)} />
-          <div className="relative w-full max-w-2xl bg-[#141414] border border-white/10 rounded-[8px] shadow-2xl animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-500 overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="relative w-full max-w-2xl bg-[#1f2937] border border-white/5 rounded-[8px] shadow-2xl animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-500 overflow-hidden flex flex-col max-h-[90vh]">
             
             <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
               <div className="flex items-center gap-3">
@@ -531,23 +531,23 @@ export default function GruposAdicionaisPage() {
                 {/* Configurações do Grupo */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 block">Nome do Grupo</label>
+                    <label className="text-[10px] font-bold text-white/50 ml-1 block">Nome do Grupo</label>
                     <input 
                       type="text" 
                       value={editingGroup.name}
                       onChange={(e) => setEditingGroup({ ...editingGroup, name: e.target.value })}
                       placeholder="Ex: Adicionais de Burger"
-                      className="w-full bg-white/[0.03] border border-white/5 rounded-lg h-10 px-4 text-xs text-white placeholder:text-muted-foreground/20 focus:outline-none focus:border-primary/50 transition-all font-medium"
+                      className="w-full bg-white/[0.05] border border-white/5 rounded-lg h-12 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-orange-500/50 transition-all font-medium"
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 block">Tipo de Escolha</label>
+                    <label className="text-[10px] font-bold text-white/50 ml-1 block">Tipo de Escolha</label>
                     <div className="relative">
                       <select 
                         value={editingGroup.type}
                         onChange={(e) => setEditingGroup({ ...editingGroup, type: e.target.value as any, minChoices: e.target.value === 'unica' ? 1 : 0, maxChoices: e.target.value === 'unica' ? 1 : editingGroup.maxChoices })}
-                        className="w-full bg-[#1a1a1a] border border-white/5 rounded-lg h-10 px-4 text-xs text-white appearance-none font-bold uppercase tracking-tighter cursor-pointer"
+                        className="w-full bg-white/[0.05] border border-white/5 rounded-lg h-12 px-4 text-sm text-white appearance-none font-bold uppercase tracking-tighter cursor-pointer"
                       >
                         <option value="unica">SELEÇÃO ÚNICA</option>
                         <option value="multipla">MÚLTIPLA ESCOLHA</option>
@@ -556,32 +556,32 @@ export default function GruposAdicionaisPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 block">Mínimo</label>
+                    <label className="text-[10px] font-bold text-white/50 ml-1 block">Mínimo</label>
                     <input 
                       type="number" 
                       value={editingGroup.minChoices}
                       disabled={editingGroup.type === 'unica'}
                       onChange={(e) => setEditingGroup({ ...editingGroup, minChoices: parseInt(e.target.value) || 0 })}
-                      className="w-full bg-white/[0.03] border border-white/5 rounded-lg h-10 px-4 text-xs text-white focus:outline-none disabled:opacity-30 font-black text-center"
+                      className="w-full bg-white/[0.05] border border-white/5 rounded-lg h-12 px-4 text-sm text-white focus:outline-none disabled:opacity-30 font-black text-center"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 block">Máximo</label>
+                    <label className="text-[10px] font-bold text-white/50 ml-1 block">Máximo</label>
                     <input 
                       type="number" 
                       value={editingGroup.maxChoices}
                       disabled={editingGroup.type === 'unica'}
                       onChange={(e) => setEditingGroup({ ...editingGroup, maxChoices: parseInt(e.target.value) || 0 })}
-                      className="w-full bg-white/[0.03] border border-white/5 rounded-lg h-10 px-4 text-xs text-white focus:outline-none disabled:opacity-30 font-black text-center"
+                      className="w-full bg-white/[0.05] border border-white/5 rounded-lg h-12 px-4 text-sm text-white focus:outline-none disabled:opacity-30 font-black text-center"
                     />
                   </div>
                 </div>
 
                 {/* Switch de Status do Grupo */}
-                <div className="flex items-center justify-between p-3.5 bg-white/[0.02] border border-white/5 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-white/[0.02] border border-white/5 rounded-lg">
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-white uppercase tracking-wider">Status do Grupo</span>
-                    <span className="text-[8px] text-muted-foreground font-medium uppercase opacity-50 italic">Habilita/Desabilita todas as opções</span>
+                    <span className="text-[11px] font-bold text-white uppercase tracking-wider">Status do Grupo</span>
+                    <span className="text-[9px] text-white/40 font-medium uppercase italic">Habilita/Desabilita todas as opções</span>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input 
@@ -597,19 +597,19 @@ export default function GruposAdicionaisPage() {
                 {/* Sub-Gerenciamento de Itens */}
                 <div className="space-y-4 pt-4 border-t border-white/5">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Adicionais do Grupo</h4>
-                    <span className="text-[9px] font-bold text-muted-foreground uppercase opacity-50">{editingGroup.items.length} itens cadastrados</span>
+                    <h4 className="text-[11px] font-bold text-orange-500 uppercase tracking-[0.2em]">Adicionais do Grupo</h4>
+                    <span className="text-[9px] font-bold text-white/40 uppercase">{editingGroup.items.length} itens cadastrados</span>
                   </div>
 
                   {/* Input de Novo Item */}
-                  <div className="flex gap-2 items-end bg-white/[0.01] p-3 rounded-lg border border-dashed border-white/10 group hover:border-primary/30 transition-all">
+                  <div className="flex gap-2 items-end bg-white/[0.01] p-3 rounded-xl border border-dashed border-white/10 group hover:border-orange-500/30 transition-all">
                     <div className="flex-1 space-y-2">
                        <input 
                         type="text" 
                         value={newItemName}
                         onChange={(e) => setNewItemName(e.target.value)}
                         placeholder="Nome do adicional (ex: Bacon extra)"
-                        className="w-full bg-transparent border-b border-white/10 h-8 text-xs text-white focus:outline-none focus:border-primary/50 transition-all"
+                        className="w-full bg-transparent border-b border-white/10 h-10 text-sm text-white focus:outline-none focus:border-orange-500/50 transition-all"
                       />
                     </div>
                     <div className="w-24 space-y-2">
@@ -618,13 +618,13 @@ export default function GruposAdicionaisPage() {
                         value={newItemPrice}
                         onChange={(e) => setNewItemPrice(e.target.value)}
                         placeholder="Preço R$"
-                        className="w-full bg-transparent border-b border-white/10 h-8 text-xs text-primary font-black focus:outline-none focus:border-primary/50 text-right"
+                        className="w-full bg-transparent border-b border-white/10 h-10 text-sm text-orange-500 font-black focus:outline-none focus:border-orange-500/50 text-right"
                       />
                     </div>
                     <button 
                       type="button"
                       onClick={addItemToGroup}
-                      className="p-2 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg transition-all cursor-pointer"
+                      className="p-2.5 bg-orange-500/10 hover:bg-orange-500 text-orange-500 hover:text-white rounded-lg transition-all cursor-pointer"
                     >
                       <PlusCircle className="w-5 h-5" />
                     </button>
@@ -634,14 +634,14 @@ export default function GruposAdicionaisPage() {
                   <div className="space-y-2 overflow-y-auto max-h-48 pr-2 custom-scrollbar">
                     {editingGroup.items.length === 0 ? (
                       <div className="py-8 text-center border border-white/5 rounded-lg bg-black/20">
-                        <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest opacity-30 italic">Nenhum item adicionado</span>
+                        <span className="text-[10px] text-white/20 font-bold uppercase tracking-widest italic font-medium">Nenhum item adicionado</span>
                       </div>
                     ) : (
                       editingGroup.items.map((item) => (
                         <div key={item.id} className="flex items-center justify-between p-3 bg-white/[0.03] border border-white/5 rounded-lg group hover:bg-white/[0.05] transition-all">
                           <div className="flex flex-col">
                             <span className="text-[11px] font-bold text-white uppercase tracking-tight">{item.name}</span>
-                            <span className="text-[9px] text-primary font-black">+ R$ {item.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                            <span className="text-[10px] font-bold text-orange-500">+ R$ {item.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                           </div>
                           <button 
                             type="button"
@@ -661,16 +661,16 @@ export default function GruposAdicionaisPage() {
                   <button 
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="flex-1 h-11 bg-white/5 hover:bg-white/10 text-white font-black text-[10px] uppercase tracking-widest rounded-lg border border-white/5 transition-all cursor-pointer active:scale-95"
+                    className="flex-1 h-12 bg-white/5 hover:bg-white/10 text-white font-bold text-[11px] uppercase tracking-widest rounded-xl border border-white/5 transition-all cursor-pointer active:scale-95"
                   >
                     Cancelar
                   </button>
                   <button 
                     type="submit"
-                    className="flex-1 h-11 bg-primary hover:bg-orange-600 text-white font-black text-[10px] uppercase tracking-widest rounded-lg shadow-xl shadow-primary/20 transition-all flex items-center justify-center gap-2 group cursor-pointer active:scale-95"
+                    className="flex-1 h-12 bg-orange-600 hover:bg-orange-500 text-white font-bold text-[11px] uppercase tracking-widest rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 group cursor-pointer active:scale-95"
                   >
                     {editingGroup.id ? "Salvar Grupo" : "Criar Grupo"}
-                    <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                    <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </div>
               </form>
