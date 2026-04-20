@@ -18,7 +18,8 @@ import {
   Loader2,
   PlusCircle,
   MinusCircle,
-  DollarSign
+  DollarSign,
+  FolderOpen
 } from "lucide-react";
 import Swal from "sweetalert2";
 
@@ -352,10 +353,10 @@ export default function GruposAdicionaisPage() {
 
           <button 
             onClick={openAddModal}
-            className="flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-orange-600 text-white rounded-[8px] font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-primary/20 active:scale-95 group cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 bg-orange-600 hover:bg-orange-500 text-white rounded-[8px] font-bold text-[10px] uppercase tracking-widest transition-all shadow-sm active:scale-95 group cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5 transition-transform group-hover:rotate-90" />
-            Novo Grupo de Adicionais
+            + Novo Adicional
           </button>
         </div>
 
@@ -399,95 +400,106 @@ export default function GruposAdicionaisPage() {
           </div>
         </div>
 
-        {/* Groups Table */}
-        <div className="glass border border-white/5 rounded-[8px] overflow-hidden shadow-2xl">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-white/[0.02] border-b border-white/5">
-                  <th className="px-6 py-5 w-10">
-                    <div className="flex items-center justify-center">
-                      <input 
-                        type="checkbox" 
-                        checked={filteredGroups.length > 0 && selectedIds.size === filteredGroups.length}
-                        onChange={handleSelectAll}
-                        className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
-                      />
-                    </div>
-                  </th>
-                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Nome do Grupo</th>
-                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Tipo</th>
-                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-center">Itens</th>
-                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-center">Status</th>
-                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-right">Ações</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {filteredGroups.map((group) => (
-                  <tr key={group.id} className={`hover:bg-white/[0.02] transition-colors group ${selectedIds.has(group.id) ? 'bg-primary/5' : ''}`}>
-                    <td className="px-6 py-4">
+        {/* Groups Table or Empty State */}
+        {filteredGroups.length > 0 ? (
+          <div className="glass border border-white/5 rounded-[8px] overflow-hidden shadow-2xl">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-white/[0.02] border-b border-white/5">
+                    <th className="px-6 py-5 w-10">
                       <div className="flex items-center justify-center">
                         <input 
                           type="checkbox" 
-                          checked={selectedIds.has(group.id)}
-                          onChange={() => handleSelectOne(group.id)}
-                          className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary cursor-pointer accent-primary" 
+                          checked={filteredGroups.length > 0 && selectedIds.size === filteredGroups.length}
+                          onChange={handleSelectAll}
+                          className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
                         />
                       </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium text-white group-hover:text-primary transition-colors tracking-tight uppercase">
-                          {group.name}
-                        </span>
-                        <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest opacity-50 mt-0.5">ID: #{group.id.toString().padStart(4, '0')}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-1.5 h-1.5 rounded-full ${group.type === 'unica' ? 'bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]' : 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]'}`} />
-                        <span className="text-[10px] font-black text-white uppercase tracking-wider">{group.type === 'unica' ? 'Seleção Única' : 'Múltipla Escolha'}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="inline-flex items-center justify-center min-w-[32px] h-7 bg-white/5 border border-white/10 rounded-lg text-[11px] font-black text-white/60">
-                        {group.items.length}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex justify-center">
-                        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${
-                          group.status === "ativo" 
-                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" 
-                            : "bg-red-500/10 border-red-500/20 text-red-500"
-                        }`}>
-                          {group.status === "ativo" ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-                          <span className="text-[9px] font-black uppercase tracking-widest">{group.status}</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button 
-                          onClick={() => openEditModal(group)}
-                          className="p-2.5 rounded-lg bg-white/5 hover:bg-primary/10 text-muted-foreground hover:text-primary border border-white/5 hover:border-primary/20 transition-all cursor-pointer"
-                        >
-                          <Pencil className="w-3.5 h-3.5" />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(group)}
-                          className="p-2.5 rounded-lg bg-white/5 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 border border-white/5 hover:border-red-500/20 transition-all cursor-pointer"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </td>
+                    </th>
+                    <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Nome do Grupo</th>
+                    <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Tipo</th>
+                    <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-center">Itens</th>
+                    <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-center">Status</th>
+                    <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-right">Ações</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {filteredGroups.map((group) => (
+                    <tr key={group.id} className={`hover:bg-white/[0.02] transition-colors group ${selectedIds.has(group.id) ? 'bg-primary/5' : ''}`}>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-center">
+                          <input 
+                            type="checkbox" 
+                            checked={selectedIds.has(group.id)}
+                            onChange={() => handleSelectOne(group.id)}
+                            className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary cursor-pointer accent-primary" 
+                          />
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium text-white group-hover:text-primary transition-colors tracking-tight uppercase">
+                            {group.name}
+                          </span>
+                          <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest opacity-50 mt-0.5">ID: #{group.id.toString().padStart(4, '0')}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-1.5 h-1.5 rounded-full ${group.type === 'unica' ? 'bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]' : 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]'}`} />
+                          <span className="text-[10px] font-black text-white uppercase tracking-wider">{group.type === 'unica' ? 'Seleção Única' : 'Múltipla Escolha'}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="inline-flex items-center justify-center min-w-[32px] h-7 bg-white/5 border border-white/10 rounded-lg text-[11px] font-black text-white/60">
+                          {group.items.length}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex justify-center">
+                          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${
+                            group.status === "ativo" 
+                              ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" 
+                              : "bg-red-500/10 border-red-500/20 text-red-500"
+                          }`}>
+                            {group.status === "ativo" ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                            <span className="text-[9px] font-black uppercase tracking-widest">{group.status}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button 
+                            onClick={() => openEditModal(group)}
+                            className="p-2.5 rounded-lg bg-white/5 hover:bg-primary/10 text-muted-foreground hover:text-primary border border-white/5 hover:border-primary/20 transition-all cursor-pointer"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(group)}
+                            className="p-2.5 rounded-lg bg-white/5 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 border border-white/5 hover:border-red-500/20 transition-all cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        ) : (
+          /* ESTADO VAZIO LIMPO E CENTRALIZADO */
+          <div className="flex flex-col items-center justify-center min-h-[400px] bg-[#1f2937]/50 border border-white/5 rounded-2xl animate-in fade-in zoom-in duration-700 shadow-2xl py-20 px-4 text-center">
+            <FolderOpen size={80} className="text-white opacity-10 mb-8" />
+            <h2 className="text-2xl font-black text-white mb-3 tracking-tight uppercase">Sua vitrine de adicionais está vazia</h2>
+            <p className="text-muted-foreground text-sm font-medium max-w-sm">
+              Clique no botão acima para adicionar seu primeiro adicional e organizar seu cardápio.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Modal de Cadastro Avançado */}
