@@ -285,6 +285,9 @@ export default function Sidebar() {
                               key={sub.href}
                               href={sub.href}
                               className={`flex items-center gap-3 py-2 text-[9px] uppercase tracking-[0.2em] font-black transition-all relative outline-none
+                                ${isSubActive ? "text-white font-semibold" : "text-white/60 hover:text-white"}
+                              `}
+                            >
                               {isSubActive && (
                                 <div className="absolute -left-3.5 w-1 h-1 rounded-full bg-white" />
                               )}
