@@ -5,29 +5,16 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 export async function POST(request: Request) {
   try {
-    // Auditoria de Variáveis R2 (Snapshots para Depuração)
-    const mask = (val: string | undefined) => {
-      if (!val) return 'AUSENTE';
-      if (val.length < 8) return 'DEFINIDA (Curta)';
-      return `${val.substring(0, 4)}...${val.substring(val.length - 4)}`;
-    };
-
-    console.log('NEXT_PUBLIC_R2_PUBLIC_URL:', mask(process.env['NEXT_PUBLIC_R2_PUBLIC_URL']));
-    
-    // Log específico solicitado para conferência rápida na Vercel
-    console.log('R2 Config Check:', { 
-      endpoint: !!process.env['R2_ENDPOINT'], 
-      bucket: !!process.env['R2_BUCKET_NAME'], 
-      key: !!process.env['R2_ACCESS_KEY_ID'] 
-    });
+    // Log solicitado para conferência do Bucket
+    console.log("Bucket:", process.env.R2_BUCKET_NAME);
 
     const s3Client = new S3Client({
-      region: 'auto', // Forçado como literal conforme exigência do R2 SDK
-      endpoint: process.env['R2_ENDPOINT']!,
+      region: 'auto',
+      endpoint: process.env.R2_ENDPOINT!,
       forcePathStyle: false,
       credentials: {
-        accessKeyId: process.env['R2_ACCESS_KEY_ID']!,
-        secretAccessKey: process.env['R2_SECRET_ACCESS_KEY']!,
+        accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
       },
     });
 
@@ -46,11 +33,11 @@ export async function POST(request: Request) {
 
     // Verificação de presença de variáveis de ambiente no Runtime
     console.log('--- DEBUG UPLOAD: AMBIENTE ---');
-    console.log('R2_ENDPOINT:', !!process.env['R2_ENDPOINT']);
-    console.log('R2_ACCESS_KEY_ID:', !!process.env['R2_ACCESS_KEY_ID']);
-    console.log('R2_SECRET_ACCESS_KEY:', !!process.env['R2_SECRET_ACCESS_KEY']);
-    console.log('Bucket:', process.env['R2_BUCKET_NAME'] ? "OK" : "VAZIO");
-    console.log('NEXT_PUBLIC_R2_PUBLIC_URL:', !!process.env['NEXT_PUBLIC_R2_PUBLIC_URL']);
+    console.log('R2_ENDPOINT:', !!process.env.R2_ENDPOINT);
+    console.log('R2_ACCESS_KEY_ID:', !!process.env.R2_ACCESS_KEY_ID);
+    console.log('R2_SECRET_ACCESS_KEY:', !!process.env.R2_SECRET_ACCESS_KEY);
+    console.log('Bucket presente:', !!process.env.R2_BUCKET_NAME);
+    console.log('NEXT_PUBLIC_R2_PUBLIC_URL:', !!process.env.NEXT_PUBLIC_R2_PUBLIC_URL);
 
     const file = formData.get('file') as File;
 
@@ -68,7 +55,7 @@ export async function POST(request: Request) {
 
     console.log('Caminho Final no R2:', filePath);
 
-    const bucketName = process.env['R2_BUCKET_NAME'] || 'movieats-prod';
+    const bucketName = process.env.R2_BUCKET_NAME || 'movieats-prod';
 
     const uploadParams = {
       Bucket: bucketName!,
@@ -95,7 +82,7 @@ export async function POST(request: Request) {
     }
 
     // URL pública construída com a variável de ambiente necessária
-    const publicUrl = `${process.env['NEXT_PUBLIC_R2_PUBLIC_URL']!}/${filePath}`;
+    const publicUrl = `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL!}/${filePath}`;
 
     return NextResponse.json({ url: publicUrl });
   } catch (error: any) {
