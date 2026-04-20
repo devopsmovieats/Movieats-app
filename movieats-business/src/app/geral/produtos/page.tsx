@@ -701,56 +701,61 @@ export default function ProdutosPage() {
 
       </div>
 
-      {/* Modal de Cadastro/Edição Compacto */}
+      {/* Modal de Cadastro/Edição Estilo Login (Premium) */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 overflow-hidden">
-          <div className="absolute inset-0 bg-[#0a0a0a]/90 backdrop-blur-xl animate-in fade-in duration-500" onClick={() => setIsModalOpen(false)} />
-          <div className="relative w-full max-w-2xl bg-[#141414] border border-white/10 rounded-[8px] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-500 overflow-hidden">
+          {/* Backdrop Blur Premium */}
+          <div 
+            className="absolute inset-0 bg-[#111827]/90 backdrop-blur-xl animate-in fade-in duration-500"
+            onClick={() => setIsModalOpen(false)}
+          />
+          
+          {/* Modal Container - Estilo Login (Suave e Moderno) */}
+          <div className="relative w-full max-w-2xl bg-[#111827]/95 backdrop-blur-[15px] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden">
             
-            <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Box className="text-primary w-4 h-4" />
-                </div>
-                <h3 className="text-[12px] font-headline font-black text-white uppercase tracking-tight">
-                  {editingProduct?.id ? `Editar: ${editingProduct.name}` : "Novo Produto"}
+            {/* Modal Header Premium */}
+            <div className="px-8 py-6 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01]">
+              <div className="flex flex-col">
+                <h3 className="text-base font-headline font-bold text-white uppercase tracking-tight leading-loose">
+                  {editingProduct?.id ? `Editar Produto` : "Novo Produto"}
                 </h3>
+                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest opacity-40">Gestão de Cardápio Digital</span>
               </div>
               <button 
-                onClick={() => setIsModalOpen(false)} 
-                className="p-2 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-white transition-all cursor-pointer"
+                onClick={() => setIsModalOpen(false)}
+                className="p-2 rounded-xl hover:bg-white/5 text-muted-foreground hover:text-white transition-all cursor-pointer group"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveProduct} className="p-5 space-y-4">
-              <div className="space-y-2">
-                <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Imagem do Produto</label>
+            <form onSubmit={handleSaveProduct} className="p-8 pt-6 space-y-6">
+              <div className="space-y-3">
+                <label className="text-[13px] font-bold text-white/50 ml-1 block">Imagem do Produto</label>
                 <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
                 <div 
                   onClick={() => fileInputRef.current?.click()} 
-                  className="w-full h-28 border-2 border-dashed border-white/5 hover:border-primary/30 rounded-[8px] flex flex-col items-center justify-center gap-2 bg-white/[0.02] cursor-pointer group transition-all relative overflow-hidden"
+                  className="w-full h-32 border-2 border-dashed border-white/5 hover:border-primary/30 rounded-2xl flex flex-col items-center justify-center gap-2 bg-white/[0.02] cursor-pointer group transition-all relative overflow-hidden"
                 >
                   {editingProduct?.image && <img src={editingProduct.image} className="absolute inset-0 w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity" alt="" />}
                   <div className="p-2 bg-white/5 rounded-full group-hover:scale-110 transition-all">
-                    <ImageIcon className="w-5 h-5 text-white/30 group-hover:text-primary transition-colors" />
+                    <ImageIcon className="w-6 h-6 text-white/30 group-hover:text-primary transition-colors" />
                   </div>
                   <div className="flex flex-col items-center relative z-10">
                     <span className="text-[10px] font-black text-white/20 uppercase tracking-widest group-hover:text-white transition-colors">Upload da Imagem</span>
-                    <span className="text-[8px] text-muted-foreground/30 font-bold uppercase mt-0.5">PNG ou JPG • Máx 2MB</span>
+                    <span className="text-[8px] text-muted-foreground/30 font-bold uppercase mt-0.5">PNG ou JPG • Máx 4MB</span>
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 block">Categoria</label>
+                  <label className="text-[13px] font-bold text-white/50 ml-1 block">Categoria</label>
                   <div className="relative">
                     <select 
                       value={editingProduct?.category || ""}
                       onChange={(e) => setEditingProduct(prev => prev ? { ...prev, category: e.target.value } : { id: 0, name: "", category: e.target.value, price: 0, order: products.length + 1, description: "", image: "", status: "ativo", removableIngredients: [] })}
-                      className="w-full bg-[#1a1a1a] border border-white/5 rounded-lg h-10 px-4 text-xs text-white focus:outline-none focus:border-primary/50 appearance-none font-bold uppercase tracking-tighter cursor-pointer"
+                      className="w-full bg-white/[0.05] border border-white/5 rounded-lg h-12 px-4 text-sm text-white focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 appearance-none font-bold uppercase tracking-tighter cursor-pointer"
                       required
                     >
                       <option value="" disabled>Selecione uma categoria</option>
@@ -763,59 +768,59 @@ export default function ProdutosPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 block">Nome do Produto</label>
+                  <label className="text-[13px] font-bold text-white/50 ml-1 block">Nome do Produto</label>
                   <input 
                     type="text" 
                     value={editingProduct?.name || ""} 
                     onChange={(e) => setEditingProduct(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, category: "", price: 0, order: products.length + 1, description: "", image: "", status: "ativo", removableIngredients: [] })} 
                     placeholder="Ex: Smash Burger" 
-                    className="w-full bg-white/[0.03] border border-white/5 rounded-lg h-10 px-4 text-xs text-white placeholder:text-muted-foreground/20 focus:outline-none focus:border-primary/50 transition-all font-medium" 
+                    className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium" 
                     required 
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 block">Preço (R$)</label>
+                  <label className="text-[13px] font-bold text-white/50 ml-1 block">Preço (R$)</label>
                   <input 
                     type="number" 
                     step="0.01" 
                     value={editingProduct?.price || ""} 
                     onChange={(e) => setEditingProduct(prev => prev ? { ...prev, price: parseFloat(e.target.value) || 0 } : { id: 0, name: "", category: "", price: parseFloat(e.target.value) || 0, order: products.length + 1, description: "", image: "", status: "ativo", removableIngredients: [] })} 
                     placeholder="Ex: 34.90" 
-                    className="w-full bg-white/[0.03] border border-white/5 rounded-lg h-10 px-4 text-xs text-white placeholder:text-muted-foreground/20 focus:outline-none focus:border-primary/50 transition-all font-black text-primary" 
+                    className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-black text-primary" 
                     required 
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 block">Ordem</label>
+                  <label className="text-[13px] font-bold text-white/50 ml-1 block">Ordem</label>
                   <input 
                     type="number" 
                     value={editingProduct?.order || ""} 
                     onChange={(e) => setEditingProduct(prev => prev ? { ...prev, order: parseInt(e.target.value) || 0 } : { id: 0, name: "", category: "", price: 0, order: parseInt(e.target.value) || 0, description: "", image: "", status: "ativo", removableIngredients: [] })} 
                     placeholder="Ex: 1" 
-                    className="w-full bg-white/[0.03] border border-white/5 rounded-lg h-10 px-4 text-xs text-white placeholder:text-muted-foreground/20 focus:outline-none focus:border-primary/50 transition-all font-black text-center" 
+                    className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-black text-center" 
                     required 
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 block">Descrição</label>
+                <label className="text-[13px] font-bold text-white/50 ml-1 block">Descrição</label>
                 <textarea 
                   value={editingProduct?.description || ""} 
                   onChange={(e) => setEditingProduct(prev => prev ? { ...prev, description: e.target.value } : { id: 0, name: "", category: "", price: 0, order: products.length + 1, description: e.target.value, image: "", status: "ativo", removableIngredients: [] })} 
                   placeholder="Descreva brevemente o produto..." 
-                  className="w-full bg-white/[0.03] border border-white/5 rounded-lg p-3 text-[11px] text-white placeholder:text-muted-foreground/20 focus:outline-none focus:border-primary/50 transition-all font-medium min-h-[80px] resize-none leading-relaxed" 
+                  className="w-full bg-white/[0.05] border border-white/5 rounded-lg p-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium min-h-[100px] resize-none leading-relaxed" 
                   required 
                 />
               </div>
 
               {/* Ingredientes Removíveis */}
-              <div className="space-y-3 pt-2">
+              <div className="space-y-4 pt-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 block">
+                  <label className="text-[13px] font-bold text-white/50 ml-1 block">
                     Ingredientes (Para retirada)
                   </label>
-                  <span className="text-[8px] text-muted-foreground/30 font-bold uppercase">
+                  <span className="text-[9px] text-muted-foreground/30 font-bold uppercase tracking-widest">
                     Enter para adicionar
                   </span>
                 </div>
@@ -834,7 +839,7 @@ export default function ProdutosPage() {
                         }
                       }}
                       placeholder="Ex: Cebola, Picles, Tomate..."
-                      className="w-full bg-white/[0.03] border border-white/5 rounded-lg h-9 pl-9 pr-4 text-[11px] text-white placeholder:text-muted-foreground/20 focus:outline-none focus:border-primary/50 transition-all font-medium"
+                      className="w-full h-11 bg-white/[0.05] border border-white/5 rounded-lg pl-10 pr-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium"
                     />
                   </div>
                   <button 
@@ -872,20 +877,20 @@ export default function ProdutosPage() {
                 </div>
               </div>
 
-              <div className="flex gap-4 pt-3 border-t border-white/5">
+              <div className="flex gap-4 pt-6 border-t border-white/[0.03]">
                 <button 
                   type="button" 
                   onClick={() => setIsModalOpen(false)} 
-                  className="flex-1 h-10 bg-white/5 hover:bg-white/10 text-white font-black text-[10px] uppercase tracking-widest rounded-lg border border-white/5 transition-all cursor-pointer active:scale-95"
+                  className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white font-bold text-sm uppercase tracking-wider rounded-xl transition-all border border-white/5 active:scale-95 cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button 
                   type="submit" 
-                  className="flex-1 h-10 bg-orange-600 hover:bg-orange-500 text-white font-bold text-sm rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 group cursor-pointer active:scale-95"
+                  className="flex-1 px-6 py-3 bg-orange-600 hover:bg-orange-500 text-white font-bold text-sm uppercase tracking-wider rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-3 group cursor-pointer"
                 >
-                  {editingProduct?.id ? "Salvar Produto" : "Confirmar Produto"}
-                  <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  {editingProduct?.id ? "Salvar Produto" : "Criar Produto"}
+                  <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
             </form>
