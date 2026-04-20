@@ -178,8 +178,8 @@ export default function Sidebar() {
               <span className="text-sm font-bold tracking-tight text-slate-900 dark:text-white leading-tight truncate">
                 {brand.name}
               </span>
-              <span className="text-[10px] font-medium text-white/40 tracking-wider mt-0.5 opacity-90">
-                {userRole === "ATENDENTE" ? "Atendimento" : userRole === "GERENTE" ? "Gestão Operacional" : "Portal do Estabelecimento"}
+              <span className="text-[10px] font-medium text-white/50 tracking-wider mt-0.5 opacity-90">
+                {userRole === "Atendente" ? "Atendimento" : userRole === "Gerente" ? "Gestão Operacional" : "Portal do Estabelecimento"}
               </span>
             </div>
           )}
@@ -284,7 +284,7 @@ export default function Sidebar() {
                             <Link
                               key={sub.href}
                               href={sub.href}
-                              className={`flex items-center gap-3 py-2 text-[9px] uppercase tracking-[0.2em] font-black transition-all relative outline-none
+                              className={`flex items-center gap-3 py-2 text-sm font-medium transition-all relative outline-none
                                 ${isSubActive ? "text-white font-semibold" : "text-white/60 hover:text-white"}
                               `}
                             >
