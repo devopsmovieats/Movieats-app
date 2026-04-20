@@ -711,7 +711,7 @@ export default function ProdutosPage() {
           />
           
           {/* Modal Container - Estilo Login (Suave e Moderno) */}
-          <div className="relative w-full max-w-2xl bg-[#111827]/95 backdrop-blur-[15px] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden">
+          <div className="relative w-full max-w-3xl bg-[#1f2937] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden">
             
             {/* Modal Header Premium */}
             <div className="px-8 py-6 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01]">
@@ -735,71 +735,78 @@ export default function ProdutosPage() {
                 <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
                 <div 
                   onClick={() => fileInputRef.current?.click()} 
-                  className="w-full h-32 border-2 border-dashed border-white/5 hover:border-primary/30 rounded-2xl flex flex-col items-center justify-center gap-2 bg-white/[0.02] cursor-pointer group transition-all relative overflow-hidden"
+                  className="w-full h-24 border-2 border-dashed border-white/5 hover:border-primary/30 rounded-2xl flex flex-col items-center justify-center gap-2 bg-white/[0.02] cursor-pointer group transition-all relative overflow-hidden"
                 >
                   {editingProduct?.image && <img src={editingProduct.image} className="absolute inset-0 w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity" alt="" />}
                   <div className="p-2 bg-white/5 rounded-full group-hover:scale-110 transition-all">
-                    <ImageIcon className="w-6 h-6 text-white/30 group-hover:text-primary transition-colors" />
+                    <ImageIcon className="w-5 h-5 text-white/30 group-hover:text-primary transition-colors" />
                   </div>
-                  <div className="flex flex-col items-center relative z-10">
+                  <div className="flex items-center gap-4 relative z-10">
                     <span className="text-[10px] font-black text-white/20 uppercase tracking-widest group-hover:text-white transition-colors">Upload da Imagem</span>
-                    <span className="text-[8px] text-muted-foreground/30 font-bold uppercase mt-0.5">PNG ou JPG • Máx 4MB</span>
+                    <span className="text-[8px] text-muted-foreground/30 font-bold uppercase">PNG ou JPG • Máx 4MB</span>
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-[13px] font-bold text-white/50 ml-1 block">Categoria</label>
-                  <div className="relative">
-                    <select 
-                      value={editingProduct?.category || ""}
-                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, category: e.target.value } : { id: 0, name: "", category: e.target.value, price: 0, order: products.length + 1, description: "", image: "", status: "ativo", removableIngredients: [] })}
-                      className="w-full bg-white/[0.05] border border-white/5 rounded-lg h-12 px-4 text-sm text-white focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 appearance-none font-bold uppercase tracking-tighter cursor-pointer"
-                      required
-                    >
-                      <option value="" disabled>Selecione uma categoria</option>
-                      {categories.map(cat => (
-                        <option key={cat.id} value={cat.name}>{cat.name.toUpperCase()}</option>
-                      ))}
-                      {categories.length === 0 && <option value="Sem Categoria">SEM CATEGORIA</option>}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+              <div className="grid grid-cols-2 gap-8">
+                {/* Coluna 1: Nome e Categoria */}
+                <div className="space-y-5">
+                  <div className="space-y-2">
+                    <label className="text-[13px] font-bold text-white/50 ml-1 block">Nome do Produto</label>
+                    <input 
+                      type="text" 
+                      value={editingProduct?.name || ""} 
+                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, category: "", price: 0, order: products.length + 1, description: "", image: "", status: "ativo", removableIngredients: [] })} 
+                      placeholder="Ex: Smash Burger" 
+                      className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium" 
+                      required 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[13px] font-bold text-white/50 ml-1 block">Categoria</label>
+                    <div className="relative">
+                      <select 
+                        value={editingProduct?.category || ""}
+                        onChange={(e) => setEditingProduct(prev => prev ? { ...prev, category: e.target.value } : { id: 0, name: "", category: e.target.value, price: 0, order: products.length + 1, description: "", image: "", status: "ativo", removableIngredients: [] })}
+                        className="w-full bg-white/[0.05] border border-white/5 rounded-lg h-12 px-4 text-sm text-white focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 appearance-none font-bold uppercase tracking-tighter cursor-pointer"
+                        required
+                      >
+                        <option value="" disabled>Selecione uma categoria</option>
+                        {categories.map(cat => (
+                          <option key={cat.id} value={cat.name}>{cat.name.toUpperCase()}</option>
+                        ))}
+                        {categories.length === 0 && <option value="Sem Categoria">SEM CATEGORIA</option>}
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+                    </div>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[13px] font-bold text-white/50 ml-1 block">Nome do Produto</label>
-                  <input 
-                    type="text" 
-                    value={editingProduct?.name || ""} 
-                    onChange={(e) => setEditingProduct(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, category: "", price: 0, order: products.length + 1, description: "", image: "", status: "ativo", removableIngredients: [] })} 
-                    placeholder="Ex: Smash Burger" 
-                    className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium" 
-                    required 
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[13px] font-bold text-white/50 ml-1 block">Preço (R$)</label>
-                  <input 
-                    type="number" 
-                    step="0.01" 
-                    value={editingProduct?.price || ""} 
-                    onChange={(e) => setEditingProduct(prev => prev ? { ...prev, price: parseFloat(e.target.value) || 0 } : { id: 0, name: "", category: "", price: parseFloat(e.target.value) || 0, order: products.length + 1, description: "", image: "", status: "ativo", removableIngredients: [] })} 
-                    placeholder="Ex: 34.90" 
-                    className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-black text-primary" 
-                    required 
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[13px] font-bold text-white/50 ml-1 block">Ordem</label>
-                  <input 
-                    type="number" 
-                    value={editingProduct?.order || ""} 
-                    onChange={(e) => setEditingProduct(prev => prev ? { ...prev, order: parseInt(e.target.value) || 0 } : { id: 0, name: "", category: "", price: 0, order: parseInt(e.target.value) || 0, description: "", image: "", status: "ativo", removableIngredients: [] })} 
-                    placeholder="Ex: 1" 
-                    className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-black text-center" 
-                    required 
-                  />
+
+                {/* Coluna 2: Preço e Ordem */}
+                <div className="space-y-5">
+                  <div className="space-y-2">
+                    <label className="text-[13px] font-bold text-white/50 ml-1 block">Preço (R$)</label>
+                    <input 
+                      type="number" 
+                      step="0.01" 
+                      value={editingProduct?.price || ""} 
+                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, price: parseFloat(e.target.value) || 0 } : { id: 0, name: "", category: "", price: parseFloat(e.target.value) || 0, order: products.length + 1, description: "", image: "", status: "ativo", removableIngredients: [] })} 
+                      placeholder="Ex: 34.90" 
+                      className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-black text-primary" 
+                      required 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[13px] font-bold text-white/50 ml-1 block">Ordem</label>
+                    <input 
+                      type="number" 
+                      value={editingProduct?.order || ""} 
+                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, order: parseInt(e.target.value) || 0 } : { id: 0, name: "", category: "", price: 0, order: parseInt(e.target.value) || 0, description: "", image: "", status: "ativo", removableIngredients: [] })} 
+                      placeholder="Ex: 1" 
+                      className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-black text-center" 
+                      required 
+                    />
+                  </div>
                 </div>
               </div>
 
