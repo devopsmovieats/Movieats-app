@@ -132,7 +132,7 @@ export default function Header() {
           onClick={toggleTheme}
           className="p-2.5 rounded-xl border-none bg-white dark:bg-[#111111] text-slate-500 dark:text-slate-400 hover:text-orange-600 transition-all hover:scale-105 active:scale-95 shadow-premium cursor-pointer outline-none"
         >
-          {isDark ? <Sun className="w-5 h-5 text-yellow-500" /> : <Moon className="w-5 h-5 text-indigo-600" />}
+          {isDark ? <Moon className="w-5 h-5 text-blue-400" /> : <Sun className="w-5 h-5 text-yellow-500" />}
         </button>
 
         {/* Notifications */}
