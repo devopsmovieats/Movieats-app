@@ -661,7 +661,7 @@ export default function CategoriasPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <div className="w-12 h-12 rounded-full border-2 border-white/5 overflow-hidden shadow-inner group-hover:border-primary/30 transition-colors mx-auto bg-white/5 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-lg border-2 border-white/5 overflow-hidden shadow-inner group-hover:border-primary/30 transition-colors mx-auto bg-white/5 flex items-center justify-center">
                           {category.image ? (
                             <img src={category.image} alt={category.name} className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" />
                           ) : (
@@ -766,10 +766,10 @@ export default function CategoriasPage() {
             {/* Modal Header Premium */}
             <div className="px-8 py-6 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01]">
               <div className="flex flex-col">
-                <h3 className="text-[14px] font-headline font-black text-white uppercase tracking-tight leading-loose">
+                <h3 className="text-sm font-headline font-black text-white uppercase tracking-tight leading-loose">
                   {editingCategory?.id ? `Editar Categoria` : "Nova Categoria"}
                 </h3>
-                <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest opacity-40">Gestão de Cardápio Digital</span>
+                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest opacity-40">Gestão de Cardápio Digital</span>
               </div>
               <button 
                 onClick={() => setIsModalOpen(false)}
@@ -789,7 +789,7 @@ export default function CategoriasPage() {
                   <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
                   <div 
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-16 h-16 bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-primary/40 rounded-2xl flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden"
+                    className="w-16 h-16 bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-primary/40 rounded-lg flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden"
                   >
                     {(previewUrl || editingCategory?.image) ? (
                       <div className="relative w-full h-full flex items-center justify-center">
@@ -819,7 +819,7 @@ export default function CategoriasPage() {
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:items-end">
                     {/* Nome da Categoria */}
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1 block">Nome da Categoria</label>
+                      <label className="text-sm font-black uppercase tracking-[0.2em] text-white/30 ml-1 block">Nome da Categoria</label>
                       <input 
                         type="text" 
                         value={editingCategory?.name || ""}
@@ -831,7 +831,7 @@ export default function CategoriasPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1 block">Visibilidade</label>
+                      <label className="text-sm font-black uppercase tracking-[0.2em] text-white/30 ml-1 block">Visibilidade</label>
                         <div 
                           className="relative w-10 h-5.5 cursor-pointer"
                           onClick={() => {
@@ -881,14 +881,14 @@ export default function CategoriasPage() {
                 <button 
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-8 h-12 bg-white/5 hover:bg-white/10 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all border border-white/5 active:scale-95 cursor-pointer"
+                  className="px-8 py-2 bg-white/5 hover:bg-white/10 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all border border-white/5 active:scale-95 cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button 
                   type="submit"
                   disabled={isSaving}
-                  className="flex-1 h-12 bg-primary hover:bg-orange-600 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all shadow-[0_10px_30px_rgba(255,107,0,0.3)] active:scale-95 flex items-center justify-center gap-3 group cursor-pointer disabled:opacity-50"
+                  className="flex-1 py-2 bg-primary hover:bg-orange-600 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all shadow-[0_10px_30px_rgba(255,107,0,0.3)] active:scale-95 flex items-center justify-center gap-3 group cursor-pointer disabled:opacity-50"
                 >
                   {isSaving ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
