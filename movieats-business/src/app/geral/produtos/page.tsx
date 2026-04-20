@@ -494,7 +494,7 @@ export default function ProdutosPage() {
           {userRole !== "ATENDENTE" && (
             <button 
               onClick={openAddModal}
-              className="flex items-center gap-2.5 px-5 py-2.5 bg-white hover:bg-slate-100 text-slate-900 rounded-lg font-bold text-sm transition-all shadow-sm border border-white/5 active:scale-95 group cursor-pointer"
+              className="flex items-center gap-2.5 px-5 py-2.5 bg-white hover:bg-slate-100 text-slate-900 rounded-lg font-bold text-[13px] transition-all shadow-lg shadow-black/20 active:scale-95 group cursor-pointer"
             >
               <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
               Novo Produto
