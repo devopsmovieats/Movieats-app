@@ -24,6 +24,7 @@ import {
   Camera
 } from "lucide-react";
 import Swal from "sweetalert2";
+import { getPublicUrl } from "@/lib/utils";
 
 // ID Fixo para teste - Villa Gourmet
 // const FIXED_ESTABLISHMENT_ID = '17db3a9f-f6c1-434d-8f4a-e40cd67035f2';
@@ -663,7 +664,7 @@ export default function CategoriasPage() {
                       <td className="px-6 py-4 text-center">
                         <div className="w-12 h-12 rounded-lg border-2 border-white/5 overflow-hidden shadow-inner group-hover:border-primary/30 transition-colors mx-auto bg-white/5 flex items-center justify-center">
                           {category.image ? (
-                            <img src={category.image} alt={category.name} className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" />
+                            <img src={getPublicUrl(category.image)} alt={category.name} className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" />
                           ) : (
                             <ImageIcon className="w-5 h-5 text-white/10" />
                           )}
@@ -794,7 +795,7 @@ export default function CategoriasPage() {
                     {(previewUrl || editingCategory?.image) ? (
                       <div className="relative w-full h-full flex items-center justify-center">
                         <img 
-                          src={previewUrl || editingCategory?.image} 
+                          src={previewUrl || getPublicUrl(editingCategory?.image)} 
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                           alt="Preview" 
                         />
