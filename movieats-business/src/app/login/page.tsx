@@ -170,8 +170,8 @@ export default function LoginPage() {
           {/* Branding */}
           <div className="flex flex-col items-center mb-5">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/10 rounded-xl">
-                <Flame className="text-primary w-8 h-8 fill-primary" />
+              <div className="p-2 bg-[#ff6b00]/10 rounded-xl">
+                <Flame className="text-[#ff6b00] w-8 h-8 fill-[#ff6b00]" />
               </div>
               <h1 className="font-headline text-3xl font-black tracking-tighter text-white">MOVIEATS</h1>
             </div>
@@ -234,12 +234,12 @@ export default function LoginPage() {
                     <div className="w-2 h-2 rounded-full bg-white scale-0 peer-checked:scale-100 transition-transform" />
                   </div>
                 </div>
-                <span className="text-[10px] text-white/40 group-hover:text-primary transition-colors font-bold uppercase tracking-widest">Lembrar</span>
+                <span className="text-[10px] text-white/40 group-hover:text-[#ff6b00] transition-colors font-bold uppercase tracking-widest">Lembrar</span>
               </label>
               <button 
                 type="button" 
                 onClick={handleRecoverPassword}
-                className="text-[10px] font-bold text-white/40 hover:text-primary tracking-widest uppercase transition-colors cursor-pointer"
+                className="text-[10px] font-bold text-white/40 hover:text-[#ff6b00] tracking-widest uppercase transition-colors cursor-pointer"
               >
                 Esqueci a Senha
               </button>
@@ -248,7 +248,7 @@ export default function LoginPage() {
             <button 
               type="submit"
               disabled={isLoading}
-              className="w-full h-12 bg-primary hover:bg-orange-600 active:scale-[0.98] disabled:opacity-70 disabled:active:scale-100 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-xl shadow-xl shadow-primary/10 transition-all flex items-center justify-center cursor-pointer mt-2"
+              className="w-full h-12 bg-[#ff6b00] hover:bg-orange-600 active:scale-[0.98] disabled:opacity-70 disabled:active:scale-100 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-xl shadow-xl shadow-[#ff6b00]/10 transition-all flex items-center justify-center cursor-pointer mt-2"
             >
               {isLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -256,12 +256,22 @@ export default function LoginPage() {
                 "Acessar Sistema"
               )}
             </button>
+
+            {/* Botão Criar Conta - Link Externo */}
+            <a 
+              href="https://wa.me/5511999999999?text=Ol%C3%A1%2C%20gostaria%20de%20criar%20uma%20conta%20no%20Movieats!"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full h-12 border border-[#ff6b00]/30 hover:border-[#ff6b00] hover:bg-[#ff6b00]/5 text-[#ff6b00] font-black text-[11px] uppercase tracking-[0.2em] rounded-xl transition-all flex items-center justify-center cursor-pointer"
+            >
+              CRIAR CONTA
+            </a>
           </form>
 
           {/* Footer */}
           <div className="mt-8 text-center text-white/50">
             <p className="text-[9px] font-bold uppercase tracking-[0.1em]">
-              © 2026 MoviEats Feito com <span className="text-primary animate-pulse-heart mx-1">❤</span> no Brasil
+              © 2026 MoviEats Feito com <span className="text-[#ff6b00] animate-pulse-heart mx-1">❤</span> no Brasil
             </p>
           </div>
         </div>
