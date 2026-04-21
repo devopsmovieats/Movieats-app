@@ -49,7 +49,7 @@ interface Product {
   price: number;
   order: number;
   description: string;
-  image: string;
+  image_url: string;
   status: "ativo" | "inativo";
   removableIngredients: string[];
 }
@@ -158,7 +158,7 @@ export default function ProdutosPage() {
       if (!error && data) {
         const formatted = data.map((p: any) => ({
           ...p,
-          image: p.image_url || ""
+          image_url: p.image_url || ""
         }));
         setProducts(formatted);
       }
@@ -633,7 +633,7 @@ export default function ProdutosPage() {
                     <td className="px-6 py-4">
                       <div className="w-12 h-12 rounded-lg border border-white/5 overflow-hidden mx-auto shadow-inner bg-black/20 group-hover:border-primary/30 transition-colors">
                         <img 
-                          src={product.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150&h=150&auto=format&fit=crop"} 
+                          src={product.image_url || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150&h=150&auto=format&fit=crop"} 
                           alt={product.name} 
                           className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" 
                           onError={(e) => {
@@ -743,9 +743,9 @@ export default function ProdutosPage() {
                   onClick={() => fileInputRef.current?.click()} 
                   className="w-full h-24 border-2 border-dashed border-white/5 hover:border-primary/30 rounded-2xl flex flex-col items-center justify-center gap-2 bg-white/[0.02] cursor-pointer group transition-all relative overflow-hidden"
                 >
-                  {editingProduct?.image && (
+                  {editingProduct?.image_url && (
                     <img 
-                      src={editingProduct.image} 
+                      src={editingProduct.image_url} 
                       className="absolute inset-0 w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity" 
                       alt="" 
                     />

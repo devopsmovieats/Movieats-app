@@ -55,7 +55,7 @@ interface Category {
   name: string;
   order: number;
   status: "ativo" | "inativo";
-  image: string;
+  image_url: string;
 }
 
 const initialCategories: Category[] = [
@@ -126,7 +126,7 @@ export default function CategoriasPage() {
           name: cat.name,
           order: cat.order || 0,
           status: cat.status === 'active' ? 'ativo' : 'inativo',
-          image: cat.image_url || ""
+          image_url: cat.image_url || ""
         }));
         setCategories(formatted);
       }
@@ -664,9 +664,9 @@ export default function CategoriasPage() {
                       </td>
                       <td className="px-6 py-4 text-center">
                         <div className="w-12 h-12 rounded-lg border-2 border-white/5 overflow-hidden shadow-inner group-hover:border-primary/30 transition-colors mx-auto bg-white/5 flex items-center justify-center">
-                          {category.image ? (
+                          {category.image_url ? (
                             <img 
-                              src={category.image} 
+                              src={category.image_url} 
                               alt={category.name} 
                               className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" 
                               onError={(e) => {
@@ -802,10 +802,10 @@ export default function CategoriasPage() {
                     onClick={() => fileInputRef.current?.click()}
                     className="w-16 h-16 bg-white/[0.05] hover:bg-white/[0.08] border border-white/5 hover:border-primary/40 rounded-lg flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden"
                   >
-                    {(previewUrl || editingCategory?.image) ? (
+                    {(previewUrl || editingCategory?.image_url) ? (
                       <div className="relative w-full h-full flex items-center justify-center">
                         <img 
-                          src={previewUrl || editingCategory?.image} 
+                          src={previewUrl || editingCategory?.image_url} 
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                           alt="Preview" 
                         />
