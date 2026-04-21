@@ -646,9 +646,13 @@ export default function CategoriasPage() {
                 </thead>
                 <tbody>
                   {paginatedCategories.map((category) => {
-                    if (category.image) {
-                      console.log(`[DEBUG CATEGORIA] ID: ${category.id} | Image: ${category.image}`);
-                    }
+                    // Força bruta: Construção da URL diretamente aqui para debugar
+                    const finalImageUrl = category.image?.startsWith('http') 
+                      ? category.image 
+                      : `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${category.image}`;
+                    
+                    console.log(`[FORÇA BRUTA CATEGORIA] ID: ${category.id} | Final URL:`, finalImageUrl);
+                    
                     return (
                       <tr 
                         key={category.id} 
@@ -669,7 +673,7 @@ export default function CategoriasPage() {
                         <div className="w-12 h-12 rounded-lg border-2 border-white/5 overflow-hidden shadow-inner group-hover:border-primary/30 transition-colors mx-auto bg-white/5 flex items-center justify-center">
                           {category.image ? (
                             <img 
-                              src={getPublicUrl(category.image)} 
+                              src={finalImageUrl} 
                               alt={category.name} 
                               className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" 
                               onError={(e) => {

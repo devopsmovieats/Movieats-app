@@ -619,10 +619,13 @@ export default function ProdutosPage() {
               </thead>
               <tbody className="divide-y divide-white/5">
                 {filteredProducts.length > 0 ? filteredProducts.map((product) => {
-                  // Log solicitado para depuração de imagens
-                  if (product.image) {
-                    console.log(`[DEBUG PRODUTO] ID: ${product.id} | Image: ${product.image}`);
-                  }
+                  // Força bruta: Construção da URL diretamente aqui para debugar
+                  const finalImageUrl = product.image?.startsWith('http') 
+                    ? product.image 
+                    : `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${product.image}`;
+                  
+                  console.log(`[FORÇA BRUTA PRODUTO] ID: ${product.id} | Final URL:`, finalImageUrl);
+                  
                   return (
                     <tr key={product.id} className={`hover:bg-white/[0.02] transition-colors group ${selectedIds.has(product.id) ? 'bg-primary/5' : ''}`}>
                     <td className="px-6 py-4">
@@ -638,7 +641,7 @@ export default function ProdutosPage() {
                     <td className="px-6 py-4">
                       <div className="w-12 h-12 rounded-lg border border-white/5 overflow-hidden mx-auto shadow-inner bg-black/20 group-hover:border-primary/30 transition-colors">
                         <img 
-                          src={getPublicUrl(product.image) || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150&h=150&auto=format&fit=crop"} 
+                          src={finalImageUrl || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150&h=150&auto=format&fit=crop"} 
                           alt={product.name} 
                           className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" 
                           onError={(e) => {
