@@ -54,7 +54,7 @@ const generateShortId = () => Math.random().toString(36).substring(2, 8).toUpper
 interface Category {
   id: string | number;
   name: string;
-  description: string;
+  descricao: string;
   order: number;
   status: "ativo" | "inativo";
   image_url: string;
@@ -64,7 +64,7 @@ const initialCategories: Category[] = [
   { 
     id: 1, 
     name: "Hambúrgueres Artesanais", 
-    description: "Nossos melhores burguers feitos na brasa.",
+    descricao: "Nossos melhores burguers feitos na brasa.",
     order: 1, 
     status: "ativo", 
     image_url: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150&h=150&auto=format&fit=crop" 
@@ -72,7 +72,7 @@ const initialCategories: Category[] = [
   { 
     id: 2, 
     name: "Pizzas Gourmet", 
-    description: "Pizzas artesanais com massa de fermentação lenta.",
+    descricao: "Pizzas artesanais com massa de fermentação lenta.",
     order: 2, 
     status: "ativo", 
     image_url: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=150&h=150&auto=format&fit=crop" 
@@ -80,7 +80,7 @@ const initialCategories: Category[] = [
   { 
     id: 3, 
     name: "Bebidas e Coquetéis", 
-    description: "Sucos naturais, refrigerantes e drinks exclusivos.",
+    descricao: "Sucos naturais, refrigerantes e drinks exclusivos.",
     order: 3, 
     status: "ativo", 
     image_url: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=150&h=150&auto=format&fit=crop" 
@@ -129,7 +129,7 @@ export default function CategoriasPage() {
         const formatted = data.map((cat: any) => ({
           id: cat.id,
           name: cat.name,
-          description: cat.description || "",
+          descricao: cat.descricao || "",
           order: cat.order || 0,
           status: cat.status === 'active' ? 'ativo' : 'inativo',
           image_url: cat.image_url || ""
@@ -331,7 +331,7 @@ export default function CategoriasPage() {
       const dataToExport = categoriesToExport.map(cat => ({
         "ID": cat.id,
         "NOME": cat.name,
-        "DESCRIÇÃO": cat.description,
+        "DESCRIÇÃO": cat.descricao,
         "ORDEM": cat.order,
         "STATUS": cat.status === 'ativo' ? 'Ativo' : 'Inativo',
         "IMAGEM": cat.image_url
@@ -408,7 +408,7 @@ export default function CategoriasPage() {
           return {
             id: row["ID"] || undefined, // Se não tiver ID (novo), o Supabase gera ou ignora se for autoincrement
             name: row["NOME"] || "Sem Nome",
-            description: row["DESCRIÇÃO"] || "",
+            descricao: row["DESCRIÇÃO"] || "",
             order: parseInt(row["ORDEM"]) || 0,
             status: statusValue,
             image_url: row["URL DA IMAGEM"] || "",
@@ -497,7 +497,7 @@ export default function CategoriasPage() {
 
       const categoryData = {
         name: editingCategory.name,
-        description: editingCategory.description,
+        descricao: editingCategory.descricao,
         order: editingCategory.order,
         status: editingCategory.status === 'ativo' ? 'active' : 'inactive',
         image_url: finalImageUrl,
@@ -776,7 +776,7 @@ export default function CategoriasPage() {
                       </td>
                       <td className="px-6 py-4">
                         <span className="text-[11px] text-muted-foreground font-medium line-clamp-1 max-w-[200px]">
-                          {category.description || "Sem descrição"}
+                          {category.descricao || "Sem descrição"}
                         </span>
                       </td>
                       <td className="px-6 py-4">
@@ -925,7 +925,7 @@ export default function CategoriasPage() {
                     <input 
                       type="text" 
                       value={editingCategory?.name || ""}
-                      onChange={(e) => setEditingCategory(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, description: "", order: categories.length + 1, status: "ativo", image_url: "" })}
+                      onChange={(e) => setEditingCategory(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, descricao: "", order: categories.length + 1, status: "ativo", image_url: "" })}
                       placeholder="Ex: Hambúrgueres"
                       className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 transition-all font-medium"
                       required
@@ -936,8 +936,8 @@ export default function CategoriasPage() {
                   <div className="space-y-2">
                     <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Descrição Detalhada</label>
                     <textarea 
-                      value={editingCategory?.description || ""}
-                      onChange={(e) => setEditingCategory(prev => prev ? { ...prev, description: e.target.value } : { id: 0, name: "", description: e.target.value, order: categories.length + 1, status: "ativo", image_url: "" })}
+                      value={editingCategory?.descricao || ""}
+                      onChange={(e) => setEditingCategory(prev => prev ? { ...prev, descricao: e.target.value } : { id: 0, name: "", descricao: e.target.value, order: categories.length + 1, status: "ativo", image_url: "" })}
                       placeholder="Descreva o que há nesta categoria..."
                       className="w-full h-24 bg-white/[0.05] border border-white/5 rounded-xl py-3 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 transition-all font-medium resize-none leading-relaxed"
                     />
@@ -953,7 +953,7 @@ export default function CategoriasPage() {
                         value={editingCategory?.order || ""}
                         onChange={(e) => {
                           const val = parseInt(e.target.value);
-                          setEditingCategory(prev => prev ? { ...prev, order: isNaN(val) ? 0 : val } : { id: 0, name: "", description: "", order: isNaN(val) ? 0 : val, status: "ativo", image_url: "" });
+                          setEditingCategory(prev => prev ? { ...prev, order: isNaN(val) ? 0 : val } : { id: 0, name: "", descricao: "", order: isNaN(val) ? 0 : val, status: "ativo", image_url: "" });
                         }}
                         className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-primary/50 transition-all font-medium text-center"
                         required
