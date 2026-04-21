@@ -64,6 +64,7 @@ const initialCategories: Category[] = [
   { 
     id: 1, 
     name: "Hambúrgueres Artesanais", 
+    description: "Nossos melhores burguers feitos na brasa.",
     order: 1, 
     status: "ativo", 
     image_url: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150&h=150&auto=format&fit=crop" 
@@ -71,6 +72,7 @@ const initialCategories: Category[] = [
   { 
     id: 2, 
     name: "Pizzas Gourmet", 
+    description: "Pizzas artesanais com massa de fermentação lenta.",
     order: 2, 
     status: "ativo", 
     image_url: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=150&h=150&auto=format&fit=crop" 
@@ -78,6 +80,7 @@ const initialCategories: Category[] = [
   { 
     id: 3, 
     name: "Bebidas e Coquetéis", 
+    description: "Sucos naturais, refrigerantes e drinks exclusivos.",
     order: 3, 
     status: "ativo", 
     image_url: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=150&h=150&auto=format&fit=crop" 
@@ -328,6 +331,7 @@ export default function CategoriasPage() {
       const dataToExport = categoriesToExport.map(cat => ({
         "ID": cat.id,
         "NOME": cat.name,
+        "DESCRIÇÃO": cat.description,
         "ORDEM": cat.order,
         "STATUS": cat.status === 'ativo' ? 'Ativo' : 'Inativo',
         "IMAGEM": cat.image_url
