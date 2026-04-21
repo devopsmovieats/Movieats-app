@@ -408,6 +408,7 @@ export default function CategoriasPage() {
           return {
             id: row["ID"] || undefined, // Se não tiver ID (novo), o Supabase gera ou ignora se for autoincrement
             name: row["NOME"] || "Sem Nome",
+            description: row["DESCRIÇÃO"] || "",
             order: parseInt(row["ORDEM"]) || 0,
             status: statusValue,
             image_url: row["URL DA IMAGEM"] || "",
