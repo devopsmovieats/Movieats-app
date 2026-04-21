@@ -196,7 +196,7 @@ export default function CategoriasPage() {
     setIsModalOpen(true);
   };
 
-  const handleSelectOne = (id: number) => {
+  const handleSelectOne = (id: string | number) => {
     const newSelected = new Set(selectedIds);
     if (newSelected.has(id)) {
       newSelected.delete(id);
@@ -210,7 +210,7 @@ export default function CategoriasPage() {
     if (selectedIds.size === filteredCategories.length && filteredCategories.length > 0) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(filteredCategories.map(cat => cat.id as number)));
+      setSelectedIds(new Set(filteredCategories.map(cat => cat.id)));
     }
   };
 
@@ -261,58 +261,69 @@ export default function CategoriasPage() {
     });
   };
 
-  const handleExport = () => {
-    // Notificação solicitada pelo usuário antes de iniciar o processo
-    Toast.fire({
-      icon: "info",
-      title: "Exportando...",
-      text: "Selecione as categorias que deseja exportar ou aguarde o download de todas.",
-      timer: 3000
-    });
+  const handleExport = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
 
-    // Se houver seleção, exporta apenas as selecionadas. Caso contrário, exporta todas.
-    const categoriesToExport = selectedIds.size > 0 
-      ? categories.filter(cat => selectedIds.has(cat.id as number))
-      : categories;
+    // @ts-ignore
+    const selectedRows = Array.from(selectedIds);
+    if (selectedRows.length === 0) {
+      Toast.fire({
+        icon: "error",
+        title: "Bloqueado",
+        text: "Para exportar o relatório, selecione as categorias desejadas primeiro.",
+        timer: 4000
+      });
+      return;
+    }
+
+    const categoriesToExport = categories.filter(cat => selectedIds.has(cat.id));
     
     if (categoriesToExport.length === 0) {
       Toast.fire({
         icon: "info",
-        title: "Nenhuma categoria para exportar"
+        title: "Aviso",
+        text: "Nenhuma categoria correspondente encontrada para exportação."
       });
       return;
     }
 
     try {
-      // Mapeamento dos dados para o formato Excel com nomes de colunas amigáveis
+      Toast.fire({
+        icon: "info",
+        title: "Exportando...",
+        text: "Preparando dados.",
+        timer: 1500
+      });
+
       const dataToExport = categoriesToExport.map(cat => ({
         "ID": cat.id,
         "NOME": cat.name,
         "ORDEM": cat.order,
-        "VISIBILIDADE": cat.status === 'ativo' ? 'Ativo' : 'Inativo',
-        "URL DA IMAGEM": cat.image_url
+        "STATUS": cat.status === 'ativo' ? 'Ativo' : 'Inativo',
+        "IMAGEM": cat.image_url
       }));
 
-      // Cria a planilha (Worksheet)
       const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-      
-      // Cria o livro (Workbook)
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Categorias");
 
-      // Gera o download automático
-      const fileName = `categorias_movieats_${new Date().toISOString().split('T')[0]}.xlsx`;
-      XLSX.writeFile(workbook, fileName);
+      const timestamp = new Date().getTime();
+      XLSX.writeFile(workbook, `relatorio_categorias_${timestamp}.xlsx`);
       
       Toast.fire({
         icon: "success",
-        title: `${categoriesToExport.length} categorias exportadas para Excel!`
+        title: "Sucesso",
+        text: "Categoria exportada com sucesso."
       });
     } catch (error) {
-      console.error("Erro na exportação Excel:", error);
+      console.error("Falha na exportação:", error);
       Toast.fire({
         icon: "error",
-        title: "Erro ao gerar arquivo Excel"
+        title: "Erro",
+        text: "Não foi possível concluir a exportação."
       });
     }
   };
@@ -554,7 +565,7 @@ export default function CategoriasPage() {
           {userRole !== "ATENDENTE" && (
             <button 
               onClick={openAddModal}
-              className="flex items-center gap-2.5 px-5 py-2.5 bg-white hover:bg-orange-600 text-slate-900 hover:text-white rounded-lg font-bold text-sm transition-all shadow-sm border border-white/5 active:scale-95 group cursor-pointer"
+              className="flex items-center gap-2.5 px-5 py-2.5 bg-white hover:bg-[#ff6b00] text-slate-900 hover:text-white rounded-lg font-bold text-sm transition-all shadow-sm border border-white/5 active:scale-95 group cursor-pointer"
             >
               <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
               Nova Categoria
@@ -699,21 +710,23 @@ export default function CategoriasPage() {
                         <div className="flex items-center justify-center">
                           <input 
                             type="checkbox" 
-                            checked={selectedIds.has(category.id as number)}
-                            onChange={() => handleSelectOne(category.id as number)}
+                            checked={selectedIds.has(category.id)}
+                            onChange={() => handleSelectOne(category.id)}
                             className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
                           />
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-center">
-                        <div className="w-12 h-12 rounded-lg border-2 border-white/5 overflow-hidden shadow-inner group-hover:border-primary/30 transition-colors mx-auto bg-white/5 flex items-center justify-center">
-                          {category.image_url && (
-                            <img 
-                              src={category.image_url} 
-                              alt={category.name} 
-                              className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" 
-                            />
-                          )}
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-center">
+                          <div className="w-12 h-12 rounded-lg border-2 border-white/5 overflow-hidden shadow-inner group-hover:border-primary/30 transition-colors bg-white/5 flex items-center justify-center">
+                            {category.image_url && (
+                              <img 
+                                src={category.image_url} 
+                                alt={category.name} 
+                                className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" 
+                              />
+                            )}
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
