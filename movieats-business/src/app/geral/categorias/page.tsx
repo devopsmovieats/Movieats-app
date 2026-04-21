@@ -744,7 +744,7 @@ export default function CategoriasPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center">
-                          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${category.status === "ativo" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" : "bg-red-500/10 border-red-500/20 text-red-500"}`}>
+                          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${category.status === "ativo" ? "bg-[#22c55e]/10 border-[#22c55e]/20 text-[#22c55e]" : "bg-red-500/10 border-red-500/20 text-red-500"}`}>
                             {category.status === "ativo" ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
                             <span className="text-[9px] font-black uppercase tracking-widest">{category.status}</span>
                           </div>
