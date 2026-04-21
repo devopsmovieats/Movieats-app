@@ -96,6 +96,7 @@ const initialProducts: Product[] = [
 ];
 
 export default function ProdutosPage() {
+  console.log("URL BASE PRODUTOS (Build/Runtime):", process.env.NEXT_PUBLIC_R2_PUBLIC_URL);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -619,12 +620,10 @@ export default function ProdutosPage() {
               </thead>
               <tbody className="divide-y divide-white/5">
                 {filteredProducts.length > 0 ? filteredProducts.map((product) => {
-                  // Força bruta: Construção da URL diretamente aqui para debugar
-                  const finalImageUrl = product.image?.startsWith('http') 
-                    ? product.image 
-                    : `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${product.image}`;
-                  
-                  console.log(`[FORÇA BRUTA PRODUTO] ID: ${product.id} | Final URL:`, finalImageUrl);
+                  // CÓDIGO DIRETO: Força a construção da URL conforme solicitado
+                  const finalImageUrl = product.image 
+                    ? `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${product.image}`
+                    : '/placeholder.png';
                   
                   return (
                     <tr key={product.id} className={`hover:bg-white/[0.02] transition-colors group ${selectedIds.has(product.id) ? 'bg-primary/5' : ''}`}>

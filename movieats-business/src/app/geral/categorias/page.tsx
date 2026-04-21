@@ -83,6 +83,7 @@ const initialCategories: Category[] = [
 ];
 
 export default function CategoriasPage() {
+  console.log("URL BASE CATEGORIAS (Build/Runtime):", process.env.NEXT_PUBLIC_R2_PUBLIC_URL);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -646,12 +647,10 @@ export default function CategoriasPage() {
                 </thead>
                 <tbody>
                   {paginatedCategories.map((category) => {
-                    // Força bruta: Construção da URL diretamente aqui para debugar
-                    const finalImageUrl = category.image?.startsWith('http') 
-                      ? category.image 
-                      : `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${category.image}`;
-                    
-                    console.log(`[FORÇA BRUTA CATEGORIA] ID: ${category.id} | Final URL:`, finalImageUrl);
+                    // CÓDIGO DIRETO: Força a construção da URL como solicitado
+                    const finalImageUrl = category.image 
+                      ? `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${category.image}`
+                      : '/placeholder.png';
                     
                     return (
                       <tr 
