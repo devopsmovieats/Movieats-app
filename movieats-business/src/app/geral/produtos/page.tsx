@@ -655,20 +655,22 @@ export default function ProdutosPage() {
                         R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </span>
                     </td>
-                     <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-4 text-right">
                       {userRole !== "ATENDENTE" ? (
-                        <div className="flex items-center justify-end gap-2">
+                        <div className="flex items-center justify-end gap-5">
                           <button 
                             onClick={() => openEditModal(product)} 
-                            className="p-2.5 rounded-lg bg-white/5 hover:bg-primary/10 text-muted-foreground hover:text-primary border border-white/5 hover:border-primary/20 transition-all cursor-pointer"
+                            className="text-muted-foreground hover:text-blue-400 transition-all duration-300 cursor-pointer"
+                            title="Editar"
                           >
-                            <Pencil className="w-3.5 h-3.5" />
+                            <Pencil className="w-4 h-4" />
                           </button>
                           <button 
                             onClick={() => handleDelete(product)} 
-                            className="p-2.5 rounded-lg bg-white/5 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 border border-white/5 hover:border-red-500/20 transition-all cursor-pointer"
+                            className="text-muted-foreground hover:text-red-400 transition-all duration-300 cursor-pointer"
+                            title="Excluir"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       ) : (
@@ -710,7 +712,7 @@ export default function ProdutosPage() {
           />
           
           {/* Modal Container - Estilo Login (Suave e Moderno) */}
-          <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-[#1f2937] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 custom-scrollbar">
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-[#1f2937] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 custom-scrollbar">
             
             {/* Modal Header Premium */}
             <div className="px-8 py-6 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01]">
@@ -776,11 +778,11 @@ export default function ProdutosPage() {
                         className="w-full bg-white/[0.05] border border-white/5 rounded-lg h-12 px-4 text-sm text-white focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 appearance-none font-bold uppercase tracking-tighter cursor-pointer"
                         required
                       >
-                        <option value="" disabled>Selecione uma categoria</option>
+                        <option value="" disabled className="bg-[#1f2937]">Selecione uma categoria</option>
                         {categories.map(cat => (
-                          <option key={cat.id} value={cat.name}>{cat.name.toUpperCase()}</option>
+                          <option key={cat.id} value={cat.name} className="bg-[#1f2937]">{cat.name.toUpperCase()}</option>
                         ))}
-                        {categories.length === 0 && <option value="Sem Categoria">SEM CATEGORIA</option>}
+                        {categories.length === 0 && <option value="Sem Categoria" className="bg-[#1f2937]">SEM CATEGORIA</option>}
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
                     </div>
@@ -899,10 +901,9 @@ export default function ProdutosPage() {
                 </button>
                 <button 
                   type="submit" 
-                  className="flex-1 px-6 py-3 bg-orange-600 hover:bg-orange-500 text-white font-bold text-sm uppercase tracking-wider rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-3 group cursor-pointer"
+                  className="flex-1 px-8 py-3 bg-orange-600 hover:bg-orange-500 text-white font-bold text-[11px] uppercase tracking-[0.2em] rounded-xl transition-all shadow-[0_10px_20px_rgba(234,88,12,0.2)] active:scale-95 flex items-center justify-center cursor-pointer"
                 >
                   {editingProduct?.id ? "Salvar Produto" : "Criar Produto"}
-                  <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
             </form>
