@@ -262,6 +262,14 @@ export default function CategoriasPage() {
   };
 
   const handleExport = () => {
+    // Notificação solicitada pelo usuário antes de iniciar o processo
+    Toast.fire({
+      icon: "info",
+      title: "Exportando...",
+      text: "Selecione as categorias que deseja exportar ou aguarde o download de todas.",
+      timer: 3000
+    });
+
     // Se houver seleção, exporta apenas as selecionadas. Caso contrário, exporta todas.
     const categoriesToExport = selectedIds.size > 0 
       ? categories.filter(cat => selectedIds.has(cat.id as number))
@@ -318,77 +326,96 @@ export default function CategoriasPage() {
     if (!file) return;
 
     const fileName = file.name.toLowerCase();
-    if (!fileName.endsWith('.csv') && !fileName.endsWith('.xlsx')) {
+    if (!fileName.endsWith('.xlsx')) {
       Toast.fire({
         icon: "error",
-        title: "Arquivo Inválido. Selecione .csv ou .xlsx"
+        title: "Arquivo Inválido. Selecione um arquivo .xlsx"
       });
       return;
     }
 
-    // Inicia simulação de importação "Elite"
     setIsImporting(true);
     setImportProgress(0);
-    setImportStatus("Iniciando...");
+    setImportStatus("Lendo arquivo...");
 
-    const phrases = [
-      "Lendo arquivo...",
-      "Validando estrutura...",
-      "Processando categorias...",
-      "Sincronizando banco de dados...",
-      "Finalizando..."
-    ];
+    const reader = new FileReader();
+    reader.onload = async (evt) => {
+      try {
+        const bstr = evt.target?.result;
+        const wb = XLSX.read(bstr, { type: 'binary' });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
 
-    let currentPhraseIndex = 0;
-    const intervalTime = 3000; // total 3s
-    const steps = 100;
-    const stepTime = intervalTime / steps;
-
-    const progressInterval = setInterval(() => {
-      setImportProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          return 100;
+        if (!data || data.length === 0) {
+          throw new Error("O arquivo está vazio ou não possui dados válidos.");
         }
-        return prev + 1;
-      });
-    }, stepTime);
 
-    const phraseInterval = setInterval(() => {
-      if (currentPhraseIndex < phrases.length - 1) {
-        currentPhraseIndex++;
-        setImportStatus(phrases[currentPhraseIndex]);
-      } else {
-        clearInterval(phraseInterval);
+        setImportStatus("Sincronizando com Supabase...");
+        setImportProgress(50);
+
+        // Mapeamento Excel -> Supabase
+        const categoriesToUpsert = data.map((row: any) => {
+          // Mapeia visibilidade para o status do banco
+          let statusValue = 'active';
+          const vis = String(row["VISIBILIDADE"] || "").toLowerCase();
+          if (vis === 'inativo' || vis === 'inactive') {
+            statusValue = 'inactive';
+          }
+
+          return {
+            id: row["ID"] || undefined, // Se não tiver ID (novo), o Supabase gera ou ignora se for autoincrement
+            name: row["NOME"] || "Sem Nome",
+            order: parseInt(row["ORDEM"]) || 0,
+            status: statusValue,
+            image_url: row["URL DA IMAGEM"] || "",
+            establishment_id: establishmentId
+          };
+        });
+
+        // Executa Upsert no Supabase
+        const { error } = await supabase
+          .from('bd_categorias')
+          .upsert(categoriesToUpsert, { onConflict: 'id' });
+
+        if (error) throw error;
+
+        setImportProgress(100);
+        setImportStatus("Finalizado!");
+        
+        Toast.fire({
+          icon: "success",
+          title: "Importação Concluída",
+          text: "Dados importados e sincronizados com o Supabase com sucesso!"
+        });
+
+        // Recarrega lista
+        fetchCategories();
+      } catch (err: any) {
+        console.error("Erro na importação:", err);
+        Toast.fire({
+          icon: "error",
+          title: "Erro na Importação",
+          text: err.message || "Ocorreu um erro ao processar o arquivo."
+        });
+      } finally {
+        setIsImporting(false);
+        if (importFileRef.current) importFileRef.current.value = "";
       }
-    }, 600);
-    
-    setTimeout(() => {
-      // Simulação de novas categorias vindas da planilha
-      const newItems: Category[] = [
-        { id: Date.now() + 1, name: "Sobremesas Geladas", order: categories.length + 1, status: "ativo", image_url: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?q=80&w=150&h=150&auto=format&fit=crop" },
-        { id: Date.now() + 2, name: "Massas Italianas", order: categories.length + 2, status: "ativo", image_url: "https://images.unsplash.com/photo-1473093226795-af9932fe5856?q=80&w=150&h=150&auto=format&fit=crop" },
-        { id: Date.now() + 3, name: "Pratos Saudáveis", order: categories.length + 3, status: "inativo", image_url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150&h=150&auto=format&fit=crop" },
-      ];
+    };
 
-      setCategories(prev => [...prev, ...newItems]);
+    reader.onerror = () => {
       setIsImporting(false);
-      
-      // Limpa o input para permitir importar o mesmo arquivo novamente se necessário
-      if (importFileRef.current) importFileRef.current.value = "";
-
-      Swal.fire({
-        title: "Importação Finalizada",
-        text: `${newItems.length} categorias importadas com sucesso!`,
-        icon: "success",
-        background: "#1f2937",
-        color: "#fff",
-        confirmButtonColor: "#ff6b00",
-        timer: 3000,
-        customClass: { popup: "rounded-[8px]" }
+      Toast.fire({
+        icon: "error",
+        title: "Erro de Leitura",
+        text: "Não foi possível ler o arquivo selecionado."
       });
-    }, intervalTime + 200);
+    };
+
+    reader.readAsBinaryString(file);
   };
+
 
   const handleSaveCategory = async (e: React.FormEvent) => {
     e.preventDefault();
