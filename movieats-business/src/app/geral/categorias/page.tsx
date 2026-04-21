@@ -511,7 +511,7 @@ export default function CategoriasPage() {
           {userRole !== "ATENDENTE" && (
             <button 
               onClick={openAddModal}
-              className="flex items-center gap-2.5 px-5 py-2.5 bg-white hover:bg-slate-100 text-slate-900 rounded-lg font-bold text-sm transition-all shadow-sm border border-white/5 active:scale-95 group cursor-pointer"
+              className="flex items-center gap-2.5 px-5 py-2.5 bg-white hover:bg-orange-600 text-slate-900 hover:text-white rounded-lg font-bold text-sm transition-all shadow-sm border border-white/5 active:scale-95 group cursor-pointer"
             >
               <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
               Nova Categoria
