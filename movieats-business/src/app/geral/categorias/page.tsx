@@ -843,11 +843,11 @@ export default function CategoriasPage() {
                           }}
                         >
                           {/* Track */}
-                          <div className={`w-10 h-5.5 rounded-full transition-all duration-300 border border-white/5 ${editingCategory?.status === 'ativo' ? 'bg-primary' : 'bg-white/10'}`} />
+                          <div className={`w-10 h-5.5 rounded-full transition-all duration-300 border border-white/5 ${editingCategory?.status === 'ativo' ? 'bg-[#22c55e]' : 'bg-white/10'}`} />
                           {/* Ball (Slider) */}
                           <div className={`absolute top-0.5 left-0.5 w-4.5 h-4.5 bg-white rounded-full transition-all duration-300 shadow-lg ${editingCategory?.status === 'ativo' ? 'translate-x-4.5' : 'translate-x-0'}`} />
                         </div>
-                        <span className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${editingCategory?.status === 'ativo' ? 'text-primary' : 'text-white/20'}`}>
+                        <span className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${editingCategory?.status === 'ativo' ? 'text-[#22c55e]' : 'text-white/20'}`}>
                           {editingCategory?.status === 'ativo' ? 'Ativo' : 'Inativo'}
                         </span>
                     </div>
