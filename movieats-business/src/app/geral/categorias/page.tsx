@@ -859,144 +859,139 @@ export default function CategoriasPage() {
             onClick={() => setIsModalOpen(false)}
           />
           
-          {/* Modal Container - Compacto e Centralizado */}
-          <div className="relative w-full max-w-lg bg-[#111827]/95 backdrop-blur-[15px] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden">
+          {/* Modal Container - Ultra Compacto e Profissional */}
+          <div className="relative w-full max-w-md bg-[#111827]/95 backdrop-blur-[15px] border border-white/5 rounded-[24px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden">
             
-            {/* Modal Header Premium */}
-            <div className="px-8 py-6 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01]">
-              <div className="flex flex-col">
-                <h3 className="text-base font-headline font-bold text-white uppercase tracking-tight leading-loose">
-                  {editingCategory?.id ? `Editar Categoria` : "Nova Categoria"}
-                </h3>
-                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest opacity-40">Gestão de Cardápio Digital</span>
-              </div>
+            {/* Modal Header Compacto */}
+            <div className="px-6 py-4 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01]">
+              <h3 className="text-sm font-headline font-bold text-white uppercase tracking-tight">
+                {editingCategory?.id ? `Editar Categoria` : "Nova Categoria"}
+              </h3>
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="p-2 rounded-xl hover:bg-white/5 text-muted-foreground hover:text-white transition-all cursor-pointer group"
+                className="p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-white transition-all cursor-pointer"
               >
-                <X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Modal Body - Ordem Lógica: Nome, Descrição, Ordem, Imagem */}
-            <form onSubmit={handleSaveCategory} className="p-8 pt-6 space-y-6">
+            {/* Modal Body - Layout Lateral e Compacto */}
+            <form onSubmit={handleSaveCategory} className="p-6 space-y-4">
               
-              <div className="space-y-5">
-                {/* Nome da Categoria */}
-                <div className="space-y-2">
-                  <label className="text-[13px] font-bold text-white/50 ml-1 block">Nome da Categoria</label>
-                  <input 
-                    type="text" 
-                    value={editingCategory?.name || ""}
-                    onChange={(e) => setEditingCategory(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, description: "", order: categories.length + 1, status: "ativo", image_url: "" })}
-                    placeholder="Ex: Pizzas"
-                    className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium"
-                    required
-                  />
-                </div>
-
-                {/* Descrição */}
-                <div className="space-y-2">
-                  <label className="text-[13px] font-bold text-white/50 ml-1 block">Descrição</label>
-                  <textarea 
-                    value={editingCategory?.description || ""}
-                    onChange={(e) => setEditingCategory(prev => prev ? { ...prev, description: e.target.value } : { id: 0, name: "", description: e.target.value, order: categories.length + 1, status: "ativo", image_url: "" })}
-                    placeholder="Breve descrição da categoria..."
-                    className="w-full h-24 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium resize-none"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-5 items-end">
-                  {/* Ordem */}
-                  <div className="space-y-2">
-                    <label className="text-[13px] font-bold text-white/50 ml-1 block">Ordem de Exibição</label>
-                    <input 
-                      type="number" 
-                      min="0"
-                      value={editingCategory?.order || ""}
-                      onChange={(e) => {
-                        const val = parseInt(e.target.value);
-                        setEditingCategory(prev => prev ? { ...prev, order: isNaN(val) ? 0 : val } : { id: 0, name: "", description: "", order: isNaN(val) ? 0 : val, status: "ativo", image_url: "" });
-                      }}
-                      placeholder="0"
-                      className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg px-4 text-sm text-white focus:outline-none focus:border-primary/50 transition-all font-medium"
-                      required
-                    />
-                  </div>
-
-                  {/* Status Toggle */}
-                  <div className="space-y-2 pb-1">
-                    <label className="text-[13px] font-bold text-white/50 ml-1 block mb-2">Visibilidade</label>
-                    <div className="flex items-center gap-3">
-                      <div 
-                        className="relative w-10 h-5.5 cursor-pointer"
-                        onClick={() => {
-                          setEditingCategory(prev => {
-                            if (!prev) return null;
-                            return { ...prev, status: prev.status === 'ativo' ? 'inativo' : 'ativo' };
-                          });
-                        }}
-                      >
-                        <div className={`w-10 h-5.5 rounded-full transition-all duration-300 border border-white/5 ${editingCategory?.status === 'ativo' ? 'bg-[#22c55e]' : 'bg-white/10'}`} />
-                        <div className={`absolute top-0.5 left-0.5 w-4.5 h-4.5 bg-white rounded-full transition-all duration-300 shadow-lg ${editingCategory?.status === 'ativo' ? 'translate-x-4.5' : 'translate-x-0'}`} />
-                      </div>
-                      <span className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${editingCategory?.status === 'ativo' ? 'text-[#22c55e]' : 'text-white/20'}`}>
-                        {editingCategory?.status === 'ativo' ? 'Ativo' : 'Inativo'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Upload de Imagem (Abaixo de tudo conforme pedido) */}
-                <div className="space-y-2">
-                  <label className="text-[13px] font-bold text-white/50 ml-1 block">Imagem de Capa</label>
+              {/* Linha 1: Imagem + Nome */}
+              <div className="flex gap-4 items-start">
+                {/* Upload de Imagem Lateral */}
+                <div className="shrink-0 space-y-1.5">
+                  <label className="text-[11px] font-bold text-white/30 ml-1 block uppercase tracking-wider">Imagem</label>
                   <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
                   <div 
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-full h-32 bg-white/[0.05] hover:bg-white/[0.08] border border-white/5 hover:border-primary/40 rounded-xl flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden"
+                    className="w-24 h-24 bg-white/[0.05] hover:bg-white/[0.08] border border-white/5 hover:border-primary/40 rounded-xl flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden"
                   >
                     {(previewUrl || editingCategory?.image_url) ? (
                       <div className="relative w-full h-full flex items-center justify-center">
                         <img 
                           src={previewUrl || editingCategory?.image_url} 
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                           alt="Preview" 
                         />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                          <Camera className="w-6 h-6 text-white" />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                          <Camera className="w-5 h-5 text-white" />
                         </div>
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="p-3 bg-white/5 rounded-full group-hover:scale-110 transition-transform">
-                          <ImageIcon className="w-5 h-5 text-white/20 group-hover:text-primary transition-colors" />
-                        </div>
-                        <div className="text-center">
-                          <span className="text-[10px] font-black text-white/40 uppercase tracking-widest block">Clique para Upload</span>
-                          <span className="text-[8px] font-bold text-white/10 uppercase tracking-tighter">JPG, PNG ou WEBP • Máx 4MB</span>
-                        </div>
+                      <div className="flex flex-col items-center gap-1">
+                        <ImageIcon className="w-5 h-5 text-white/20 group-hover:text-primary transition-colors" />
+                        <span className="text-[8px] font-black text-white/20 uppercase tracking-tighter">Upload</span>
                       </div>
                     )}
                   </div>
                 </div>
+
+                {/* Nome da Categoria ao Lado */}
+                <div className="flex-1 space-y-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-white/30 ml-1 block uppercase tracking-wider">Nome da Categoria</label>
+                    <input 
+                      type="text" 
+                      value={editingCategory?.name || ""}
+                      onChange={(e) => setEditingCategory(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, description: "", order: categories.length + 1, status: "ativo", image_url: "" })}
+                      placeholder="Ex: Pizzas"
+                      className="w-full h-11 bg-white/[0.05] border border-white/5 rounded-lg px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 transition-all font-medium"
+                      required
+                    />
+                  </div>
+                  
+                  {/* Ordem de Exibição acoplada na lateral se necessário, mas aqui usaremos linha 3 */}
+                </div>
               </div>
 
-              {/* Ações Finais - Estilo Login */}
-              <div className="flex gap-4 pt-4 border-t border-white/[0.03]">
+              {/* Linha 2: Descrição */}
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-white/30 ml-1 block uppercase tracking-wider">Descrição</label>
+                <textarea 
+                  value={editingCategory?.description || ""}
+                  onChange={(e) => setEditingCategory(prev => prev ? { ...prev, description: e.target.value } : { id: 0, name: "", description: e.target.value, order: categories.length + 1, status: "ativo", image_url: "" })}
+                  placeholder="Breve descrição da categoria..."
+                  className="w-full h-20 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 transition-all font-medium resize-none leading-snug"
+                />
+              </div>
+
+              {/* Linha 3: Ordem + Status */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-white/30 ml-1 block uppercase tracking-wider">Ordem</label>
+                  <input 
+                    type="number" 
+                    min="0"
+                    value={editingCategory?.order || ""}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      setEditingCategory(prev => prev ? { ...prev, order: isNaN(val) ? 0 : val } : { id: 0, name: "", description: "", order: isNaN(val) ? 0 : val, status: "ativo", image_url: "" });
+                    }}
+                    className="w-full h-11 bg-white/[0.05] border border-white/5 rounded-lg px-4 text-sm text-white focus:outline-none focus:border-primary/50 transition-all font-medium"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-white/30 ml-1 block uppercase tracking-wider">Visibilidade</label>
+                  <div className="flex items-center gap-3 h-11 px-1">
+                    <div 
+                      className="relative w-9 h-5 cursor-pointer"
+                      onClick={() => {
+                        setEditingCategory(prev => {
+                          if (!prev) return null;
+                          return { ...prev, status: prev.status === 'ativo' ? 'inativo' : 'ativo' };
+                        });
+                      }}
+                    >
+                      <div className={`w-9 h-5 rounded-full transition-all duration-300 border border-white/5 ${editingCategory?.status === 'ativo' ? 'bg-[#22c55e]' : 'bg-white/10'}`} />
+                      <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-all duration-300 shadow-lg ${editingCategory?.status === 'ativo' ? 'translate-x-4' : 'translate-x-0'}`} />
+                    </div>
+                    <span className={`text-[9px] font-black uppercase tracking-widest transition-all duration-300 ${editingCategory?.status === 'ativo' ? 'text-[#22c55e]' : 'text-white/20'}`}>
+                      {editingCategory?.status === 'ativo' ? 'Ativo' : 'Inativo'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Botões de Ação Compactos */}
+              <div className="flex gap-3 pt-4">
                 <button 
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white font-bold text-sm uppercase tracking-wider rounded-lg transition-all border border-white/5 active:scale-95 cursor-pointer"
+                  className="px-5 py-2.5 bg-white/5 hover:bg-white/10 text-white font-bold text-[11px] uppercase tracking-wider rounded-lg transition-all border border-white/5 active:scale-95 cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button 
                   type="submit"
                   disabled={isSaving}
-                  className="flex-1 px-6 py-3 bg-orange-600 hover:bg-orange-500 text-white font-bold text-sm uppercase tracking-wider rounded-lg transition-all shadow-sm active:scale-95 flex items-center justify-center gap-3 group cursor-pointer disabled:opacity-50"
+                  className="flex-1 px-5 py-2.5 bg-orange-600 hover:bg-orange-500 text-white font-bold text-[11px] uppercase tracking-wider rounded-lg transition-all shadow-sm active:scale-95 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50"
                 >
                   {isSaving ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
                     <>
                       {editingCategory?.id ? "Salvar Categoria" : "Confirmar Categoria"}
