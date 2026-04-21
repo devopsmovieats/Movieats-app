@@ -743,9 +743,9 @@ export default function ProdutosPage() {
                   onClick={() => fileInputRef.current?.click()} 
                   className="w-full h-24 border-2 border-dashed border-white/5 hover:border-primary/30 rounded-2xl flex flex-col items-center justify-center gap-2 bg-white/[0.02] cursor-pointer group transition-all relative overflow-hidden"
                 >
-                  {(previewUrl || editingProduct?.image) && (
+                  {editingProduct?.image && (
                     <img 
-                      src={previewUrl || editingProduct?.image} 
+                      src={editingProduct.image} 
                       className="absolute inset-0 w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity" 
                       alt="" 
                     />
