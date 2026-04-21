@@ -67,7 +67,7 @@ const initialProducts: Product[] = [
     price: 38.90, 
     order: 1, 
     description: "Pão brioche, dois blends de 80g, queijo cheddar e maionese da casa.", 
-    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150&h=150&auto=format&fit=crop", 
+    image_url: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150&h=150&auto=format&fit=crop", 
     status: "ativo",
     removableIngredients: ["Cebola", "Picles", "Maionese"]
   },
@@ -78,7 +78,7 @@ const initialProducts: Product[] = [
     price: 18.00, 
     order: 2, 
     description: "Batatas fritas com casca, temperadas com páprica e alecrim.", 
-    image: "https://images.unsplash.com/photo-1573015084245-7da883204507?q=80&w=150&h=150&auto=format&fit=crop", 
+    image_url: "https://images.unsplash.com/photo-1573015084245-7da883204507?q=80&w=150&h=150&auto=format&fit=crop", 
     status: "ativo",
     removableIngredients: ["Páprica", "Alecrim"]
   },
@@ -89,7 +89,7 @@ const initialProducts: Product[] = [
     price: 7.50, 
     order: 3, 
     description: "Lata 350ml gelada.", 
-    image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=150&h=150&auto=format&fit=crop", 
+    image_url: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=150&h=150&auto=format&fit=crop", 
     status: "ativo",
     removableIngredients: []
   },
@@ -192,7 +192,7 @@ export default function ProdutosPage() {
       price: 0,
       order: products.length + 1,
       description: "",
-      image: "",
+      image_url: "",
       status: "ativo",
       removableIngredients: []
     });
@@ -293,24 +293,22 @@ export default function ProdutosPage() {
     if (editingProduct) {
       if (editingProduct.id === 0) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, image, ...productToInsert } = editingProduct;
+        const { id, ...productToInsert } = editingProduct;
         const { data, error } = await supabase
           .from('bd_produtos')
-          .insert([{ ...productToInsert, image_url: image, establishment_id: establishmentId }])
+          .insert([{ ...productToInsert, establishment_id: establishmentId }])
           .select();
 
         if (!error && data) {
-          const newProduct = { ...data[0], image: data[0].image_url };
-          setProducts(prev => [...prev, newProduct]);
+          setProducts(prev => [...prev, data[0]]);
           Toast.fire({ icon: "success", title: "Produto criado com sucesso" });
         } else {
           Toast.fire({ icon: "error", title: "Erro ao criar produto" });
         }
       } else {
-        const { image, ...productToUpdate } = editingProduct;
         const { error } = await supabase
           .from('bd_produtos')
-          .update({ ...productToUpdate, image_url: image })
+          .update(editingProduct)
           .eq('id', editingProduct.id);
 
         if (!error) {
@@ -415,8 +413,8 @@ export default function ProdutosPage() {
     setTimeout(() => {
       // Simulação de novos produtos
       const newItems: Product[] = [
-        { id: Date.now() + 1, name: "Pizza Calabresa", category: "Pizzas", price: 45.90, order: products.length + 1, description: "Molho de tomate, mussarela e calabresa.", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=150&h=150&auto=format&fit=crop", status: "ativo", removableIngredients: [] },
-        { id: Date.now() + 2, name: "Suco de Laranja", category: "Bebidas", price: 12.00, order: products.length + 2, description: "Suco natural 500ml.", image: "https://images.unsplash.com/photo-1621506821199-a996ee0fef8d?q=80&w=150&h=150&auto=format&fit=crop", status: "ativo", removableIngredients: [] },
+        { id: Date.now() + 1, name: "Pizza Calabresa", category: "Pizzas", price: 45.90, order: products.length + 1, description: "Molho de tomate, mussarela e calabresa.", image_url: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=150&h=150&auto=format&fit=crop", status: "ativo", removableIngredients: [] },
+        { id: Date.now() + 2, name: "Suco de Laranja", category: "Bebidas", price: 12.00, order: products.length + 2, description: "Suco natural 500ml.", image_url: "https://images.unsplash.com/photo-1621506821199-a996ee0fef8d?q=80&w=150&h=150&auto=format&fit=crop", status: "ativo", removableIngredients: [] },
       ];
 
       setProducts(prev => {
@@ -456,14 +454,14 @@ export default function ProdutosPage() {
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64String = reader.result as string;
-      setEditingProduct(prev => prev ? { ...prev, image: base64String } : { 
+      setEditingProduct(prev => prev ? { ...prev, image_url: base64String } : { 
         id: 0, 
         name: "", 
         category: categories[0]?.name || "Sem Categoria", 
         price: 0, 
         order: products.length + 1, 
         description: "", 
-        image: base64String, 
+        image_url: base64String, 
         status: "ativo",
         removableIngredients: []
       });
@@ -768,7 +766,7 @@ export default function ProdutosPage() {
                     <input 
                       type="text" 
                       value={editingProduct?.name || ""} 
-                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, category: "", price: 0, order: products.length + 1, description: "", image: "", status: "ativo", removableIngredients: [] })} 
+                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, category: "", price: 0, order: products.length + 1, description: "", image_url: "", status: "ativo", removableIngredients: [] })} 
                       placeholder="Ex: Smash Burger" 
                       className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium" 
                       required 
@@ -779,7 +777,7 @@ export default function ProdutosPage() {
                     <div className="relative">
                       <select 
                         value={editingProduct?.category || ""}
-                        onChange={(e) => setEditingProduct(prev => prev ? { ...prev, category: e.target.value } : { id: 0, name: "", category: e.target.value, price: 0, order: products.length + 1, description: "", image: "", status: "ativo", removableIngredients: [] })}
+                        onChange={(e) => setEditingProduct(prev => prev ? { ...prev, category: e.target.value } : { id: 0, name: "", category: e.target.value, price: 0, order: products.length + 1, description: "", image_url: "", status: "ativo", removableIngredients: [] })}
                         className="w-full bg-white/[0.05] border border-white/5 rounded-lg h-12 px-4 text-sm text-white focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 appearance-none font-bold uppercase tracking-tighter cursor-pointer"
                         required
                       >
@@ -802,7 +800,7 @@ export default function ProdutosPage() {
                       type="number" 
                       step="0.01" 
                       value={editingProduct?.price || ""} 
-                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, price: parseFloat(e.target.value) || 0 } : { id: 0, name: "", category: "", price: parseFloat(e.target.value) || 0, order: products.length + 1, description: "", image: "", status: "ativo", removableIngredients: [] })} 
+                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, price: parseFloat(e.target.value) || 0 } : { id: 0, name: "", category: "", price: parseFloat(e.target.value) || 0, order: products.length + 1, description: "", image_url: "", status: "ativo", removableIngredients: [] })} 
                       placeholder="Ex: 34.90" 
                       className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-black text-primary" 
                       required 
@@ -813,7 +811,7 @@ export default function ProdutosPage() {
                     <input 
                       type="number" 
                       value={editingProduct?.order || ""} 
-                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, order: parseInt(e.target.value) || 0 } : { id: 0, name: "", category: "", price: 0, order: parseInt(e.target.value) || 0, description: "", image: "", status: "ativo", removableIngredients: [] })} 
+                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, order: parseInt(e.target.value) || 0 } : { id: 0, name: "", category: "", price: 0, order: parseInt(e.target.value) || 0, description: "", image_url: "", status: "ativo", removableIngredients: [] })} 
                       placeholder="Ex: 1" 
                       className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-black text-center" 
                       required 
@@ -826,7 +824,7 @@ export default function ProdutosPage() {
                 <label className="text-[13px] font-bold text-white/50 ml-1 block">Descrição</label>
                 <textarea 
                   value={editingProduct?.description || ""} 
-                  onChange={(e) => setEditingProduct(prev => prev ? { ...prev, description: e.target.value } : { id: 0, name: "", category: "", price: 0, order: products.length + 1, description: e.target.value, image: "", status: "ativo", removableIngredients: [] })} 
+                  onChange={(e) => setEditingProduct(prev => prev ? { ...prev, description: e.target.value } : { id: 0, name: "", category: "", price: 0, order: products.length + 1, description: e.target.value, image_url: "", status: "ativo", removableIngredients: [] })} 
                   placeholder="Descreva brevemente o produto..." 
                   className="w-full bg-white/[0.05] border border-white/5 rounded-lg p-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium min-h-[100px] resize-none leading-relaxed" 
                   required 

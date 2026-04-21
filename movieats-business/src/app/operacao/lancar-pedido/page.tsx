@@ -25,7 +25,7 @@ interface Product {
   name: string;
   category: string;
   price: number;
-  image: string;
+  image_url: string;
 }
 
 interface CartItem extends Product {
@@ -35,11 +35,11 @@ interface CartItem extends Product {
 const initialCategories = ["🍔 Hambúrgueres", "🍟 Acompanhamentos", "🥤 Bebidas", "🍰 Sobremesas", "🥗 Saladas"];
 
 const initialProducts: Product[] = [
-  { id: 1, name: "Smash Burger Duo", category: "🍔 Hambúrgueres", price: 38.90, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150&h=150&auto=format&fit=crop" },
-  { id: 2, name: "Batata Rústica", category: "🍟 Acompanhamentos", price: 18.00, image: "https://images.unsplash.com/photo-1573015084245-7da883204507?q=80&w=150&h=150&auto=format&fit=crop" },
-  { id: 3, name: "Coca-Cola Zero", category: "🥤 Bebidas", price: 7.50, image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=150&h=150&auto=format&fit=crop" },
-  { id: 4, name: "Pizza Calabresa", category: "🍕 Pizzas", price: 45.90, image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=150&h=150&auto=format&fit=crop" },
-  { id: 5, name: "Suco de Laranja", category: "🥤 Bebidas", price: 12.00, image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?q=80&w=150&h=150&auto=format&fit=crop" }
+  { id: 1, name: "Smash Burger Duo", category: "🍔 Hambúrgueres", price: 38.90, image_url: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150&h=150&auto=format&fit=crop" },
+  { id: 2, name: "Batata Rústica", category: "🍟 Acompanhamentos", price: 18.00, image_url: "https://images.unsplash.com/photo-1573015084245-7da883204507?q=80&w=150&h=150&auto=format&fit=crop" },
+  { id: 3, name: "Coca-Cola Zero", category: "🥤 Bebidas", price: 7.50, image_url: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=150&h=150&auto=format&fit=crop" },
+  { id: 4, name: "Pizza Calabresa", category: "🍕 Pizzas", price: 45.90, image_url: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=150&h=150&auto=format&fit=crop" },
+  { id: 5, name: "Suco de Laranja", category: "🥤 Bebidas", price: 12.00, image_url: "https://images.unsplash.com/photo-1613478223719-2ab802602423?q=80&w=150&h=150&auto=format&fit=crop" }
 ];
 
 export default function LancarPedidoPage() {
@@ -127,7 +127,7 @@ export default function LancarPedidoPage() {
               {cart.length > 0 ? (
                 cart.map((item) => (
                   <div key={item.id} className="flex items-center gap-2 bg-white/[0.02] border border-white/5 p-2 rounded-lg group hover:border-primary/20 transition-all">
-                    <img src={item.image} alt={item.name} className="w-8 h-8 rounded-md object-cover" />
+                    <img src={item.image_url} alt={item.name} className="w-8 h-8 rounded-md object-cover" />
                     <div className="flex-1 min-w-0">
                       <h4 className="text-[9px] font-black text-white uppercase truncate tracking-tight leading-none">{item.name}</h4>
                       <span className="text-[8px] font-bold text-primary">R$ {item.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
@@ -279,7 +279,7 @@ export default function LancarPedidoPage() {
                 >
                   <div className="relative aspect-square rounded-lg overflow-hidden mb-2 bg-white/5">
                     <img 
-                      src={product.image} 
+                      src={product.image_url} 
                       alt={product.name} 
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />

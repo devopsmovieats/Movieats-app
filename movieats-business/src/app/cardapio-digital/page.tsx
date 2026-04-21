@@ -39,14 +39,14 @@ interface Product {
   category: string;
   price: number;
   description: string;
-  image: string;
+  image_url: string;
   status: string;
 }
 
 interface Category {
   id: number;
   name: string;
-  image: string;
+  image_url: string;
   status: string;
 }
 
@@ -248,7 +248,7 @@ export default function CardapioDigitalPage() {
                   {/* Product Image */}
                   <div className="relative aspect-square overflow-hidden bg-black/20">
                      <img 
-                       src={product.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=400&h=400&auto=format&fit=crop"} 
+                       src={product.image_url || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=400&h=400&auto=format&fit=crop"} 
                        alt={product.name}
                        className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-110"
                      />
@@ -351,7 +351,7 @@ export default function CardapioDigitalPage() {
                  {cart.map(item => (
                     <div key={item.id} className="flex gap-4 items-center">
                        <div className="w-16 h-16 rounded-md overflow-hidden bg-black/20 shrink-0 border border-white/5">
-                          <img src={item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150&h=150&auto=format&fit=crop"} alt="" className="w-full h-full object-cover" />
+                          <img src={item.image_url || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150&h=150&auto=format&fit=crop"} alt="" className="w-full h-full object-cover" />
                        </div>
                        <div className="flex-1 space-y-1">
                           <h4 className="text-[10px] font-black uppercase tracking-tight line-clamp-1">{item.name}</h4>

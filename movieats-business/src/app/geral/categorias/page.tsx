@@ -64,21 +64,21 @@ const initialCategories: Category[] = [
     name: "Hambúrgueres Artesanais", 
     order: 1, 
     status: "ativo", 
-    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150&h=150&auto=format&fit=crop" 
+    image_url: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150&h=150&auto=format&fit=crop" 
   },
   { 
     id: 2, 
     name: "Pizzas Gourmet", 
     order: 2, 
     status: "ativo", 
-    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=150&h=150&auto=format&fit=crop" 
+    image_url: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=150&h=150&auto=format&fit=crop" 
   },
   { 
     id: 3, 
     name: "Bebidas e Coquetéis", 
     order: 3, 
     status: "ativo", 
-    image: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=150&h=150&auto=format&fit=crop" 
+    image_url: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=150&h=150&auto=format&fit=crop" 
   },
 ];
 
@@ -350,9 +350,9 @@ export default function CategoriasPage() {
     setTimeout(() => {
       // Simulação de novas categorias vindas da planilha
       const newItems: Category[] = [
-        { id: Date.now() + 1, name: "Sobremesas Geladas", order: categories.length + 1, status: "ativo", image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?q=80&w=150&h=150&auto=format&fit=crop" },
-        { id: Date.now() + 2, name: "Massas Italianas", order: categories.length + 2, status: "ativo", image: "https://images.unsplash.com/photo-1473093226795-af9932fe5856?q=80&w=150&h=150&auto=format&fit=crop" },
-        { id: Date.now() + 3, name: "Pratos Saudáveis", order: categories.length + 3, status: "inativo", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150&h=150&auto=format&fit=crop" },
+        { id: Date.now() + 1, name: "Sobremesas Geladas", order: categories.length + 1, status: "ativo", image_url: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?q=80&w=150&h=150&auto=format&fit=crop" },
+        { id: Date.now() + 2, name: "Massas Italianas", order: categories.length + 2, status: "ativo", image_url: "https://images.unsplash.com/photo-1473093226795-af9932fe5856?q=80&w=150&h=150&auto=format&fit=crop" },
+        { id: Date.now() + 3, name: "Pratos Saudáveis", order: categories.length + 3, status: "inativo", image_url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150&h=150&auto=format&fit=crop" },
       ];
 
       setCategories(prev => [...prev, ...newItems]);
@@ -380,7 +380,7 @@ export default function CategoriasPage() {
     setIsSaving(true);
 
     try {
-      let finalImageUrl = editingCategory.image;
+      let finalImageUrl = editingCategory.image_url;
 
       // Se houver um novo arquivo selecionado, faz o upload para o R2 primeiro
       if (selectedFile) {
@@ -834,7 +834,7 @@ export default function CategoriasPage() {
                       <input 
                         type="text" 
                         value={editingCategory?.name || ""}
-                        onChange={(e) => setEditingCategory(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, order: categories.length + 1, status: "ativo", image: "" })}
+                        onChange={(e) => setEditingCategory(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, order: categories.length + 1, status: "ativo", image_url: "" })}
                         placeholder="Ex: Pizzas"
                         className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium"
                         required
@@ -873,7 +873,7 @@ export default function CategoriasPage() {
                         value={editingCategory?.order || ""}
                         onChange={(e) => {
                           const val = parseInt(e.target.value);
-                          setEditingCategory(prev => prev ? { ...prev, order: isNaN(val) ? 0 : val } : { id: 0, name: "", order: isNaN(val) ? 0 : val, status: "ativo", image: "" });
+                          setEditingCategory(prev => prev ? { ...prev, order: isNaN(val) ? 0 : val } : { id: 0, name: "", order: isNaN(val) ? 0 : val, status: "ativo", image_url: "" });
                         }}
                         placeholder="0"
                         className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg px-4 text-sm text-white focus:outline-none focus:border-primary/50 transition-all font-medium text-center"
