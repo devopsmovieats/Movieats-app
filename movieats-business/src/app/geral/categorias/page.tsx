@@ -750,7 +750,7 @@ export default function CategoriasPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center">
-                          <span className="inline-flex items-center justify-center w-7 h-7 bg-white/5 border border-white/10 rounded-lg text-[11px] font-black text-white/60">
+                          <span className="text-[11px] font-bold text-white/60">
                             {category.order}
                           </span>
                         </div>
@@ -780,22 +780,26 @@ export default function CategoriasPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center">
-                          <div 
-                            className="relative w-10 h-5.5 cursor-pointer"
-                            onClick={() => handleToggleStatus(category)}
-                          >
-                            <div className={`w-10 h-5.5 rounded-full transition-all duration-300 border border-white/5 ${category.status === 'ativo' ? 'bg-[#22c55e]' : 'bg-white/10'}`} />
-                            <div className={`absolute top-0.5 left-0.5 w-4.5 h-4.5 bg-white rounded-full transition-all duration-300 shadow-lg ${category.status === 'ativo' ? 'translate-x-4.5' : 'translate-x-0'}`} />
-                          </div>
+                          <span className={`text-[10px] font-black uppercase tracking-widest ${category.status === 'ativo' ? 'text-[#22c55e]' : 'text-zinc-600'}`}>
+                            {category.status === 'ativo' ? 'Ativo' : 'Inativo'}
+                          </span>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <button onClick={() => openEditModal(category)} className="p-2.5 rounded-lg bg-white/5 hover:bg-primary/10 text-muted-foreground hover:text-primary border border-white/5 hover:border-primary/20 transition-all duration-300 cursor-pointer">
-                            <Pencil className="w-3.5 h-3.5" />
+                        <div className="flex items-center justify-end gap-5">
+                          <button 
+                            onClick={() => openEditModal(category)} 
+                            className="text-muted-foreground hover:text-blue-400 transition-all duration-300 cursor-pointer"
+                            title="Editar"
+                          >
+                            <Pencil className="w-4 h-4" />
                           </button>
-                          <button onClick={() => handleDelete(category)} className="p-2.5 rounded-lg bg-white/5 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 border border-white/5 hover:border-red-500/20 transition-all duration-300 cursor-pointer">
-                            <Trash2 className="w-3.5 h-3.5" />
+                          <button 
+                            onClick={() => handleDelete(category)} 
+                            className="text-muted-foreground hover:text-red-400 transition-all duration-300 cursor-pointer"
+                            title="Excluir"
+                          >
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </td>
@@ -992,17 +996,12 @@ export default function CategoriasPage() {
                 <button 
                   type="submit"
                   disabled={isSaving}
-                  className="flex-1 px-8 py-3 bg-orange-600 hover:bg-orange-500 text-white font-bold text-[11px] uppercase tracking-[0.2em] rounded-xl transition-all shadow-[0_10px_20px_rgba(234,88,12,0.2)] active:scale-95 flex items-center justify-center gap-3 group cursor-pointer disabled:opacity-50"
+                  className="flex-1 px-8 py-3 bg-orange-600 hover:bg-orange-500 text-white font-bold text-[11px] uppercase tracking-[0.2em] rounded-xl transition-all shadow-[0_10px_20px_rgba(234,88,12,0.2)] active:scale-95 flex items-center justify-center cursor-pointer disabled:opacity-50"
                 >
                   {isSaving ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
                   ) : (
-                    <>
-                      {editingCategory?.id ? "Atualizar Categoria" : "Salvar Categoria"}
-                      <div className="w-5 h-5 bg-white/10 rounded-lg flex items-center justify-center group-hover:bg-white/20 transition-colors">
-                        <CheckCircle2 className="w-3 h-3" />
-                      </div>
-                    </>
+                    editingCategory?.id ? "Atualizar Categoria" : "Salvar Categoria"
                   )}
                 </button>
               </div>
