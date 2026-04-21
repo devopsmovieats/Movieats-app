@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import * as XLSX from "xlsx";
 import DashboardLayout from "@/components/DashboardLayout";
 import { supabase } from "@/lib/supabase";
 import { 
@@ -273,51 +274,37 @@ export default function CategoriasPage() {
       });
       return;
     }
-    
-    // Função auxiliar para escapar valores do CSV
-    const escapeCSV = (val: any) => {
-      const stringVal = String(val ?? "");
-      if (stringVal.includes(",") || stringVal.includes("\"") || stringVal.includes("\n")) {
-        return `"${stringVal.replace(/"/g, '""')}"`;
-      }
-      return stringVal;
-    };
-
-    // Header do CSV e mapeamento de dados
-    const headers = ["ID", "Nome", "Ordem", "Status", "URL da Imagem"];
-    const rows = categoriesToExport.map(cat => [
-      cat.id,
-      cat.name,
-      cat.order,
-      cat.status,
-      cat.image_url
-    ]);
-
-    const csvContent = [
-      headers.join(","),
-      ...rows.map(row => row.map(escapeCSV).join(","))
-    ].join("\n");
 
     try {
-      const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
-      const link = document.createElement("a");
-      const url = URL.createObjectURL(blob);
-      link.setAttribute("href", url);
-      link.setAttribute("download", `categorias_movieats_${new Date().toISOString().split('T')[0]}.csv`);
-      link.style.visibility = "hidden";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Mapeamento dos dados para o formato Excel com nomes de colunas amigáveis
+      const dataToExport = categoriesToExport.map(cat => ({
+        "ID": cat.id,
+        "NOME": cat.name,
+        "ORDEM": cat.order,
+        "VISIBILIDADE": cat.status === 'ativo' ? 'Ativo' : 'Inativo',
+        "URL DA IMAGEM": cat.image_url
+      }));
+
+      // Cria a planilha (Worksheet)
+      const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+      
+      // Cria o livro (Workbook)
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Categorias");
+
+      // Gera o download automático
+      const fileName = `categorias_movieats_${new Date().toISOString().split('T')[0]}.xlsx`;
+      XLSX.writeFile(workbook, fileName);
       
       Toast.fire({
         icon: "success",
-        title: `${categoriesToExport.length} categorias exportadas com sucesso!`
+        title: `${categoriesToExport.length} categorias exportadas para Excel!`
       });
     } catch (error) {
-      console.error("Erro na exportação:", error);
+      console.error("Erro na exportação Excel:", error);
       Toast.fire({
         icon: "error",
-        title: "Erro ao gerar arquivo de exportação"
+        title: "Erro ao gerar arquivo Excel"
       });
     }
   };
