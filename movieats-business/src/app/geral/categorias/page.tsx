@@ -261,36 +261,65 @@ export default function CategoriasPage() {
   };
 
   const handleExport = () => {
-    const categoriesToExport = categories.filter(cat => selectedIds.has(cat.id));
+    // Se houver seleção, exporta apenas as selecionadas. Caso contrário, exporta todas.
+    const categoriesToExport = selectedIds.size > 0 
+      ? categories.filter(cat => selectedIds.has(cat.id as number))
+      : categories;
     
     if (categoriesToExport.length === 0) {
       Toast.fire({
         icon: "info",
-        title: "Selecione categorias para exportar"
+        title: "Nenhuma categoria para exportar"
       });
       return;
     }
     
-    // Header do CSV
-    const csvContent = [
-      ["ID", "Nome", "Ordem", "Status"],
-      ...categoriesToExport.map(cat => [cat.id, cat.name, cat.order, cat.status])
-    ].map(e => e.join(",")).join("\n");
+    // Função auxiliar para escapar valores do CSV
+    const escapeCSV = (val: any) => {
+      const stringVal = String(val ?? "");
+      if (stringVal.includes(",") || stringVal.includes("\"") || stringVal.includes("\n")) {
+        return `"${stringVal.replace(/"/g, '""')}"`;
+      }
+      return stringVal;
+    };
 
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", `categorias_movieats_${new Date().getTime()}.csv`);
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    Toast.fire({
-      icon: "success",
-      title: `${categoriesToExport.length} categorias exportadas com sucesso!`
-    });
+    // Header do CSV e mapeamento de dados
+    const headers = ["ID", "Nome", "Ordem", "Status", "URL da Imagem"];
+    const rows = categoriesToExport.map(cat => [
+      cat.id,
+      cat.name,
+      cat.order,
+      cat.status,
+      cat.image_url
+    ]);
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map(row => row.map(escapeCSV).join(","))
+    ].join("\n");
+
+    try {
+      const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `categorias_movieats_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      Toast.fire({
+        icon: "success",
+        title: `${categoriesToExport.length} categorias exportadas com sucesso!`
+      });
+    } catch (error) {
+      console.error("Erro na exportação:", error);
+      Toast.fire({
+        icon: "error",
+        title: "Erro ao gerar arquivo de exportação"
+      });
+    }
   };
 
   const handleImportClick = () => {
