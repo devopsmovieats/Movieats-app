@@ -646,18 +646,12 @@ export default function CategoriasPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {paginatedCategories.map((category) => {
-                    // CÓDIGO DIRETO: Força a construção da URL como solicitado
-                    const finalImageUrl = category.image 
-                      ? `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${category.image}`
-                      : '/placeholder.png';
-                    
-                    return (
-                      <tr 
-                        key={category.id} 
-                        className="category-row bg-transparent hover:bg-white/[0.02] border-b border-white/5 transition-colors"
-                        style={{ cursor: 'pointer' }}
-                      >
+                  {paginatedCategories.map((category) => (
+                    <tr 
+                      key={category.id} 
+                      className="category-row bg-transparent hover:bg-white/[0.02] border-b border-white/5 transition-colors"
+                      style={{ cursor: 'pointer' }}
+                    >
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-center">
                           <input 
@@ -672,7 +666,7 @@ export default function CategoriasPage() {
                         <div className="w-12 h-12 rounded-lg border-2 border-white/5 overflow-hidden shadow-inner group-hover:border-primary/30 transition-colors mx-auto bg-white/5 flex items-center justify-center">
                           {category.image ? (
                             <img 
-                              src={finalImageUrl} 
+                              src={category.image} 
                               alt={category.name} 
                               className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" 
                               onError={(e) => {
@@ -718,8 +712,7 @@ export default function CategoriasPage() {
                         </div>
                       </td>
                     </tr>
-                   );
-                  })}
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -812,7 +805,7 @@ export default function CategoriasPage() {
                     {(previewUrl || editingCategory?.image) ? (
                       <div className="relative w-full h-full flex items-center justify-center">
                         <img 
-                          src={previewUrl || getPublicUrl(editingCategory?.image)} 
+                          src={previewUrl || editingCategory?.image} 
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                           alt="Preview" 
                         />

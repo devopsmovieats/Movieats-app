@@ -96,7 +96,6 @@ const initialProducts: Product[] = [
 ];
 
 export default function ProdutosPage() {
-  console.log("URL BASE PRODUTOS (Build/Runtime):", process.env.NEXT_PUBLIC_R2_PUBLIC_URL);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -619,13 +618,7 @@ export default function ProdutosPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {filteredProducts.length > 0 ? filteredProducts.map((product) => {
-                  // CÓDIGO DIRETO: Força a construção da URL conforme solicitado
-                  const finalImageUrl = product.image 
-                    ? `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${product.image}`
-                    : '/placeholder.png';
-                  
-                  return (
+                {filteredProducts.length > 0 ? filteredProducts.map((product) => (
                     <tr key={product.id} className={`hover:bg-white/[0.02] transition-colors group ${selectedIds.has(product.id) ? 'bg-primary/5' : ''}`}>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-center">
@@ -640,7 +633,7 @@ export default function ProdutosPage() {
                     <td className="px-6 py-4">
                       <div className="w-12 h-12 rounded-lg border border-white/5 overflow-hidden mx-auto shadow-inner bg-black/20 group-hover:border-primary/30 transition-colors">
                         <img 
-                          src={finalImageUrl || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150&h=150&auto=format&fit=crop"} 
+                          src={product.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150&h=150&auto=format&fit=crop"} 
                           alt={product.name} 
                           className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" 
                           onError={(e) => {
@@ -690,8 +683,7 @@ export default function ProdutosPage() {
                       )}
                     </td>
                   </tr>
-                 );
-                }) : (
+                )) : (
                   <tr>
                     <td colSpan={6} className="px-6 py-20 text-center">
                       <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest opacity-40">Nenhum produto encontrado.</p>
@@ -751,7 +743,13 @@ export default function ProdutosPage() {
                   onClick={() => fileInputRef.current?.click()} 
                   className="w-full h-24 border-2 border-dashed border-white/5 hover:border-primary/30 rounded-2xl flex flex-col items-center justify-center gap-2 bg-white/[0.02] cursor-pointer group transition-all relative overflow-hidden"
                 >
-                  {editingProduct?.image && <img src={getPublicUrl(editingProduct.image)} className="absolute inset-0 w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity" alt="" />}
+                  {(previewUrl || editingProduct?.image) && (
+                    <img 
+                      src={previewUrl || editingProduct?.image} 
+                      className="absolute inset-0 w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity" 
+                      alt="" 
+                    />
+                  )}
                   <div className="p-2 bg-white/5 rounded-full group-hover:scale-110 transition-all">
                     <ImageIcon className="w-5 h-5 text-white/30 group-hover:text-primary transition-colors" />
                   </div>
