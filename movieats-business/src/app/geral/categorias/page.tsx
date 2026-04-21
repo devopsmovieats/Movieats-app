@@ -54,6 +54,7 @@ const generateShortId = () => Math.random().toString(36).substring(2, 8).toUpper
 interface Category {
   id: string | number;
   name: string;
+  description: string;
   order: number;
   status: "ativo" | "inativo";
   image_url: string;
@@ -125,6 +126,7 @@ export default function CategoriasPage() {
         const formatted = data.map((cat: any) => ({
           id: cat.id,
           name: cat.name,
+          description: cat.description || "",
           order: cat.order || 0,
           status: cat.status === 'active' ? 'ativo' : 'inativo',
           image_url: cat.image_url || ""
@@ -211,6 +213,31 @@ export default function CategoriasPage() {
       setSelectedIds(new Set());
     } else {
       setSelectedIds(new Set(filteredCategories.map(cat => cat.id)));
+    }
+  };
+
+  const handleToggleStatus = async (category: Category) => {
+    const newStatus = category.status === "ativo" ? "inactive" : "active";
+    
+    try {
+      const { error } = await supabase
+        .from('bd_categorias')
+        .update({ status: newStatus })
+        .eq('id', category.id);
+
+      if (error) throw error;
+
+      Toast.fire({
+        icon: "success",
+        title: `Status atualizado para ${newStatus === 'active' ? 'Ativo' : 'Inativo'}`
+      });
+      fetchCategories();
+    } catch (error) {
+      console.error("Erro ao mudar status:", error);
+      Toast.fire({
+        icon: "error",
+        title: "Erro ao atualizar status"
+      });
     }
   };
 
@@ -465,6 +492,7 @@ export default function CategoriasPage() {
 
       const categoryData = {
         name: editingCategory.name,
+        description: editingCategory.description,
         order: editingCategory.order,
         status: editingCategory.status === 'ativo' ? 'active' : 'inactive',
         image_url: finalImageUrl,
@@ -692,9 +720,10 @@ export default function CategoriasPage() {
                         />
                       </div>
                     </th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Imagem</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Nome da Categoria</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-center">Ordem</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-center">Imagem</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Nome</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Descrição</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-center">Status</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-right">Ações</th>
                   </tr>
@@ -704,7 +733,6 @@ export default function CategoriasPage() {
                     <tr 
                       key={category.id} 
                       className="category-row bg-transparent hover:bg-white/[0.02] border-b border-white/5 transition-colors"
-                      style={{ cursor: 'pointer' }}
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-center">
@@ -714,6 +742,13 @@ export default function CategoriasPage() {
                             onChange={() => handleSelectOne(category.id)}
                             className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
                           />
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex justify-center">
+                          <span className="inline-flex items-center justify-center w-7 h-7 bg-white/5 border border-white/10 rounded-lg text-[11px] font-black text-white/60">
+                            {category.order}
+                          </span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -730,23 +765,23 @@ export default function CategoriasPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex flex-col">
-                          <span className="text-sm font-medium text-white group-hover:text-primary transition-colors tracking-tight uppercase">
-                            {category.name}
-                          </span>
-                          <span className="text-[9px] text-muted-foreground font-bold mt-0.5 uppercase tracking-widest opacity-50">ID: #{category.id}</span>
-                        </div>
+                        <span className="text-sm font-medium text-white group-hover:text-primary transition-colors tracking-tight uppercase">
+                          {category.name}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className="inline-flex items-center justify-center w-7 h-7 bg-white/5 border border-white/10 rounded-lg text-[11px] font-black text-white/60">
-                          {category.order}
+                      <td className="px-6 py-4">
+                        <span className="text-[11px] text-muted-foreground font-medium line-clamp-1 max-w-[200px]">
+                          {category.description || "Sem descrição"}
                         </span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center">
-                          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${category.status === "ativo" ? "bg-[#22c55e]/10 border-[#22c55e]/20 text-[#22c55e]" : "bg-red-500/10 border-red-500/20 text-red-500"}`}>
-                            {category.status === "ativo" ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-                            <span className="text-[9px] font-black uppercase tracking-widest">{category.status}</span>
+                          <div 
+                            className="relative w-10 h-5.5 cursor-pointer"
+                            onClick={() => handleToggleStatus(category)}
+                          >
+                            <div className={`w-10 h-5.5 rounded-full transition-all duration-300 border border-white/5 ${category.status === 'ativo' ? 'bg-[#22c55e]' : 'bg-white/10'}`} />
+                            <div className={`absolute top-0.5 left-0.5 w-4.5 h-4.5 bg-white rounded-full transition-all duration-300 shadow-lg ${category.status === 'ativo' ? 'translate-x-4.5' : 'translate-x-0'}`} />
                           </div>
                         </div>
                       </td>
@@ -820,8 +855,8 @@ export default function CategoriasPage() {
             onClick={() => setIsModalOpen(false)}
           />
           
-          {/* Modal Container - Estilo Login (Suave e Moderno) */}
-          <div className="relative w-full max-w-xl bg-[#111827]/95 backdrop-blur-[15px] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden">
+          {/* Modal Container - Compacto e Centralizado */}
+          <div className="relative w-full max-w-lg bg-[#111827]/95 backdrop-blur-[15px] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden">
             
             {/* Modal Header Premium */}
             <div className="px-8 py-6 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01]">
@@ -839,96 +874,105 @@ export default function CategoriasPage() {
               </button>
             </div>
 
-            {/* Modal Body - Estilo Login Inputs */}
+            {/* Modal Body - Ordem Lógica: Nome, Descrição, Ordem, Imagem */}
             <form onSubmit={handleSaveCategory} className="p-8 pt-6 space-y-6">
               
-              <div className="flex gap-6 items-start">
-                {/* Upload Lateral Compacto (Max 80px, usando 64px para elegância) */}
-                <div className="w-16 shrink-0">
-                  <label className="text-[13px] font-bold text-white/50 ml-1 mb-2 block">Imagem</label>
+              <div className="space-y-5">
+                {/* Nome da Categoria */}
+                <div className="space-y-2">
+                  <label className="text-[13px] font-bold text-white/50 ml-1 block">Nome da Categoria</label>
+                  <input 
+                    type="text" 
+                    value={editingCategory?.name || ""}
+                    onChange={(e) => setEditingCategory(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, description: "", order: categories.length + 1, status: "ativo", image_url: "" })}
+                    placeholder="Ex: Pizzas"
+                    className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium"
+                    required
+                  />
+                </div>
+
+                {/* Descrição */}
+                <div className="space-y-2">
+                  <label className="text-[13px] font-bold text-white/50 ml-1 block">Descrição</label>
+                  <textarea 
+                    value={editingCategory?.description || ""}
+                    onChange={(e) => setEditingCategory(prev => prev ? { ...prev, description: e.target.value } : { id: 0, name: "", description: e.target.value, order: categories.length + 1, status: "ativo", image_url: "" })}
+                    placeholder="Breve descrição da categoria..."
+                    className="w-full h-24 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium resize-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-5 items-end">
+                  {/* Ordem */}
+                  <div className="space-y-2">
+                    <label className="text-[13px] font-bold text-white/50 ml-1 block">Ordem de Exibição</label>
+                    <input 
+                      type="number" 
+                      min="0"
+                      value={editingCategory?.order || ""}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value);
+                        setEditingCategory(prev => prev ? { ...prev, order: isNaN(val) ? 0 : val } : { id: 0, name: "", description: "", order: isNaN(val) ? 0 : val, status: "ativo", image_url: "" });
+                      }}
+                      placeholder="0"
+                      className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg px-4 text-sm text-white focus:outline-none focus:border-primary/50 transition-all font-medium"
+                      required
+                    />
+                  </div>
+
+                  {/* Status Toggle */}
+                  <div className="space-y-2 pb-1">
+                    <label className="text-[13px] font-bold text-white/50 ml-1 block mb-2">Visibilidade</label>
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="relative w-10 h-5.5 cursor-pointer"
+                        onClick={() => {
+                          setEditingCategory(prev => {
+                            if (!prev) return null;
+                            return { ...prev, status: prev.status === 'ativo' ? 'inativo' : 'ativo' };
+                          });
+                        }}
+                      >
+                        <div className={`w-10 h-5.5 rounded-full transition-all duration-300 border border-white/5 ${editingCategory?.status === 'ativo' ? 'bg-[#22c55e]' : 'bg-white/10'}`} />
+                        <div className={`absolute top-0.5 left-0.5 w-4.5 h-4.5 bg-white rounded-full transition-all duration-300 shadow-lg ${editingCategory?.status === 'ativo' ? 'translate-x-4.5' : 'translate-x-0'}`} />
+                      </div>
+                      <span className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${editingCategory?.status === 'ativo' ? 'text-[#22c55e]' : 'text-white/20'}`}>
+                        {editingCategory?.status === 'ativo' ? 'Ativo' : 'Inativo'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Upload de Imagem (Abaixo de tudo conforme pedido) */}
+                <div className="space-y-2">
+                  <label className="text-[13px] font-bold text-white/50 ml-1 block">Imagem de Capa</label>
                   <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
                   <div 
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-16 h-16 bg-white/[0.05] hover:bg-white/[0.08] border border-white/5 hover:border-primary/40 rounded-lg flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden"
+                    className="w-full h-32 bg-white/[0.05] hover:bg-white/[0.08] border border-white/5 hover:border-primary/40 rounded-xl flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden"
                   >
                     {(previewUrl || editingCategory?.image_url) ? (
                       <div className="relative w-full h-full flex items-center justify-center">
                         <img 
                           src={previewUrl || editingCategory?.image_url} 
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
                           alt="Preview" 
                         />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                          <Camera className="w-6 h-6 text-white" />
+                        </div>
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center gap-1">
-                        <div className="p-1 bg-white/5 rounded-lg group-hover:scale-105 transition-transform">
-                          <ImageIcon className="w-3.5 h-3.5 text-white/20 group-hover:text-primary transition-colors" />
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="p-3 bg-white/5 rounded-full group-hover:scale-110 transition-transform">
+                          <ImageIcon className="w-5 h-5 text-white/20 group-hover:text-primary transition-colors" />
                         </div>
-                        <span className="text-[6.5px] font-black text-white/20 uppercase tracking-widest group-hover:text-white">Upload</span>
-                        <span className="text-[5.5px] font-bold text-white/10 uppercase tracking-tighter">Máx 4MB</span>
+                        <div className="text-center">
+                          <span className="text-[10px] font-black text-white/40 uppercase tracking-widest block">Clique para Upload</span>
+                          <span className="text-[8px] font-bold text-white/10 uppercase tracking-tighter">JPG, PNG ou WEBP • Máx 4MB</span>
+                        </div>
                       </div>
                     )}
-                  </div>
-                </div>
-
-                {/* Grid Compacto Lado a Lado (Nome e Status) */}
-                <div className="flex-1 space-y-5">
-                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:items-end">
-                    {/* Nome da Categoria */}
-                    <div className="space-y-2">
-                      <label className="text-[13px] font-bold text-white/50 ml-1 block">Nome da Categoria</label>
-                      <input 
-                        type="text" 
-                        value={editingCategory?.name || ""}
-                        onChange={(e) => setEditingCategory(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, order: categories.length + 1, status: "ativo", image_url: "" })}
-                        placeholder="Ex: Pizzas"
-                        className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium"
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-[13px] font-bold text-white/50 ml-1 block">Visibilidade</label>
-                        <div 
-                          className="relative w-10 h-5.5 cursor-pointer"
-                          onClick={() => {
-                            setEditingCategory(prev => {
-                              if (!prev) return null;
-                              return { ...prev, status: prev.status === 'ativo' ? 'inativo' : 'ativo' };
-                            });
-                          }}
-                        >
-                          {/* Track */}
-                          <div className={`w-10 h-5.5 rounded-full transition-all duration-300 border border-white/5 ${editingCategory?.status === 'ativo' ? 'bg-[#22c55e]' : 'bg-white/10'}`} />
-                          {/* Ball (Slider) */}
-                          <div className={`absolute top-0.5 left-0.5 w-4.5 h-4.5 bg-white rounded-full transition-all duration-300 shadow-lg ${editingCategory?.status === 'ativo' ? 'translate-x-4.5' : 'translate-x-0'}`} />
-                        </div>
-                        <span className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${editingCategory?.status === 'ativo' ? 'text-[#22c55e]' : 'text-white/20'}`}>
-                          {editingCategory?.status === 'ativo' ? 'Ativo' : 'Inativo'}
-                        </span>
-                    </div>
-                  </div>
-
-                  {/* Ordem e Texto Informativo */}
-                  <div className="grid grid-cols-1 md:grid-cols-[100px_1fr] gap-4 items-center">
-                    <div className="space-y-2">
-                      <label className="text-[13px] font-bold text-white/50 ml-1 block">Ordem</label>
-                      <input 
-                        type="number" 
-                        min="0"
-                        value={editingCategory?.order || ""}
-                        onChange={(e) => {
-                          const val = parseInt(e.target.value);
-                          setEditingCategory(prev => prev ? { ...prev, order: isNaN(val) ? 0 : val } : { id: 0, name: "", order: isNaN(val) ? 0 : val, status: "ativo", image_url: "" });
-                        }}
-                        placeholder="0"
-                        className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg px-4 text-sm text-white focus:outline-none focus:border-primary/50 transition-all font-medium text-center"
-                        required
-                      />
-                    </div>
-                    <p className="text-[9px] text-muted-foreground font-medium uppercase tracking-[0.1em] opacity-40 leading-relaxed max-w-[200px]">
-                      Ative para deixar a categoria visível no cardápio digital e para os garçons.
-                    </p>
                   </div>
                 </div>
               </div>
