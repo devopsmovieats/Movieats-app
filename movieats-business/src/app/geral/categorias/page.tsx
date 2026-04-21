@@ -645,12 +645,16 @@ export default function CategoriasPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {paginatedCategories.map((category) => (
-                    <tr 
-                      key={category.id} 
-                      className="category-row bg-transparent hover:bg-white/[0.02] border-b border-white/5 transition-colors"
-                      style={{ cursor: 'pointer' }}
-                    >
+                  {paginatedCategories.map((category) => {
+                    if (category.image) {
+                      console.log(`[DEBUG CATEGORIA] ID: ${category.id} | Image: ${category.image}`);
+                    }
+                    return (
+                      <tr 
+                        key={category.id} 
+                        className="category-row bg-transparent hover:bg-white/[0.02] border-b border-white/5 transition-colors"
+                        style={{ cursor: 'pointer' }}
+                      >
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-center">
                           <input 
@@ -664,7 +668,16 @@ export default function CategoriasPage() {
                       <td className="px-6 py-4 text-center">
                         <div className="w-12 h-12 rounded-lg border-2 border-white/5 overflow-hidden shadow-inner group-hover:border-primary/30 transition-colors mx-auto bg-white/5 flex items-center justify-center">
                           {category.image ? (
-                            <img src={getPublicUrl(category.image)} alt={category.name} className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" />
+                            <img 
+                              src={getPublicUrl(category.image)} 
+                              alt={category.name} 
+                              className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" 
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2' ry='2'%3E%3C/rect%3E%3Ccircle cx='9' cy='9' r='2'%3E%3C/circle%3E%3Cpath d='m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21'%3E%3C/path%3E%3C/svg%3E";
+                                e.currentTarget.className = "w-full h-full object-center opacity-10 bg-white/5 p-3";
+                              }}
+                            />
                           ) : (
                             <ImageIcon className="w-5 h-5 text-white/10" />
                           )}
@@ -702,7 +715,8 @@ export default function CategoriasPage() {
                         </div>
                       </td>
                     </tr>
-                  ))}
+                   );
+                  })}
                 </tbody>
               </table>
             </div>

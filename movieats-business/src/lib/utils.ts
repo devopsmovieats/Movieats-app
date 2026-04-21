@@ -19,9 +19,12 @@ export function getPublicUrl(path: string | undefined | null): string {
   const cleanPath = path.replace(/^\/+/, "");
 
   if (!cleanBase) {
-    console.warn("NEXT_PUBLIC_R2_PUBLIC_URL não está configurada.");
+    console.warn("DEBUG: NEXT_PUBLIC_R2_PUBLIC_URL não está configurada.");
     return `/${cleanPath}`;
   }
 
-  return `${cleanBase}/${cleanPath}`;
+  const finalUrl = `${cleanBase}/${cleanPath}`;
+  console.log(`DEBUG: Path do Banco: ${path} | URL Final: ${finalUrl}`);
+  
+  return finalUrl;
 }
