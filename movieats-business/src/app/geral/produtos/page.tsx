@@ -46,11 +46,11 @@ interface Product {
   id: string | number;
   name: string;
   categoria_id: string;
-  price: number;
-  order: number;
+  preco: number;
+  order_index: number;
   descricao: string;
   image_url: string;
-  status: "ativo" | "inativo";
+  active: boolean;
   removable_ingredients: string[];
 }
 
@@ -64,22 +64,22 @@ const initialProducts: Product[] = [
     id: 1, 
     name: "Smash Burger Duo", 
     categoria_id: "cat_1", 
-    price: 38.90, 
-    order: 1, 
+    preco: 38.90, 
+    order_index: 1, 
     descricao: "Pão brioche, dois blends de 80g, queijo cheddar e maionese da casa.", 
     image_url: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150&h=150&auto=format&fit=crop", 
-    status: "ativo",
+    active: true,
     removable_ingredients: ["Cebola", "Picles", "Maionese"]
   },
   { 
     id: 2, 
     name: "Batata Rústica", 
     categoria_id: "cat_2", 
-    price: 18.00, 
-    order: 2, 
+    preco: 18.00, 
+    order_index: 2, 
     descricao: "Batatas fritas com casca, temperadas com páprica e alecrim.", 
     image_url: "https://images.unsplash.com/photo-1573015084245-7da883204507?q=80&w=150&h=150&auto=format&fit=crop", 
-    status: "ativo",
+    active: true,
     removable_ingredients: ["Páprica", "Alecrim"]
   }
 ];
@@ -139,7 +139,7 @@ export default function ProdutosPage() {
       .select('id, name')
       .eq('establishment_id', establishmentId)
       .eq('status', 'active')
-      .order('order', { ascending: true });
+      .order('order_index', { ascending: true });
 
     if (!error && data) {
       setCategories(data);
@@ -154,7 +154,7 @@ export default function ProdutosPage() {
         .from('bd_produtos')
         .select('*')
         .eq('establishment_id', establishmentId)
-        .order('order', { ascending: true });
+        .order('order_index', { ascending: true });
 
       if (!error && data) {
         setProducts(data);
@@ -187,11 +187,11 @@ export default function ProdutosPage() {
       id: 0,
       name: "",
       categoria_id: categories[0]?.id || "",
-      price: 0,
-      order: products.length + 1,
+      preco: 0,
+      order_index: products.length + 1,
       descricao: "",
       image_url: "",
-      status: "ativo",
+      active: true,
       removable_ingredients: []
     });
     setIngredientInput("");
@@ -325,10 +325,10 @@ export default function ProdutosPage() {
       const productData = {
         name: editingProduct.name,
         categoria_id: editingProduct.categoria_id,
-        price: editingProduct.price,
+        preco: editingProduct.preco,
         descricao: editingProduct.descricao,
-        order: editingProduct.order,
-        status: editingProduct.status === 'ativo' ? 'ativo' : 'inativo',
+        order_index: editingProduct.order_index,
+        active: editingProduct.active,
         image_url: finalImageUrl,
         removable_ingredients: editingProduct.removable_ingredients,
         establishment_id: currentEstId
@@ -374,7 +374,7 @@ export default function ProdutosPage() {
       ["ID", "Nome", "Categoria", "Preço", "Ordem", "Status", "Descrição"],
       ...productsToExport.map(p => {
         const catName = categories.find(c => c.id === p.categoria_id)?.name || "Sem Categoria";
-        return [p.id, p.name, catName, p.price, p.order, p.status, p.descricao];
+        return [p.id, p.name, catName, p.preco, p.order_index, p.active ? "Ativo" : "Inativo", p.descricao];
       })
     ].map(e => e.join(",")).join("\n");
 
@@ -451,8 +451,8 @@ export default function ProdutosPage() {
     setTimeout(() => {
       // Simulação de novos produtos
       const newItems: Product[] = [
-        { id: Date.now() + 1, name: "Pizza Calabresa", categoria_id: "", price: 45.90, order: products.length + 1, descricao: "Molho de tomate, mussarela e calabresa.", image_url: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=150&h=150&auto=format&fit=crop", status: "ativo", removable_ingredients: [] },
-        { id: Date.now() + 2, name: "Suco de Laranja", categoria_id: "", price: 12.00, order: products.length + 2, descricao: "Suco natural 500ml.", image_url: "https://images.unsplash.com/photo-1621506821199-a996ee0fef8d?q=80&w=150&h=150&auto=format&fit=crop", status: "ativo", removable_ingredients: [] },
+        { id: Date.now() + 1, name: "Pizza Calabresa", categoria_id: "", preco: 45.90, order_index: products.length + 1, descricao: "Molho de tomate, mussarela e calabresa.", image_url: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=150&h=150&auto=format&fit=crop", active: true, removable_ingredients: [] },
+        { id: Date.now() + 2, name: "Suco de Laranja", categoria_id: "", preco: 12.00, order_index: products.length + 2, descricao: "Suco natural 500ml.", image_url: "https://images.unsplash.com/photo-1621506821199-a996ee0fef8d?q=80&w=150&h=150&auto=format&fit=crop", active: true, removable_ingredients: [] },
       ];
 
       setProducts(prev => {
@@ -680,7 +680,7 @@ export default function ProdutosPage() {
                     </td>
                     <td className="px-6 py-4 text-center">
                       <span className="text-sm font-bold text-white tracking-tighter">
-                        R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        R$ {product.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
@@ -824,8 +824,8 @@ export default function ProdutosPage() {
                     <input 
                       type="number" 
                       step="0.01" 
-                      value={editingProduct?.price || ""} 
-                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, price: parseFloat(e.target.value) || 0 } : null)} 
+                      value={editingProduct?.preco || ""} 
+                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, preco: parseFloat(e.target.value) || 0 } : null)} 
                       placeholder="Ex: 34.90" 
                       className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-black text-primary" 
                       required 
@@ -835,8 +835,8 @@ export default function ProdutosPage() {
                     <label className="text-[13px] font-bold text-white/50 ml-1 block">Ordem</label>
                     <input 
                       type="number" 
-                      value={editingProduct?.order || ""} 
-                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, order: parseInt(e.target.value) || 0 } : null)} 
+                      value={editingProduct?.order_index || ""} 
+                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, order_index: parseInt(e.target.value) || 0 } : null)} 
                       placeholder="Ex: 1" 
                       className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-black text-center" 
                       required 
