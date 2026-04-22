@@ -651,8 +651,7 @@ export default function ProdutosPage() {
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Categoria</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Preço</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Ingredientes</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Status</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Disponibilidade</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-center">Status</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-right">Ações</th>
                   </tr>
               </thead>
@@ -712,14 +711,9 @@ export default function ProdutosPage() {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 align-middle">
-                      <span className={`text-[10px] font-black uppercase tracking-widest ${product.active ? 'text-green-500' : 'text-red-500'}`}>
-                        {product.active ? 'Ativo' : 'Inativo'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 align-middle">
-                      <span className={`text-[10px] font-black uppercase tracking-widest ${product.active ? 'text-green-400/70' : 'text-red-400/70'}`}>
-                        {product.active ? 'Disponível' : 'Indisponível'}
+                    <td className="px-6 py-4 align-middle text-center">
+                      <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-md border ${product.active ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-red-500 bg-red-500/10 border-red-500/20'}`}>
+                        {product.active ? 'DISPONÍVEL' : 'INDISPONÍVEL'}
                       </span>
                     </td>
                     <td className="px-6 py-4 align-middle text-right">
@@ -747,7 +741,7 @@ export default function ProdutosPage() {
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan={10} className="px-6 py-20 text-center">
+                    <td colSpan={9} className="px-6 py-20 text-center">
                       <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest opacity-40">Nenhum produto encontrado.</p>
                     </td>
                   </tr>
