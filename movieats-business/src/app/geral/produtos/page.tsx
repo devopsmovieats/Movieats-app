@@ -625,38 +625,49 @@ export default function ProdutosPage() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-white/[0.02] border-b border-white/5">
-                  <th className="px-6 py-5 w-10">
-                    <div className="flex items-center justify-center">
+                    <th className="px-6 py-5 w-10 text-center">
                       <input 
                         type="checkbox" 
                         checked={filteredProducts.length > 0 && selectedIds.size === filteredProducts.length}
                         onChange={handleSelectAll}
                         className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
                       />
-                    </div>
-                  </th>
-                  <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Imagem</th>
-                  <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Produto</th>
-                  <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Categoria</th>
-                  <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-center">Preço</th>
-                  <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-right">Ações</th>
-                </tr>
+                    </th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">ID</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-center">Ordem</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Imagem</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Nome</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Categoria</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Preço</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Ingredientes</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Status</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Disponibilidade</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-right">Ações</th>
+                  </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
                 {filteredProducts.length > 0 ? filteredProducts.map((product) => (
                     <tr key={product.id} className={`hover:bg-white/[0.02] transition-colors group ${selectedIds.has(product.id) ? 'bg-primary/5' : ''}`}>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-center">
-                        <input 
-                          type="checkbox" 
-                          checked={selectedIds.has(product.id)}
-                          onChange={() => handleSelectOne(product.id)}
-                          className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
-                        />
-                      </div>
+                    <td className="px-6 py-4 text-center">
+                      <input 
+                        type="checkbox" 
+                        checked={selectedIds.has(product.id)}
+                        onChange={() => handleSelectOne(product.id)}
+                        className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
+                      />
                     </td>
                     <td className="px-6 py-4">
-                      <div className="w-12 h-12 rounded-lg border border-white/5 overflow-hidden mx-auto shadow-inner bg-black/20 group-hover:border-primary/30 transition-colors">
+                      <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest opacity-50">
+                        #{product.id.toString().substring(0, 8)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <span className="text-sm font-black text-white/40">
+                        {product.order_index}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="w-12 h-12 rounded-lg border border-white/5 overflow-hidden shadow-inner bg-black/20 group-hover:border-primary/30 transition-colors">
                         <img 
                           src={product.image_url || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150&h=150&auto=format&fit=crop"} 
                           alt={product.name} 
@@ -665,21 +676,39 @@ export default function ProdutosPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium text-white group-hover:text-primary transition-colors uppercase tracking-tight">
-                          {product.name}
-                        </span>
-                        <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest opacity-50 mt-0.5">ID: #{product.id.toString().padStart(4, '0')}</span>
-                      </div>
+                      <span className="text-sm font-medium text-white group-hover:text-primary transition-colors uppercase tracking-tight">
+                        {product.name}
+                      </span>
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-[10px] font-black text-white/50 bg-white/5 border border-white/5 px-2.5 py-1 rounded-md uppercase tracking-wide">
                         {categories.find(c => c.id === product.categoria_id)?.name || "Sem Categoria"}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-center">
+                    <td className="px-6 py-4">
                       <span className="text-sm font-bold text-white tracking-tighter">
                         R$ {product.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-wrap gap-1 max-w-[200px]">
+                        {product.removable_ingredients && product.removable_ingredients.length > 0 ? product.removable_ingredients.map((ing, i) => (
+                          <span key={i} className="text-[8px] font-bold text-primary/50 uppercase tracking-tighter bg-primary/5 px-1.5 py-0.5 rounded">
+                            {ing}
+                          </span>
+                        )) : (
+                          <span className="text-[8px] text-muted-foreground/30 italic">Nenhum</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`text-[10px] font-black uppercase tracking-widest ${product.active ? 'text-green-500' : 'text-red-500'}`}>
+                        {product.active ? 'Ativo' : 'Inativo'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`text-[10px] font-black uppercase tracking-widest ${product.active ? 'text-green-400/70' : 'text-red-400/70'}`}>
+                        {product.active ? 'Disponível' : 'Indisponível'}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
@@ -707,7 +736,7 @@ export default function ProdutosPage() {
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan={6} className="px-6 py-20 text-center">
+                    <td colSpan={11} className="px-6 py-20 text-center">
                       <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest opacity-40">Nenhum produto encontrado.</p>
                     </td>
                   </tr>
