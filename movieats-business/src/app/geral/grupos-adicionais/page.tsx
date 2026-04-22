@@ -107,7 +107,7 @@ export default function GruposAdicionaisPage() {
       if (groupsError) throw groupsError;
 
       // Buscar complementos para cada grupo
-      const groupsWithItems = await Promise.all((groupsData || []).map(async (group) => {
+      const groupsWithItems = await Promise.all((groupsData || []).map(async (group: any) => {
         const { data: itemsData } = await supabase
           .from('bd_complementos')
           .select('*')
