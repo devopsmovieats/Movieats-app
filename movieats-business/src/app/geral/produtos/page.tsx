@@ -166,7 +166,8 @@ export default function ProdutosPage() {
 
   const filteredProducts = products.filter(prod => {
     const matchesSearch = prod.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = categoryFilter === "todas" || prod.category === categoryFilter;
+    const catName = categories.find(c => c.id === prod.categoria_id)?.name || "";
+    const matchesCategory = categoryFilter === "todas" || catName === categoryFilter;
     return matchesSearch && matchesCategory;
   });
 
@@ -346,7 +347,10 @@ export default function ProdutosPage() {
     // Header do CSV
     const csvContent = [
       ["ID", "Nome", "Categoria", "Preço", "Ordem", "Status", "Descrição"],
-      ...productsToExport.map(p => [p.id, p.name, p.category, p.price, p.order, p.status, p.description])
+      ...productsToExport.map(p => {
+        const catName = categories.find(c => c.id === p.categoria_id)?.name || "Sem Categoria";
+        return [p.id, p.name, catName, p.price, p.order, p.status, p.descricao];
+      })
     ].map(e => e.join(",")).join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
