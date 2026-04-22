@@ -19,7 +19,8 @@ import {
   Upload,
   Loader2,
   Tag,
-  FolderOpen
+  FolderOpen,
+  Camera
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { getPublicUrl } from "@/lib/utils";
