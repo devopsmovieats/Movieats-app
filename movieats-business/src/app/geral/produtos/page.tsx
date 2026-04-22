@@ -63,36 +63,25 @@ const initialProducts: Product[] = [
   { 
     id: 1, 
     name: "Smash Burger Duo", 
-    category: "Hambúrgueres", 
+    categoria_id: "cat_1", 
     price: 38.90, 
     order: 1, 
-    description: "Pão brioche, dois blends de 80g, queijo cheddar e maionese da casa.", 
+    descricao: "Pão brioche, dois blends de 80g, queijo cheddar e maionese da casa.", 
     image_url: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150&h=150&auto=format&fit=crop", 
     status: "ativo",
-    removableIngredients: ["Cebola", "Picles", "Maionese"]
+    removable_ingredients: ["Cebola", "Picles", "Maionese"]
   },
   { 
     id: 2, 
     name: "Batata Rústica", 
-    category: "Acompanhamentos", 
+    categoria_id: "cat_2", 
     price: 18.00, 
     order: 2, 
-    description: "Batatas fritas com casca, temperadas com páprica e alecrim.", 
+    descricao: "Batatas fritas com casca, temperadas com páprica e alecrim.", 
     image_url: "https://images.unsplash.com/photo-1573015084245-7da883204507?q=80&w=150&h=150&auto=format&fit=crop", 
     status: "ativo",
-    removableIngredients: ["Páprica", "Alecrim"]
-  },
-  { 
-    id: 3, 
-    name: "Coca-Cola Zero 350ml", 
-    category: "Bebidas", 
-    price: 7.50, 
-    order: 3, 
-    description: "Lata 350ml gelada.", 
-    image_url: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=150&h=150&auto=format&fit=crop", 
-    status: "ativo",
-    removableIngredients: []
-  },
+    removable_ingredients: ["Páprica", "Alecrim"]
+  }
 ];
 
 export default function ProdutosPage() {
