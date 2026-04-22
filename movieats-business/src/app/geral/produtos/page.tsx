@@ -786,26 +786,33 @@ export default function ProdutosPage() {
             </div>
 
             <form onSubmit={handleSaveProduct} className="p-8 pt-6 space-y-6">
-              <div className="space-y-3">
-                <label className="text-[13px] font-bold text-white/50 ml-1 block">Imagem do Produto</label>
-                <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
-                <div 
-                  onClick={() => fileInputRef.current?.click()} 
-                  className="w-full h-24 border-2 border-dashed border-white/5 hover:border-primary/30 rounded-2xl flex flex-col items-center justify-center gap-2 bg-white/[0.02] cursor-pointer group transition-all relative overflow-hidden"
-                >
-                  {editingProduct?.image_url && (
-                    <img 
-                      src={editingProduct.image_url} 
-                      className="absolute inset-0 w-full h-full object-cover opacity-100 transition-opacity" 
-                      alt="" 
-                    />
-                  )}
-                  <div className="p-2 bg-white/5 rounded-full group-hover:scale-110 transition-all">
-                    <ImageIcon className="w-5 h-5 text-white/30 group-hover:text-primary transition-colors" />
-                  </div>
-                  <div className="flex items-center gap-4 relative z-10">
-                    <span className="text-[10px] font-black text-white/20 uppercase tracking-widest group-hover:text-white transition-colors">Upload da Imagem</span>
-                    <span className="text-[8px] text-muted-foreground/30 font-bold uppercase">PNG ou JPG • Máx 4MB</span>
+              <div className="flex justify-center py-2">
+                <div className="shrink-0 space-y-3">
+                  <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest text-center">Imagem do Produto</label>
+                  <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
+                  <div 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-[200px] h-[200px] bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 hover:border-orange-500/40 rounded-2xl flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden shadow-2xl"
+                  >
+                    {(previewUrl || editingProduct?.image_url) ? (
+                      <div className="relative w-full h-full">
+                        <img 
+                          src={previewUrl || editingProduct?.image_url} 
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-100" 
+                          alt="Preview" 
+                        />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                          <Camera className="w-8 h-8 text-white" />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-3">
+                        <div className="p-4 bg-white/5 rounded-full group-hover:scale-110 transition-transform">
+                          <ImageIcon className="w-6 h-6 text-white/20 group-hover:text-primary transition-colors" />
+                        </div>
+                        <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Upload Imagem</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -943,6 +950,24 @@ export default function ProdutosPage() {
                       <span className="text-[9px] text-white/10 font-black uppercase tracking-widest">Nenhum item para retirada</span>
                     </div>
                   )}
+                </div>
+              </div>
+
+              {/* Toggle de Disponibilidade */}
+              <div className="space-y-3 pt-2">
+                <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Disponibilidade</label>
+                <div className="flex items-center justify-between h-14 px-5 bg-white/[0.03] border border-white/10 rounded-2xl transition-all hover:bg-white/[0.05]">
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-white tracking-tight">Produto Disponível</span>
+                    <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter opacity-50">Visível no Cardápio Digital</span>
+                  </div>
+                  <div 
+                    className="relative w-12 h-6.5 cursor-pointer"
+                    onClick={() => setEditingProduct(prev => prev ? { ...prev, active: !prev.active } : null)}
+                  >
+                    <div className={`w-12 h-6.5 rounded-full transition-all duration-500 border border-white/10 ${editingProduct?.active ? 'bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)]' : 'bg-white/10'}`} />
+                    <div className={`absolute top-1 left-1 w-4.5 h-4.5 bg-white rounded-full transition-all duration-500 shadow-xl ${editingProduct?.active ? 'translate-x-5.5' : 'translate-x-0'}`} />
+                  </div>
                 </div>
               </div>
 
