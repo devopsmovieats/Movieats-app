@@ -499,7 +499,7 @@ export default function GruposAdicionaisPage() {
             <div className="px-8 py-6 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01]">
               <div className="flex flex-col">
                 <h3 className="text-base font-headline font-bold text-white uppercase tracking-tight leading-loose">
-                  {editingGroup.id ? `Editar: ${editingGroup.nome}` : "Novo Grupo de Adicionais"}
+                  {editingGroup.id ? `Editar: ${editingGroup.nome_grupo}` : "Novo Grupo de Adicionais"}
                 </h3>
                 <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest opacity-40">Configuração de Complementos</span>
               </div>
