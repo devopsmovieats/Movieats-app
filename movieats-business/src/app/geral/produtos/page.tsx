@@ -107,17 +107,29 @@ export default function ProdutosPage() {
   // Carregar sessão, Categorias e Produtos ao montar
   useEffect(() => {
     const getSession = async () => {
+    const getSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user?.id) {
         setEstablishmentId(session.user.id);
+      } else {
+        // Fallback para localStorage
+        const userSaved = localStorage.getItem("movieats_user");
+        if (userSaved) {
+          try {
+            const user = JSON.parse(userSaved);
+            if (user.id) setEstablishmentId(user.id);
+          } catch (e) {}
+        }
       }
     };
     getSession();
 
     const userSaved = localStorage.getItem("movieats_user");
     if (userSaved) {
-      const user = JSON.parse(userSaved);
-      if (user.role) setUserRole(user.role);
+      try {
+        const user = JSON.parse(userSaved);
+        if (user.role) setUserRole(user.role);
+      } catch (e) {}
     }
   }, []);
 
@@ -278,6 +290,20 @@ export default function ProdutosPage() {
   const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProduct) return;
+    
+    // Garantia de establishment_id
+    let currentEstId = establishmentId;
+    if (!currentEstId) {
+      const { data: { session } } = await supabase.auth.getSession();
+      currentEstId = session?.user?.id || null;
+      if (currentEstId) setEstablishmentId(currentEstId);
+    }
+
+    if (!currentEstId) {
+      Toast.fire({ icon: "error", title: "Sessão inválida. Faça login novamente." });
+      return;
+    }
+
     setIsSaving(true);
 
     try {
@@ -306,7 +332,7 @@ export default function ProdutosPage() {
         status: editingProduct.status === 'ativo' ? 'ativo' : 'inativo',
         image_url: finalImageUrl,
         removable_ingredients: editingProduct.removable_ingredients,
-        establishment_id: establishmentId
+        establishment_id: currentEstId
       };
 
       if (editingProduct.id === 0) {
