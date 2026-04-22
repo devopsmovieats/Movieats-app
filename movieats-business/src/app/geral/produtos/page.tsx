@@ -107,7 +107,6 @@ export default function ProdutosPage() {
   // Carregar sessão, Categorias e Produtos ao montar
   useEffect(() => {
     const getSession = async () => {
-    const getSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user?.id) {
         setEstablishmentId(session.user.id);
