@@ -426,8 +426,8 @@ export default function ProdutosPage() {
     setTimeout(() => {
       // Simulação de novos produtos
       const newItems: Product[] = [
-        { id: Date.now() + 1, name: "Pizza Calabresa", category: "Pizzas", price: 45.90, order: products.length + 1, description: "Molho de tomate, mussarela e calabresa.", image_url: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=150&h=150&auto=format&fit=crop", status: "ativo", removableIngredients: [] },
-        { id: Date.now() + 2, name: "Suco de Laranja", category: "Bebidas", price: 12.00, order: products.length + 2, description: "Suco natural 500ml.", image_url: "https://images.unsplash.com/photo-1621506821199-a996ee0fef8d?q=80&w=150&h=150&auto=format&fit=crop", status: "ativo", removableIngredients: [] },
+        { id: Date.now() + 1, name: "Pizza Calabresa", categoria_id: "", price: 45.90, order: products.length + 1, descricao: "Molho de tomate, mussarela e calabresa.", image_url: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=150&h=150&auto=format&fit=crop", status: "ativo", removable_ingredients: [] },
+        { id: Date.now() + 2, name: "Suco de Laranja", categoria_id: "", price: 12.00, order: products.length + 2, descricao: "Suco natural 500ml.", image_url: "https://images.unsplash.com/photo-1621506821199-a996ee0fef8d?q=80&w=150&h=150&auto=format&fit=crop", status: "ativo", removable_ingredients: [] },
       ];
 
       setProducts(prev => {
