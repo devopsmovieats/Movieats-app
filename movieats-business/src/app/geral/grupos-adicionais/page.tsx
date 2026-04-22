@@ -19,9 +19,12 @@ import {
   PlusCircle,
   MinusCircle,
   DollarSign,
-  FolderOpen
+  FolderOpen,
+  Camera,
+  Tag
 } from "lucide-react";
 import Swal from "sweetalert2";
+import { supabase } from "@/lib/supabase";
 
 // Configuração do Toast elegante conforme o padrão Movieats
 const Toast = Swal.mixin({
@@ -43,100 +46,105 @@ const Toast = Swal.mixin({
 
 interface AddonItem {
   id: string;
-  name: string;
-  price: number;
+  nome: string;
+  preco: number;
+  grupo_id?: string;
 }
 
 interface AddonGroup {
-  id: number;
-  name: string;
-  type: "unica" | "multipla";
-  minChoices: number;
-  maxChoices: number;
-  status: "ativo" | "inativo";
-  items: AddonItem[];
+  id: string | number;
+  nome: string;
+  tipo: "unica" | "multipla";
+  minimo: number;
+  maximo: number;
+  ativo: boolean;
+  items?: AddonItem[];
 }
 
-const initialGroups: AddonGroup[] = [
-  {
-    id: 1,
-    name: "Adicionais de Burger",
-    type: "multipla",
-    minChoices: 0,
-    maxChoices: 5,
-    status: "ativo",
-    items: [
-      { id: "1-1", name: "Bacon Crocante", price: 4.50 },
-      { id: "1-2", name: "Queijo Cheddar", price: 3.00 },
-      { id: "1-3", name: "Ovo Frito", price: 2.50 }
-    ]
-  },
-  {
-    id: 2,
-    name: "Tamanho da Bebida",
-    type: "unica",
-    minChoices: 1,
-    maxChoices: 1,
-    status: "ativo",
-    items: [
-      { id: "2-1", name: "Pequeno (300ml)", price: 0 },
-      { id: "2-2", name: "Médio (500ml)", price: 2.00 },
-      { id: "2-3", name: "Grande (700ml)", price: 4.50 }
-    ]
-  }
-];
+
 
 export default function GruposAdicionaisPage() {
   const [groups, setGroups] = useState<AddonGroup[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [editingGroup, setEditingGroup] = useState<AddonGroup | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
-  const [isImporting, setIsImporting] = useState(false);
-  const [importProgress, setImportProgress] = useState(0);
-  const [importStatus, setImportStatus] = useState("");
+  const [selectedIds, setSelectedIds] = useState<Set<any>>(new Set());
+  const [currentEstId, setCurrentEstId] = useState<string | null>(null);
   
-  // States para novos itens dentro do modal
   const [newItemName, setNewItemName] = useState("");
   const [newItemPrice, setNewItemPrice] = useState("");
 
-  const importFileRef = useRef<HTMLInputElement>(null);
-
-  // Carregar dados
+  // Buscar ID do estabelecimento
   useEffect(() => {
-    const saved = localStorage.getItem('movieats_addons_groups');
-    if (saved) {
-      try {
-        setGroups(JSON.parse(saved));
-      } catch (e) {
-        console.error("Erro ao carregar grupos", e);
-        setGroups(initialGroups);
+    async function getEst() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from('bd_perfis')
+          .select('establishment_id')
+          .eq('id', user.id)
+          .single();
+        if (profile?.establishment_id) {
+          setCurrentEstId(profile.establishment_id);
+        }
       }
-    } else {
-      setGroups(initialGroups);
-      localStorage.setItem('movieats_addons_groups', JSON.stringify(initialGroups));
     }
+    getEst();
   }, []);
 
-  // Salvar dados
-  useEffect(() => {
-    if (groups.length > 0) {
-      localStorage.setItem('movieats_addons_groups', JSON.stringify(groups));
+  // Carregar dados do Supabase
+  const fetchGroups = async () => {
+    if (!currentEstId) return;
+    
+    try {
+      const { data: groupsData, error: groupsError } = await supabase
+        .from('bd_grupos_adicionais')
+        .select('*')
+        .eq('establishment_id', currentEstId)
+        .order('created_at', { ascending: false });
+
+      if (groupsError) throw groupsError;
+
+      // Buscar complementos para cada grupo
+      const groupsWithItems = await Promise.all((groupsData || []).map(async (group) => {
+        const { data: itemsData } = await supabase
+          .from('bd_complementos')
+          .select('*')
+          .eq('grupo_id', group.id)
+          .order('nome', { ascending: true });
+        
+        return {
+          ...group,
+          items: itemsData || []
+        };
+      }));
+
+      setGroups(groupsWithItems);
+    } catch (error) {
+      console.error("Erro ao carregar grupos:", error);
+      Toast.fire({ icon: "error", title: "Erro ao carregar dados" });
     }
-  }, [groups]);
+  };
+
+  useEffect(() => {
+    if (currentEstId) {
+      fetchGroups();
+    }
+  }, [currentEstId]);
 
   const filteredGroups = groups.filter(g => 
-    g.name.toLowerCase().includes(searchQuery.toLowerCase())
+    g.nome.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const openAddModal = () => {
     setEditingGroup({
       id: 0,
-      name: "",
-      type: "multipla",
-      minChoices: 0,
-      maxChoices: 1,
-      status: "ativo",
+      nome: "",
+      tipo: "multipla",
+      minimo: 0,
+      maximo: 1,
+      ativo: true,
       items: []
     });
     setNewItemName("");
@@ -145,87 +153,125 @@ export default function GruposAdicionaisPage() {
   };
 
   const openEditModal = (group: AddonGroup) => {
-    setEditingGroup({ ...group, items: [...group.items] });
+    setEditingGroup({ ...group, items: [...(group.items || [])] });
     setNewItemName("");
     setNewItemPrice("");
     setIsModalOpen(true);
   };
 
   const addItemToGroup = () => {
-    if (!newItemName) return;
+    if (!newItemName || !editingGroup) return;
     const price = parseFloat(newItemPrice) || 0;
     const item: AddonItem = {
-      id: `item-${Date.now()}`,
-      name: newItemName,
-      price: price
+      id: `temp-${Date.now()}`,
+      nome: newItemName,
+      preco: price
     };
-    setEditingGroup(prev => prev ? { ...prev, items: [...prev.items, item] } : null);
+    setEditingGroup({ ...editingGroup, items: [...(editingGroup.items || []), item] });
     setNewItemName("");
     setNewItemPrice("");
-    Toast.fire({
-      icon: "success",
-      title: "Item adicionado ao grupo"
-    });
+    Toast.fire({ icon: "success", title: "Item adicionado" });
   };
 
   const removeItemFromGroup = (itemId: string) => {
-    setEditingGroup(prev => prev ? { ...prev, items: prev.items.filter(i => i.id !== itemId) } : null);
-    Toast.fire({
-      icon: "success",
-      title: "Item removido"
-    });
+    if (!editingGroup) return;
+    setEditingGroup({ ...editingGroup, items: (editingGroup.items || []).filter(i => i.id !== itemId) });
   };
 
-  const handleSaveGroup = (e: React.FormEvent) => {
+  const handleSaveGroup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingGroup) return;
+    if (!editingGroup || !currentEstId) return;
 
-    if (editingGroup.minChoices > editingGroup.maxChoices) {
-      Toast.fire({
-        icon: "error",
-        title: "O Mínimo não pode ser maior que o Máximo"
-      });
+    if (editingGroup.minimo > editingGroup.maximo) {
+      Toast.fire({ icon: "error", title: "Mínimo maior que o Máximo" });
       return;
     }
 
-    if (editingGroup.id === 0) {
-      const newGroup = { ...editingGroup, id: Date.now() };
-      setGroups(prev => [...prev, newGroup]);
-      Toast.fire({ icon: "success", title: "Grupo criado com sucesso" });
-    } else {
-      setGroups(prev => prev.map(g => g.id === editingGroup.id ? editingGroup : g));
-      Toast.fire({ icon: "success", title: "Alterações salvas com sucesso" });
+    setIsSaving(true);
+    try {
+      const groupData = {
+        nome: editingGroup.nome,
+        tipo: editingGroup.tipo,
+        minimo: editingGroup.minimo,
+        maximo: editingGroup.maximo,
+        ativo: editingGroup.ativo,
+        establishment_id: currentEstId
+      };
+
+      let groupId = editingGroup.id;
+
+      if (editingGroup.id === 0) {
+        const { data: newGroup, error: groupError } = await supabase
+          .from('bd_grupos_adicionais')
+          .insert([groupData])
+          .select()
+          .single();
+        if (groupError) throw groupError;
+        groupId = newGroup.id;
+      } else {
+        const { error: groupError } = await supabase
+          .from('bd_grupos_adicionais')
+          .update(groupData)
+          .eq('id', editingGroup.id);
+        if (groupError) throw groupError;
+      }
+
+      // Sincronizar itens (complementos)
+      // Primeiro remove os antigos (estratégia simples de reset por grupo)
+      await supabase.from('bd_complementos').delete().eq('grupo_id', groupId);
+
+      // Insere os novos
+      if (editingGroup.items && editingGroup.items.length > 0) {
+        const { error: itemsError } = await supabase
+          .from('bd_complementos')
+          .insert(editingGroup.items.map(item => ({
+            nome: item.nome,
+            preco: item.preco,
+            grupo_id: groupId,
+            establishment_id: currentEstId
+          })));
+        if (itemsError) throw itemsError;
+      }
+
+      Toast.fire({ icon: "success", title: editingGroup.id === 0 ? "Grupo criado" : "Alterações salvas" });
+      setIsModalOpen(false);
+      fetchGroups();
+    } catch (error: any) {
+      console.error("Erro ao salvar:", error);
+      Toast.fire({ icon: "error", title: "Erro ao salvar dados" });
+    } finally {
+      setIsSaving(false);
     }
-    setIsModalOpen(false);
   };
 
-  const handleDelete = (group: AddonGroup) => {
-    Swal.fire({
+  const handleDelete = async (group: AddonGroup) => {
+    const result = await Swal.fire({
       title: "Remover Grupo?",
-      text: `Deseja excluir "${group.name}"?`,
+      text: `Deseja excluir "${group.nome}" e seus itens?`,
       icon: "warning",
-      width: "400px",
       showCancelButton: true,
       confirmButtonText: "Excluir",
       cancelButtonText: "Cancelar",
-      background: "#1a1a1a",
+      background: "#141414",
       color: "#fff",
-      confirmButtonColor: "#ff6b00",
-      cancelButtonColor: "#2a2a2a",
-      iconColor: "#ff6b00",
-      customClass: {
-        popup: "rounded-[8px] border border-white/5 shadow-2xl p-4",
-        confirmButton: "rounded-lg font-black uppercase text-[10px] px-6 py-3 tracking-widest cursor-pointer",
-        cancelButton: "rounded-lg font-black uppercase text-[10px] px-6 py-3 tracking-widest cursor-pointer",
-        title: "text-base font-black uppercase tracking-tight",
-        icon: "scale-75 mb-0"
-      }
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setGroups(prev => prev.filter(g => g.id !== group.id));
-        Toast.fire({ icon: "success", title: "Grupo excluído" });
-      }
+      confirmButtonColor: "#ff4b4b",
+      customClass: { popup: "rounded-xl border border-white/5" }
     });
+
+    if (result.isConfirmed) {
+      try {
+        const { error } = await supabase
+          .from('bd_grupos_adicionais')
+          .delete()
+          .eq('id', group.id);
+        
+        if (error) throw error;
+        Toast.fire({ icon: "success", title: "Grupo removido" });
+        fetchGroups();
+      } catch (error) {
+        Toast.fire({ icon: "error", title: "Erro ao excluir" });
+      }
+    }
   };
 
   const handleSelectOne = (id: number) => {
@@ -242,94 +288,34 @@ export default function GruposAdicionaisPage() {
 
   const handleExport = () => {
     const groupsToExport = groups.filter(g => selectedIds.has(g.id));
-    
     if (groupsToExport.length === 0) {
       Toast.fire({ icon: "info", title: "Selecione grupos para exportar" });
       return;
     }
     
     const csvContent = [
-      ["ID", "Nome", "Tipo", "Mínimo", "Máximo", "Status", "Total de Itens"],
-      ...groupsToExport.map(g => [g.id, g.name, g.type, g.minChoices, g.maxChoices, g.status, g.items.length])
+      ["ID", "Nome", "Tipo", "Mínimo", "Máximo", "Status", "Itens"],
+      ...groupsToExport.map(g => [
+        g.id, 
+        g.nome, 
+        g.tipo === 'unica' ? 'ÚNICA' : 'MÚLTIPLA', 
+        g.minimo, 
+        g.maximo, 
+        g.ativo ? 'ATIVO' : 'INATIVO',
+        (g.items || []).map(i => `${i.nome} (R$ ${i.preco})`).join(" | ")
+      ])
     ].map(e => e.join(",")).join("\n");
 
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([`\uFEFF${csvContent}`], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", `adicionais_movieats_${new Date().getTime()}.csv`);
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
+    link.href = URL.createObjectURL(blob);
+    link.download = `grupos_adicionais_${new Date().getTime()}.csv`;
     link.click();
-    document.body.removeChild(link);
     
-    Toast.fire({
-      icon: "success",
-      title: `${groupsToExport.length} grupos exportados com sucesso!`
-    });
+    Toast.fire({ icon: "success", title: "Exportação concluída" });
   };
 
-  const handleImportClick = () => {
-    importFileRef.current?.click();
-  };
 
-  const handleFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setIsImporting(true);
-    setImportProgress(0);
-    setImportStatus("Iniciando...");
-
-    const phrases = ["Lendo CSV...", "Validando regras...", "Sincronizando...", "Otimizando...", "Concluído!"];
-    let currentPhraseIndex = 0;
-    
-    const interval = setInterval(() => {
-      setImportProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          return 100;
-        }
-        return prev + 2;
-      });
-    }, 50);
-
-    const phraseInterval = setInterval(() => {
-      if (currentPhraseIndex < phrases.length - 1) {
-        currentPhraseIndex++;
-        setImportStatus(phrases[currentPhraseIndex]);
-      } else {
-        clearInterval(phraseInterval);
-      }
-    }, 600);
-    
-    setTimeout(() => {
-      const newItems: AddonGroup[] = [
-        { 
-          id: Date.now(), 
-          name: "Molhos Especiais", 
-          type: "multipla", 
-          minChoices: 0, 
-          maxChoices: 3, 
-          status: "ativo", 
-          items: [{ id: "m1", name: "Barbecue", price: 2.00 }, { id: "m2", name: "Maionese Verde", price: 2.00 }] 
-        }
-      ];
-
-      setGroups(prev => [...prev, ...newItems]);
-      setIsImporting(false);
-      if (importFileRef.current) importFileRef.current.value = "";
-
-      Swal.fire({
-        title: "Sucesso!",
-        text: "Grupos importados com sucesso!",
-        icon: "success",
-        background: "#1a1a1a",
-        color: "#fff",
-        confirmButtonColor: "#ff6b00"
-      });
-    }, 3000);
-  };
 
   return (
     <DashboardLayout>
@@ -375,14 +361,6 @@ export default function GruposAdicionaisPage() {
           <div className="flex-1" />
 
           <div className="flex items-center gap-3">
-            <input type="file" ref={importFileRef} onChange={handleFileImport} accept=".csv, .xlsx" className="hidden" />
-            <button 
-              onClick={handleImportClick}
-              className="flex items-center gap-2 px-5 py-3 glass border-white/10 hover:border-primary/30 hover:bg-white/5 rounded-lg text-[10px] font-black text-white hover:text-primary uppercase tracking-[0.15em] transition-all cursor-pointer group active:scale-95"
-            >
-              <Upload className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
-              Importar
-            </button>
             <button 
               onClick={handleExport}
               className="flex items-center gap-2 px-5 py-3 glass border-white/10 hover:border-primary/30 hover:bg-primary/5 rounded-lg text-[10px] font-black text-white hover:text-primary uppercase tracking-[0.15em] transition-all cursor-pointer group active:scale-95"
@@ -416,7 +394,7 @@ export default function GruposAdicionaisPage() {
                         />
                       </div>
                     </th>
-                    <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Nome do Grupo</th>
+                    <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Grupo</th>
                     <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Tipo</th>
                     <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-center">Itens</th>
                     <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-center">Status</th>
@@ -439,31 +417,30 @@ export default function GruposAdicionaisPage() {
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
                           <span className="text-sm font-medium text-white group-hover:text-primary transition-colors tracking-tight uppercase">
-                            {group.name}
+                            {group.nome}
                           </span>
-                          <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest opacity-50 mt-0.5">ID: #{group.id.toString().padStart(4, '0')}</span>
+                          <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest opacity-50 mt-0.5">#{group.id.toString().substring(0, 8)}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <div className={`w-1.5 h-1.5 rounded-full ${group.type === 'unica' ? 'bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]' : 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]'}`} />
-                          <span className="text-[10px] font-black text-white uppercase tracking-wider">{group.type === 'unica' ? 'Seleção Única' : 'Múltipla Escolha'}</span>
+                          <div className={`w-1.5 h-1.5 rounded-full ${group.tipo === 'unica' ? 'bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]' : 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]'}`} />
+                          <span className="text-[10px] font-black text-white uppercase tracking-wider">{group.tipo === 'unica' ? 'Seleção Única' : 'Múltipla Escolha'}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-center">
                         <span className="inline-flex items-center justify-center min-w-[32px] h-7 bg-white/5 border border-white/10 rounded-lg text-[11px] font-black text-white/60">
-                          {group.items.length}
+                          {group.items?.length || 0}
                         </span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center">
-                          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${
-                            group.status === "ativo" 
+                          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md border transition-all ${
+                            group.ativo 
                               ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" 
                               : "bg-red-500/10 border-red-500/20 text-red-500"
                           }`}>
-                            {group.status === "ativo" ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-                            <span className="text-[9px] font-black uppercase tracking-widest">{group.status}</span>
+                            <span className="text-[9px] font-black uppercase tracking-widest">{group.ativo ? 'DISPONÍVEL' : 'INDISPONÍVEL'}</span>
                           </div>
                         </div>
                       </td>
@@ -505,215 +482,181 @@ export default function GruposAdicionaisPage() {
       {isModalOpen && editingGroup && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 overflow-hidden">
           <div className="absolute inset-0 bg-[#0a0a0a]/95 backdrop-blur-xl animate-in fade-in duration-500" onClick={() => setIsModalOpen(false)} />
-          <div className="relative w-full max-w-2xl bg-[#1f2937] border border-white/5 rounded-[8px] shadow-2xl animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-500 overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="relative w-full max-w-4xl bg-[#111827] border border-white/5 rounded-[32px] shadow-2xl animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-500 overflow-hidden flex flex-col max-h-[90vh]">
             
-            <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <List className="text-primary w-4 h-4" />
-                </div>
-                <h3 className="text-[12px] font-headline font-black text-white uppercase tracking-tight">
-                  {editingGroup.id ? `Editar: ${editingGroup.name}` : "Novo Grupo de Adicionais"}
+            <div className="px-8 py-6 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01]">
+              <div className="flex flex-col">
+                <h3 className="text-base font-headline font-bold text-white uppercase tracking-tight leading-loose">
+                  {editingGroup.id ? `Editar: ${editingGroup.nome}` : "Novo Grupo de Adicionais"}
                 </h3>
+                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest opacity-40">Configuração de Complementos</span>
               </div>
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="p-2 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-white transition-all cursor-pointer"
+                className="p-2 rounded-xl hover:bg-white/5 text-muted-foreground hover:text-white transition-all cursor-pointer group"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-5 custom-scrollbar">
-              <form onSubmit={handleSaveGroup} className="space-y-6">
-                
-                {/* Configurações do Grupo */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-white/50 ml-1 block">Nome do Grupo</label>
-                    <input 
-                      type="text" 
-                      value={editingGroup.name}
-                      onChange={(e) => setEditingGroup({ ...editingGroup, name: e.target.value })}
-                      placeholder="Ex: Adicionais de Burger"
-                      className="w-full bg-white/[0.05] border border-white/5 rounded-lg h-12 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-orange-500/50 transition-all font-medium"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-white/50 ml-1 block">Tipo de Escolha</label>
-                    <div className="relative">
-                      <select 
-                        value={editingGroup.type}
-                        onChange={(e) => setEditingGroup({ ...editingGroup, type: e.target.value as any, minChoices: e.target.value === 'unica' ? 1 : 0, maxChoices: e.target.value === 'unica' ? 1 : editingGroup.maxChoices })}
-                        className="w-full bg-white/[0.05] border border-white/5 rounded-lg h-12 px-4 text-sm text-white appearance-none font-bold uppercase tracking-tighter cursor-pointer"
-                      >
-                        <option value="unica">SELEÇÃO ÚNICA</option>
-                        <option value="multipla">MÚLTIPLA ESCOLHA</option>
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-white/50 ml-1 block">Mínimo</label>
-                    <input 
-                      type="number" 
-                      value={editingGroup.minChoices}
-                      disabled={editingGroup.type === 'unica'}
-                      onChange={(e) => setEditingGroup({ ...editingGroup, minChoices: parseInt(e.target.value) || 0 })}
-                      className="w-full bg-white/[0.05] border border-white/5 rounded-lg h-12 px-4 text-sm text-white focus:outline-none disabled:opacity-30 font-black text-center"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-white/50 ml-1 block">Máximo</label>
-                    <input 
-                      type="number" 
-                      value={editingGroup.maxChoices}
-                      disabled={editingGroup.type === 'unica'}
-                      onChange={(e) => setEditingGroup({ ...editingGroup, maxChoices: parseInt(e.target.value) || 0 })}
-                      className="w-full bg-white/[0.05] border border-white/5 rounded-lg h-12 px-4 text-sm text-white focus:outline-none disabled:opacity-30 font-black text-center"
-                    />
-                  </div>
-                </div>
-
-                {/* Switch de Status do Grupo */}
-                <div className="flex items-center justify-between p-4 bg-white/[0.02] border border-white/5 rounded-lg">
-                  <div className="flex flex-col">
-                    <span className="text-[11px] font-bold text-white uppercase tracking-wider">Status do Grupo</span>
-                    <span className="text-[9px] text-white/40 font-medium uppercase italic">Habilita/Desabilita todas as opções</span>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      className="sr-only peer" 
-                      checked={editingGroup.status === "ativo"} 
-                      onChange={() => setEditingGroup({ ...editingGroup, status: editingGroup.status === "ativo" ? "inativo" : "ativo" })}
-                    />
-                    <div className="w-10 h-5.5 bg-white/5 border border-white/10 rounded-full peer peer-checked:bg-emerald-500/20 transition-all after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white/20 after:rounded-full after:h-4.5 after:w-4.5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:bg-emerald-500" />
-                  </label>
-                </div>
-
-                {/* Sub-Gerenciamento de Itens */}
-                <div className="space-y-4 pt-4 border-t border-white/5">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-[11px] font-bold text-orange-500 uppercase tracking-[0.2em]">Adicionais do Grupo</h4>
-                    <span className="text-[9px] font-bold text-white/40 uppercase">{editingGroup.items.length} itens cadastrados</span>
-                  </div>
-
-                  {/* Input de Novo Item */}
-                  <div className="flex gap-2 items-end bg-white/[0.01] p-3 rounded-xl border border-dashed border-white/10 group hover:border-orange-500/30 transition-all">
-                    <div className="flex-1 space-y-2">
-                       <input 
+            <form onSubmit={handleSaveGroup} className="flex flex-col flex-1 overflow-hidden">
+              <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  
+                  {/* Coluna Esquerda: Definições do Grupo */}
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-[13px] font-bold text-white/50 ml-1 block">Nome do Grupo</label>
+                      <input 
                         type="text" 
-                        value={newItemName}
-                        onChange={(e) => setNewItemName(e.target.value)}
-                        placeholder="Nome do adicional (ex: Bacon extra)"
-                        className="w-full bg-transparent border-b border-white/10 h-10 text-sm text-white focus:outline-none focus:border-orange-500/50 transition-all"
+                        value={editingGroup.nome}
+                        onChange={(e) => setEditingGroup({ ...editingGroup, nome: e.target.value })}
+                        placeholder="Ex: Adicionais de Burger"
+                        className="w-full bg-white/[0.05] border border-white/10 rounded-xl h-12 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium"
+                        required
                       />
                     </div>
-                    <div className="w-24 space-y-2">
-                       <input 
-                        type="number" 
-                        value={newItemPrice}
-                        onChange={(e) => setNewItemPrice(e.target.value)}
-                        placeholder="Preço R$"
-                        className="w-full bg-transparent border-b border-white/10 h-10 text-sm text-orange-500 font-black focus:outline-none focus:border-orange-500/50 text-right"
-                      />
-                    </div>
-                    <button 
-                      type="button"
-                      onClick={addItemToGroup}
-                      className="p-2.5 bg-orange-500/10 hover:bg-orange-500 text-orange-500 hover:text-white rounded-lg transition-all cursor-pointer"
-                    >
-                      <PlusCircle className="w-5 h-5" />
-                    </button>
-                  </div>
 
-                  {/* Lista de Itens */}
-                  <div className="space-y-2 overflow-y-auto max-h-48 pr-2 custom-scrollbar">
-                    {editingGroup.items.length === 0 ? (
-                      <div className="py-8 text-center border border-white/5 rounded-lg bg-black/20">
-                        <span className="text-[10px] text-white/20 font-bold uppercase tracking-widest italic font-medium">Nenhum item adicionado</span>
+                    <div className="space-y-2">
+                      <label className="text-[13px] font-bold text-white/50 ml-1 block">Tipo de Escolha</label>
+                      <div className="relative">
+                        <select 
+                          value={editingGroup.tipo}
+                          onChange={(e) => setEditingGroup({ ...editingGroup, tipo: e.target.value as any, minimo: e.target.value === 'unica' ? 1 : 0, maximo: e.target.value === 'unica' ? 1 : editingGroup.maximo })}
+                          className="w-full bg-[#1f2937] border border-white/10 rounded-xl h-12 px-4 text-sm text-white appearance-none font-bold uppercase tracking-tighter cursor-pointer focus:outline-none focus:border-orange-500/50"
+                        >
+                          <option value="unica" className="bg-[#1f2937]">SELEÇÃO ÚNICA</option>
+                          <option value="multipla" className="bg-[#1f2937]">MÚLTIPLA ESCOLHA</option>
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
                       </div>
-                    ) : (
-                      editingGroup.items.map((item) => (
-                        <div key={item.id} className="flex items-center justify-between p-3 bg-white/[0.03] border border-white/5 rounded-lg group hover:bg-white/[0.05] transition-all">
-                          <div className="flex flex-col">
-                            <span className="text-[11px] font-bold text-white uppercase tracking-tight">{item.name}</span>
-                            <span className="text-[10px] font-bold text-orange-500">+ R$ {item.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                          </div>
-                          <button 
-                            type="button"
-                            onClick={() => removeItemFromGroup(item.id)}
-                            className="p-2 text-white/20 hover:text-red-500 transition-colors cursor-pointer"
-                          >
-                            <MinusCircle className="w-4 h-4" />
-                          </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-[13px] font-bold text-white/50 ml-1 block">Qtd Mínima</label>
+                        <input 
+                          type="number" 
+                          value={editingGroup.minimo}
+                          disabled={editingGroup.tipo === 'unica'}
+                          onChange={(e) => setEditingGroup({ ...editingGroup, minimo: parseInt(e.target.value) || 0 })}
+                          className="w-full bg-white/[0.05] border border-white/10 rounded-xl h-12 px-4 text-sm text-white focus:outline-none disabled:opacity-30 font-black text-center"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[13px] font-bold text-white/50 ml-1 block">Qtd Máxima</label>
+                        <input 
+                          type="number" 
+                          value={editingGroup.maximo}
+                          disabled={editingGroup.tipo === 'unica'}
+                          onChange={(e) => setEditingGroup({ ...editingGroup, maximo: parseInt(e.target.value) || 0 })}
+                          className="w-full bg-white/[0.05] border border-white/10 rounded-xl h-12 px-4 text-sm text-white focus:outline-none disabled:opacity-30 font-black text-center"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between h-14 px-5 bg-white/[0.03] border border-white/10 rounded-2xl transition-all hover:bg-white/[0.05]">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-white tracking-tight">Grupo Disponível</span>
+                        <span className="text-[10px] text-muted-foreground font-medium uppercase opacity-50">Habilita no Cardápio</span>
+                      </div>
+                      <div 
+                        className="relative w-12 h-6.5 cursor-pointer"
+                        onClick={() => setEditingGroup({ ...editingGroup, ativo: !editingGroup.ativo })}
+                      >
+                        <div className={`w-12 h-6.5 rounded-full transition-all duration-500 border border-white/10 ${editingGroup.ativo ? 'bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)]' : 'bg-white/10'}`} />
+                        <div className={`absolute top-1 left-1 w-4.5 h-4.5 bg-white rounded-full transition-all duration-500 shadow-xl ${editingGroup.ativo ? 'translate-x-5.5' : 'translate-x-0'}`} />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Coluna Direita: Itens do Grupo */}
+                  <div className="space-y-6">
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[13px] font-bold text-white/50 ml-1 block">Adicionar Itens (Adicionais)</label>
+                        <span className="text-[9px] text-muted-foreground/30 font-bold uppercase tracking-widest">{editingGroup.items?.length || 0} cadastrados</span>
+                      </div>
+                      
+                      <div className="flex gap-2 items-end">
+                        <div className="flex-1 space-y-2">
+                           <input 
+                            type="text" 
+                            value={newItemName}
+                            onChange={(e) => setNewItemName(e.target.value)}
+                            placeholder="Nome (ex: Bacon)"
+                            className="w-full bg-white/[0.05] border border-white/10 h-11 px-4 rounded-xl text-sm text-white focus:outline-none focus:border-orange-500/50 transition-all font-medium"
+                          />
                         </div>
-                      ))
-                    )}
+                        <div className="w-28 space-y-2">
+                           <input 
+                            type="number" 
+                            value={newItemPrice}
+                            onChange={(e) => setNewItemPrice(e.target.value)}
+                            placeholder="R$ 0,00"
+                            className="w-full bg-white/[0.05] border border-white/10 h-11 px-4 rounded-xl text-sm text-orange-500 font-black focus:outline-none focus:border-orange-500/50 text-right"
+                          />
+                        </div>
+                        <button 
+                          type="button"
+                          onClick={addItemToGroup}
+                          className="w-11 h-11 flex items-center justify-center bg-orange-600/10 hover:bg-[#FF8C00] text-orange-500 hover:text-white border border-orange-600/20 rounded-xl transition-all duration-200 active:scale-90"
+                        >
+                          <Plus className="w-5 h-5" />
+                        </button>
+                      </div>
+
+                      <div className="space-y-2 overflow-y-auto max-h-[220px] pr-2 custom-scrollbar min-h-[100px]">
+                        {(!editingGroup.items || editingGroup.items.length === 0) ? (
+                          <div className="py-12 text-center border border-dashed border-white/10 rounded-2xl bg-black/20">
+                            <span className="text-[10px] text-white/20 font-black uppercase tracking-[0.2em]">Nenhum item adicionado</span>
+                          </div>
+                        ) : (
+                          editingGroup.items.map((item) => (
+                            <div key={item.id} className="flex items-center justify-between p-4 bg-white/[0.03] border border-white/10 rounded-xl group hover:bg-white/[0.05] transition-all">
+                              <div className="flex flex-col">
+                                <span className="text-[11px] font-bold text-white uppercase tracking-tight">{item.nome}</span>
+                                <span className="text-[10px] font-black text-orange-500">+ R$ {item.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                              </div>
+                              <button 
+                                type="button"
+                                onClick={() => removeItemFromGroup(item.id)}
+                                className="p-2 text-white/20 hover:text-red-500 transition-colors cursor-pointer"
+                              >
+                                <MinusCircle className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Footer Fixado */}
-                <div className="flex gap-4 pt-4 border-t border-white/5">
-                  <button 
-                    type="button"
-                    onClick={() => setIsModalOpen(false)}
-                    className="flex-1 h-12 bg-white/5 hover:bg-white/10 text-white font-bold text-[11px] uppercase tracking-widest rounded-xl border border-white/5 transition-all cursor-pointer active:scale-95"
-                  >
-                    Cancelar
-                  </button>
-                  <button 
-                    type="submit"
-                    className="flex-1 h-12 bg-orange-600 hover:bg-orange-500 text-white font-bold text-[11px] uppercase tracking-widest rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 group cursor-pointer active:scale-95"
-                  >
-                    {editingGroup.id ? "Salvar Grupo" : "Criar Grupo"}
-                    <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </button>
-                </div>
-              </form>
-            </div>
+              <div className="px-8 py-6 border-t border-white/[0.03] flex gap-4 bg-white/[0.01]">
+                <button 
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-8 py-3 bg-white/5 hover:bg-white/10 text-white font-bold text-[11px] uppercase tracking-[0.2em] rounded-xl transition-all border border-white/5 active:scale-95 cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit"
+                  disabled={isSaving}
+                  className="flex-1 h-12 bg-orange-600 hover:bg-orange-500 text-white font-bold text-[11px] uppercase tracking-widest rounded-xl shadow-sm transition-all flex items-center justify-center cursor-pointer active:scale-95 disabled:opacity-50"
+                >
+                  {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : (editingGroup.id ? "Salvar Alterações" : "Criar Grupo")}
+                </button>
+              </div>
+            </form>
 
           </div>
         </div>
       )}
 
-      {/* Loading Overlay Importação "Elite" */}
-      {isImporting && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-[#0a0a0a]/80 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="flex flex-col items-center gap-8 w-full max-w-[400px] px-6">
-            <div className="relative">
-              <div className="w-20 h-20 rounded-full border-2 border-primary/10 border-t-primary animate-spin" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Loader2 className="w-8 h-8 text-primary animate-pulse" />
-              </div>
-            </div>
 
-            <div className="w-full space-y-4">
-              <div className="flex flex-col items-center text-center gap-2">
-                <h3 className="text-white font-black text-[16px] uppercase tracking-[0.2em]">
-                  {importStatus}
-                </h3>
-                <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest opacity-60">
-                  Operação em progresso • {importProgress}%
-                </p>
-              </div>
-
-              <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
-                <div 
-                  className="h-full bg-primary transition-all duration-300 ease-out shadow-[0_0_15px_rgba(255,107,0,0.5)]"
-                  style={{ width: `${importProgress}%` }}
-                />
-              </div>
-            </div>
-            
-            <span className="text-[9px] text-white/20 font-black uppercase tracking-[0.3em] mt-2">
-              DNA ELITE • MOVIEATS
-            </span>
-          </div>
-        </div>
-      )}
     </DashboardLayout>
   );
 }
