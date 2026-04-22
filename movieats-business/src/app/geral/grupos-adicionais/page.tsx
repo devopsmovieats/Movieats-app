@@ -53,11 +53,11 @@ interface AddonItem {
 
 interface AddonGroup {
   id: string | number;
-  nome: string;
-  tipo: "unica" | "multipla";
-  minimo: number;
-  maximo: number;
-  ativo: boolean;
+  nome_grupo: string;
+  tipo_escolha: "unica" | "multipla";
+  qtd_minima: number;
+  qtd_maxima: number;
+  active: boolean;
   items?: AddonItem[];
 }
 
@@ -140,11 +140,11 @@ export default function GruposAdicionaisPage() {
   const openAddModal = () => {
     setEditingGroup({
       id: 0,
-      nome: "",
-      tipo: "multipla",
-      minimo: 0,
-      maximo: 1,
-      ativo: true,
+      nome_grupo: "",
+      tipo_escolha: "multipla",
+      qtd_minima: 0,
+      qtd_maxima: 1,
+      active: true,
       items: []
     });
     setNewItemName("");
@@ -182,7 +182,7 @@ export default function GruposAdicionaisPage() {
     e.preventDefault();
     if (!editingGroup || !currentEstId) return;
 
-    if (editingGroup.minimo > editingGroup.maximo) {
+    if (editingGroup.qtd_minima > editingGroup.qtd_maxima) {
       Toast.fire({ icon: "error", title: "Mínimo maior que o Máximo" });
       return;
     }
@@ -190,11 +190,11 @@ export default function GruposAdicionaisPage() {
     setIsSaving(true);
     try {
       const groupData = {
-        nome: editingGroup.nome,
-        tipo: editingGroup.tipo,
-        minimo: editingGroup.minimo,
-        maximo: editingGroup.maximo,
-        ativo: editingGroup.ativo,
+        nome_grupo: editingGroup.nome_grupo,
+        tipo_escolha: editingGroup.tipo_escolha,
+        qtd_minima: editingGroup.qtd_minima,
+        qtd_maxima: editingGroup.qtd_maxima,
+        active: editingGroup.active,
         establishment_id: currentEstId
       };
 
@@ -217,8 +217,12 @@ export default function GruposAdicionaisPage() {
       }
 
       // Sincronizar itens (complementos)
-      // Primeiro remove os antigos (estratégia simples de reset por grupo)
-      await supabase.from('bd_complementos').delete().eq('grupo_id', groupId);
+      // Primeiro remove os antigos
+      const { error: deleteError } = await supabase
+        .from('bd_complementos')
+        .delete()
+        .eq('grupo_id', groupId);
+      if (deleteError) throw deleteError;
 
       // Insere os novos
       if (editingGroup.items && editingGroup.items.length > 0) {
@@ -233,12 +237,16 @@ export default function GruposAdicionaisPage() {
         if (itemsError) throw itemsError;
       }
 
-      Toast.fire({ icon: "success", title: editingGroup.id === 0 ? "Grupo criado" : "Alterações salvas" });
+      Toast.fire({ icon: "success", title: editingGroup.id === 0 ? "Grupo criado com sucesso!" : "Alterações salvas com sucesso!" });
       setIsModalOpen(false);
       fetchGroups();
     } catch (error: any) {
       console.error("Erro ao salvar:", error);
-      Toast.fire({ icon: "error", title: "Erro ao salvar dados" });
+      Toast.fire({ 
+        icon: "error", 
+        title: "Erro ao salvar",
+        text: error.message || "Verifique a conexão e as colunas do banco."
+      });
     } finally {
       setIsSaving(false);
     }
@@ -247,7 +255,7 @@ export default function GruposAdicionaisPage() {
   const handleDelete = async (group: AddonGroup) => {
     const result = await Swal.fire({
       title: "Remover Grupo?",
-      text: `Deseja excluir "${group.nome}" e seus itens?`,
+      text: `Deseja excluir "${group.nome_grupo}" e seus itens?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Excluir",
@@ -266,10 +274,14 @@ export default function GruposAdicionaisPage() {
           .eq('id', group.id);
         
         if (error) throw error;
-        Toast.fire({ icon: "success", title: "Grupo removido" });
+        Toast.fire({ icon: "success", title: "Grupo removido com sucesso!" });
         fetchGroups();
-      } catch (error) {
-        Toast.fire({ icon: "error", title: "Erro ao excluir" });
+      } catch (error: any) {
+        Toast.fire({ 
+          icon: "error", 
+          title: "Erro ao excluir",
+          text: error.message 
+        });
       }
     }
   };
@@ -297,11 +309,11 @@ export default function GruposAdicionaisPage() {
       ["ID", "Nome", "Tipo", "Mínimo", "Máximo", "Status", "Itens"],
       ...groupsToExport.map(g => [
         g.id, 
-        g.nome, 
-        g.tipo === 'unica' ? 'ÚNICA' : 'MÚLTIPLA', 
-        g.minimo, 
-        g.maximo, 
-        g.ativo ? 'ATIVO' : 'INATIVO',
+        g.nome_grupo, 
+        g.tipo_escolha === 'unica' ? 'ÚNICA' : 'MÚLTIPLA', 
+        g.qtd_minima, 
+        g.qtd_maxima, 
+        g.active ? 'ATIVO' : 'INATIVO',
         (g.items || []).map(i => `${i.nome} (R$ ${i.preco})`).join(" | ")
       ])
     ].map(e => e.join(",")).join("\n");
@@ -417,15 +429,15 @@ export default function GruposAdicionaisPage() {
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
                           <span className="text-sm font-medium text-white group-hover:text-primary transition-colors tracking-tight uppercase">
-                            {group.nome}
+                            {group.nome_grupo}
                           </span>
                           <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest opacity-50 mt-0.5">#{group.id.toString().substring(0, 8)}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <div className={`w-1.5 h-1.5 rounded-full ${group.tipo === 'unica' ? 'bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]' : 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]'}`} />
-                          <span className="text-[10px] font-black text-white uppercase tracking-wider">{group.tipo === 'unica' ? 'Seleção Única' : 'Múltipla Escolha'}</span>
+                          <div className={`w-1.5 h-1.5 rounded-full ${group.tipo_escolha === 'unica' ? 'bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]' : 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]'}`} />
+                          <span className="text-[10px] font-black text-white uppercase tracking-wider">{group.tipo_escolha === 'unica' ? 'Seleção Única' : 'Múltipla Escolha'}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-center">
@@ -436,11 +448,11 @@ export default function GruposAdicionaisPage() {
                       <td className="px-6 py-4">
                         <div className="flex justify-center">
                           <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md border transition-all ${
-                            group.ativo 
+                            group.active 
                               ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" 
                               : "bg-red-500/10 border-red-500/20 text-red-500"
                           }`}>
-                            <span className="text-[9px] font-black uppercase tracking-widest">{group.ativo ? 'DISPONÍVEL' : 'INDISPONÍVEL'}</span>
+                            <span className="text-[9px] font-black uppercase tracking-widest">{group.active ? 'DISPONÍVEL' : 'INDISPONÍVEL'}</span>
                           </div>
                         </div>
                       </td>
@@ -509,8 +521,8 @@ export default function GruposAdicionaisPage() {
                       <label className="text-[13px] font-bold text-white/50 ml-1 block">Nome do Grupo</label>
                       <input 
                         type="text" 
-                        value={editingGroup.nome}
-                        onChange={(e) => setEditingGroup({ ...editingGroup, nome: e.target.value })}
+                        value={editingGroup.nome_grupo}
+                        onChange={(e) => setEditingGroup({ ...editingGroup, nome_grupo: e.target.value })}
                         placeholder="Ex: Adicionais de Burger"
                         className="w-full bg-white/[0.05] border border-white/10 rounded-xl h-12 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium"
                         required
@@ -521,8 +533,8 @@ export default function GruposAdicionaisPage() {
                       <label className="text-[13px] font-bold text-white/50 ml-1 block">Tipo de Escolha</label>
                       <div className="relative">
                         <select 
-                          value={editingGroup.tipo}
-                          onChange={(e) => setEditingGroup({ ...editingGroup, tipo: e.target.value as any, minimo: e.target.value === 'unica' ? 1 : 0, maximo: e.target.value === 'unica' ? 1 : editingGroup.maximo })}
+                          value={editingGroup.tipo_escolha}
+                          onChange={(e) => setEditingGroup({ ...editingGroup, tipo_escolha: e.target.value as any, qtd_minima: e.target.value === 'unica' ? 1 : 0, qtd_maxima: e.target.value === 'unica' ? 1 : editingGroup.qtd_maxima })}
                           className="w-full bg-[#1f2937] border border-white/10 rounded-xl h-12 px-4 text-sm text-white appearance-none font-bold uppercase tracking-tighter cursor-pointer focus:outline-none focus:border-orange-500/50"
                         >
                           <option value="unica" className="bg-[#1f2937]">SELEÇÃO ÚNICA</option>
@@ -537,9 +549,9 @@ export default function GruposAdicionaisPage() {
                         <label className="text-[13px] font-bold text-white/50 ml-1 block">Qtd Mínima</label>
                         <input 
                           type="number" 
-                          value={editingGroup.minimo}
-                          disabled={editingGroup.tipo === 'unica'}
-                          onChange={(e) => setEditingGroup({ ...editingGroup, minimo: parseInt(e.target.value) || 0 })}
+                          value={editingGroup.qtd_minima}
+                          disabled={editingGroup.tipo_escolha === 'unica'}
+                          onChange={(e) => setEditingGroup({ ...editingGroup, qtd_minima: parseInt(e.target.value) || 0 })}
                           className="w-full bg-white/[0.05] border border-white/10 rounded-xl h-12 px-4 text-sm text-white focus:outline-none disabled:opacity-30 font-black text-center"
                         />
                       </div>
@@ -547,9 +559,9 @@ export default function GruposAdicionaisPage() {
                         <label className="text-[13px] font-bold text-white/50 ml-1 block">Qtd Máxima</label>
                         <input 
                           type="number" 
-                          value={editingGroup.maximo}
-                          disabled={editingGroup.tipo === 'unica'}
-                          onChange={(e) => setEditingGroup({ ...editingGroup, maximo: parseInt(e.target.value) || 0 })}
+                          value={editingGroup.qtd_maxima}
+                          disabled={editingGroup.tipo_escolha === 'unica'}
+                          onChange={(e) => setEditingGroup({ ...editingGroup, qtd_maxima: parseInt(e.target.value) || 0 })}
                           className="w-full bg-white/[0.05] border border-white/10 rounded-xl h-12 px-4 text-sm text-white focus:outline-none disabled:opacity-30 font-black text-center"
                         />
                       </div>
@@ -562,10 +574,10 @@ export default function GruposAdicionaisPage() {
                       </div>
                       <div 
                         className="relative w-12 h-6.5 cursor-pointer"
-                        onClick={() => setEditingGroup({ ...editingGroup, ativo: !editingGroup.ativo })}
+                        onClick={() => setEditingGroup({ ...editingGroup, active: !editingGroup.active })}
                       >
-                        <div className={`w-12 h-6.5 rounded-full transition-all duration-500 border border-white/10 ${editingGroup.ativo ? 'bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)]' : 'bg-white/10'}`} />
-                        <div className={`absolute top-1 left-1 w-4.5 h-4.5 bg-white rounded-full transition-all duration-500 shadow-xl ${editingGroup.ativo ? 'translate-x-5.5' : 'translate-x-0'}`} />
+                        <div className={`w-12 h-6.5 rounded-full transition-all duration-500 border border-white/10 ${editingGroup.active ? 'bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)]' : 'bg-white/10'}`} />
+                        <div className={`absolute top-1 left-1 w-4.5 h-4.5 bg-white rounded-full transition-all duration-500 shadow-xl ${editingGroup.active ? 'translate-x-5.5' : 'translate-x-0'}`} />
                       </div>
                     </div>
                   </div>
@@ -647,7 +659,12 @@ export default function GruposAdicionaisPage() {
                   disabled={isSaving}
                   className="flex-1 h-12 bg-orange-600 hover:bg-orange-500 text-white font-bold text-[11px] uppercase tracking-widest rounded-xl shadow-sm transition-all flex items-center justify-center cursor-pointer active:scale-95 disabled:opacity-50"
                 >
-                  {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : (editingGroup.id ? "Salvar Alterações" : "Criar Grupo")}
+                  {isSaving ? (
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Carregando...</span>
+                    </div>
+                  ) : (editingGroup.id ? "Salvar Alterações" : "Criar Grupo")}
                 </button>
               </div>
             </form>
