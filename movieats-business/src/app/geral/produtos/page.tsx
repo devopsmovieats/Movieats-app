@@ -766,8 +766,8 @@ export default function ProdutosPage() {
             onClick={() => setIsModalOpen(false)}
           />
           
-          {/* Modal Container - Equilibrado e Profissional (Sincronizado com Categorias) */}
-          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-[#111827]/95 backdrop-blur-[15px] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 custom-scrollbar">
+          {/* Modal Container - Compacto e Centralizado (500px aprox) */}
+          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-[#111827]/95 backdrop-blur-[15px] border border-white/10 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 custom-scrollbar">
             
             {/* Modal Header Premium */}
             <div className="px-8 py-6 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01]">
@@ -820,7 +820,7 @@ export default function ProdutosPage() {
                       value={editingProduct?.name || ""} 
                       onChange={(e) => setEditingProduct(prev => prev ? { ...prev, name: e.target.value } : null)} 
                       placeholder="Ex: Smash Burger" 
-                      className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl py-3 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium" 
+                      className="w-full h-12 bg-white/[0.05] border border-white/10 rounded-xl py-3 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium" 
                       required 
                     />
                   </div>
@@ -830,7 +830,7 @@ export default function ProdutosPage() {
                       <select 
                         value={editingProduct?.categoria_id || ""}
                         onChange={(e) => setEditingProduct(prev => prev ? { ...prev, categoria_id: e.target.value } : null)}
-                        className="w-full bg-white/[0.05] border border-white/5 rounded-xl h-12 px-4 text-sm text-white focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 appearance-none font-bold uppercase tracking-tighter cursor-pointer"
+                        className="w-full bg-white/[0.05] border border-white/10 rounded-xl h-12 px-4 text-sm text-white focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 appearance-none font-bold uppercase tracking-tighter cursor-pointer"
                         required
                       >
                         <option value="" disabled className="bg-[#1f2937]">Selecione uma categoria</option>
@@ -854,7 +854,7 @@ export default function ProdutosPage() {
                       value={editingProduct?.preco || ""} 
                       onChange={(e) => setEditingProduct(prev => prev ? { ...prev, preco: parseFloat(e.target.value) || 0 } : null)} 
                       placeholder="Ex: 34.90" 
-                      className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl py-3 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-black text-primary" 
+                      className="w-full h-12 bg-white/[0.05] border border-white/10 rounded-xl py-3 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-black text-orange-500" 
                       required 
                     />
                   </div>
@@ -865,7 +865,7 @@ export default function ProdutosPage() {
                       value={editingProduct?.order_index || ""} 
                       onChange={(e) => setEditingProduct(prev => prev ? { ...prev, order_index: parseInt(e.target.value) || 0 } : null)} 
                       placeholder="Ex: 1" 
-                      className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-black text-center" 
+                      className="w-full h-12 bg-white/[0.05] border border-white/10 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-black text-center" 
                       required 
                     />
                   </div>
@@ -878,7 +878,7 @@ export default function ProdutosPage() {
                   value={editingProduct?.descricao || ""} 
                   onChange={(e) => setEditingProduct(prev => prev ? { ...prev, descricao: e.target.value } : null)} 
                   placeholder="Descreva brevemente o produto..." 
-                  className="w-full bg-white/[0.05] border border-white/5 rounded-xl p-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium min-h-[100px] resize-none leading-relaxed" 
+                  className="w-full bg-white/[0.05] border border-white/10 rounded-xl p-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium min-h-[100px] resize-none leading-relaxed" 
                   required 
                 />
               </div>
@@ -908,13 +908,13 @@ export default function ProdutosPage() {
                         }
                       }}
                       placeholder="Ex: Cebola, Picles, Tomate..."
-                      className="w-full h-11 bg-white/[0.05] border border-white/5 rounded-xl pl-10 pr-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium"
+                      className="w-full h-11 bg-white/[0.05] border border-white/10 rounded-xl pl-10 pr-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium"
                     />
                   </div>
                   <button 
                     type="button"
                     onClick={handleAddIngredient}
-                    className="w-11 h-11 flex items-center justify-center bg-orange-600/10 hover:bg-orange-600 text-orange-500 hover:text-white border border-orange-600/20 rounded-xl transition-all active:scale-90"
+                    className="w-11 h-11 flex items-center justify-center bg-orange-600/10 hover:bg-[#FF8C00] text-orange-500 hover:text-white border border-orange-600/20 rounded-xl transition-all duration-200 active:scale-90"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
