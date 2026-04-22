@@ -647,7 +647,7 @@ export default function ProdutosPage() {
               <tbody className="divide-y divide-white/5">
                 {filteredProducts.length > 0 ? filteredProducts.map((product) => (
                     <tr key={product.id} className={`hover:bg-white/[0.02] transition-colors group ${selectedIds.has(product.id) ? 'bg-primary/5' : ''}`}>
-                    <td className="px-6 py-4 text-center">
+                    <td className="px-6 py-4 align-middle text-center">
                       <input 
                         type="checkbox" 
                         checked={selectedIds.has(product.id)}
@@ -655,12 +655,12 @@ export default function ProdutosPage() {
                         className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
                       />
                     </td>
-                    <td className="px-6 py-4 text-center">
+                    <td className="px-6 py-4 align-middle text-center">
                       <span className="text-sm font-black text-white/40">
                         {product.order_index}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 align-middle">
                       <div className="w-12 h-12 rounded-lg border border-white/5 overflow-hidden shadow-inner bg-black/20 group-hover:border-primary/30 transition-colors">
                         <img 
                           src={product.image_url || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150&h=150&auto=format&fit=crop"} 
@@ -669,7 +669,7 @@ export default function ProdutosPage() {
                         />
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 align-middle">
                       <div className="flex flex-col">
                         <span className="text-sm font-medium text-white group-hover:text-primary transition-colors uppercase tracking-tight">
                           {product.name}
@@ -679,38 +679,38 @@ export default function ProdutosPage() {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 align-middle">
                       <span className="text-[10px] font-black text-white/50 bg-white/5 border border-white/5 px-2.5 py-1 rounded-md uppercase tracking-wide">
                         {categories.find(c => c.id === product.categoria_id)?.name || "Sem Categoria"}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 align-middle">
                       <span className="text-sm font-bold text-white tracking-tighter">
                         R$ {product.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-1 max-w-[200px]">
+                    <td className="px-6 py-4 align-middle">
+                      <div className="flex flex-wrap gap-1.5 max-w-[220px]">
                         {product.removable_ingredients && product.removable_ingredients.length > 0 ? product.removable_ingredients.map((ing, i) => (
-                          <span key={i} className="text-[8px] font-bold text-primary/50 uppercase tracking-tighter bg-primary/5 px-1.5 py-0.5 rounded">
+                          <span key={i} className="text-[10px] font-bold text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-md uppercase tracking-tight">
                             {ing}
                           </span>
                         )) : (
-                          <span className="text-[8px] text-muted-foreground/30 italic">Nenhum</span>
+                          <span className="text-[10px] text-muted-foreground/30 italic font-medium">Nenhum</span>
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 align-middle">
                       <span className={`text-[10px] font-black uppercase tracking-widest ${product.active ? 'text-green-500' : 'text-red-500'}`}>
                         {product.active ? 'Ativo' : 'Inativo'}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 align-middle">
                       <span className={`text-[10px] font-black uppercase tracking-widest ${product.active ? 'text-green-400/70' : 'text-red-400/70'}`}>
                         {product.active ? 'Disponível' : 'Indisponível'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-4 align-middle text-right">
                       {userRole !== "ATENDENTE" ? (
                         <div className="flex items-center justify-end gap-5">
                           <button 
