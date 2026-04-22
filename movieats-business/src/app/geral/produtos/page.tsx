@@ -633,10 +633,9 @@ export default function ProdutosPage() {
                         className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
                       />
                     </th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">ID</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-center">Ordem</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Imagem</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Nome</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Produto</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Categoria</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Preço</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Ingredientes</th>
@@ -656,11 +655,6 @@ export default function ProdutosPage() {
                         className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
                       />
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest opacity-50">
-                        #{product.id.toString().substring(0, 8)}
-                      </span>
-                    </td>
                     <td className="px-6 py-4 text-center">
                       <span className="text-sm font-black text-white/40">
                         {product.order_index}
@@ -676,9 +670,14 @@ export default function ProdutosPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm font-medium text-white group-hover:text-primary transition-colors uppercase tracking-tight">
-                        {product.name}
-                      </span>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-white group-hover:text-primary transition-colors uppercase tracking-tight">
+                          {product.name}
+                        </span>
+                        <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest opacity-40 mt-0.5">
+                          #{product.id.toString().substring(0, 8).toUpperCase()}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-[10px] font-black text-white/50 bg-white/5 border border-white/5 px-2.5 py-1 rounded-md uppercase tracking-wide">
@@ -736,7 +735,7 @@ export default function ProdutosPage() {
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan={11} className="px-6 py-20 text-center">
+                    <td colSpan={10} className="px-6 py-20 text-center">
                       <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest opacity-40">Nenhum produto encontrado.</p>
                     </td>
                   </tr>
