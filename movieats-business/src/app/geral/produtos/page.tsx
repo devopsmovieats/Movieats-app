@@ -313,7 +313,7 @@ export default function ProdutosPage() {
       if (file) {
         const formData = new FormData();
         formData.append('file', file);
-        if (establishmentId) formData.append('establishment_id', establishmentId);
+        if (currentEstId) formData.append('establishment_id', currentEstId);
 
         const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData });
         if (!uploadRes.ok) throw new Error('Falha no upload da imagem');
