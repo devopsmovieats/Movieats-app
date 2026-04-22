@@ -274,7 +274,7 @@ export default function GruposAdicionaisPage() {
     }
   };
 
-  const handleSelectOne = (id: number) => {
+  const handleSelectOne = (id: any) => {
     const newSelected = new Set(selectedIds);
     if (newSelected.has(id)) newSelected.delete(id);
     else newSelected.add(id);
