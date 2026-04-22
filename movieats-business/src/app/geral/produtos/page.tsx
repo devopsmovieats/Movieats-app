@@ -45,17 +45,17 @@ const Toast = Swal.mixin({
 interface Product {
   id: string | number;
   name: string;
-  category: string;
+  categoria_id: string;
   price: number;
   order: number;
-  description: string;
+  descricao: string;
   image_url: string;
   status: "ativo" | "inativo";
-  removableIngredients: string[];
+  removable_ingredients: string[];
 }
 
 interface Category {
-  id: number;
+  id: string;
   name: string;
 }
 
@@ -99,6 +99,7 @@ export default function ProdutosPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("todas");
@@ -156,11 +157,7 @@ export default function ProdutosPage() {
         .order('order', { ascending: true });
 
       if (!error && data) {
-        const formatted = data.map((p: any) => ({
-          ...p,
-          image_url: p.image_url || ""
-        }));
-        setProducts(formatted);
+        setProducts(data);
       }
     } catch (err) {
       console.error("Erro ao buscar produtos:", err);
@@ -188,20 +185,20 @@ export default function ProdutosPage() {
     setEditingProduct({
       id: 0,
       name: "",
-      category: categories[0]?.name || "Sem Categoria",
+      categoria_id: categories[0]?.id || "",
       price: 0,
       order: products.length + 1,
-      description: "",
+      descricao: "",
       image_url: "",
       status: "ativo",
-      removableIngredients: []
+      removable_ingredients: []
     });
     setIngredientInput("");
     setIsModalOpen(true);
   };
 
   const openEditModal = (product: Product) => {
-    setEditingProduct({ ...product, removableIngredients: [...(product.removableIngredients || [])] });
+    setEditingProduct({ ...product, removable_ingredients: [...(product.removable_ingredients || [])] });
     setIngredientInput("");
     setIsModalOpen(true);
   };
@@ -210,14 +207,14 @@ export default function ProdutosPage() {
     if (e) e.preventDefault();
     if (!ingredientInput.trim() || !editingProduct) return;
     
-    if (editingProduct.removableIngredients.includes(ingredientInput.trim())) {
+    if (editingProduct.removable_ingredients.includes(ingredientInput.trim())) {
       setIngredientInput("");
       return;
     }
 
     setEditingProduct({
       ...editingProduct,
-      removableIngredients: [...editingProduct.removableIngredients, ingredientInput.trim()]
+      removable_ingredients: [...editingProduct.removable_ingredients, ingredientInput.trim()]
     });
     setIngredientInput("");
   };
@@ -226,7 +223,7 @@ export default function ProdutosPage() {
     if (!editingProduct) return;
     setEditingProduct({
       ...editingProduct,
-      removableIngredients: editingProduct.removableIngredients.filter(i => i !== ingredient)
+      removable_ingredients: editingProduct.removable_ingredients.filter(i => i !== ingredient)
     });
   };
 
@@ -290,36 +287,59 @@ export default function ProdutosPage() {
 
   const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingProduct) {
-      if (editingProduct.id === 0) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, ...productToInsert } = editingProduct;
-        const { data, error } = await supabase
-          .from('bd_produtos')
-          .insert([{ ...productToInsert, establishment_id: establishmentId }])
-          .select();
+    if (!editingProduct) return;
+    setIsSaving(true);
 
-        if (!error && data) {
-          setProducts(prev => [...prev, data[0]]);
-          Toast.fire({ icon: "success", title: "Produto criado com sucesso" });
-        } else {
-          Toast.fire({ icon: "error", title: "Erro ao criar produto" });
-        }
+    try {
+      let finalImageUrl = editingProduct.image_url;
+
+      // Upload R2 se houver nova imagem
+      const file = fileInputRef.current?.files?.[0];
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        if (establishmentId) formData.append('establishment_id', establishmentId);
+
+        const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData });
+        if (!uploadRes.ok) throw new Error('Falha no upload da imagem');
+        
+        const { url } = await uploadRes.json();
+        finalImageUrl = url;
+      }
+
+      const productData = {
+        name: editingProduct.name,
+        categoria_id: editingProduct.categoria_id,
+        price: editingProduct.price,
+        descricao: editingProduct.descricao,
+        order: editingProduct.order,
+        status: editingProduct.status === 'ativo' ? 'ativo' : 'inativo',
+        image_url: finalImageUrl,
+        removable_ingredients: editingProduct.removable_ingredients,
+        establishment_id: establishmentId
+      };
+
+      if (editingProduct.id === 0) {
+        const { error } = await supabase.from('bd_produtos').insert([productData]);
+        if (error) throw error;
+        Toast.fire({ icon: "success", title: "Produto criado com sucesso" });
       } else {
         const { error } = await supabase
           .from('bd_produtos')
-          .update(editingProduct)
+          .update(productData)
           .eq('id', editingProduct.id);
-
-        if (!error) {
-          setProducts(prev => prev.map(p => p.id === editingProduct.id ? editingProduct : p));
-          Toast.fire({ icon: "success", title: "Alterações salvas com sucesso" });
-        } else {
-          Toast.fire({ icon: "error", title: "Erro ao salvar alterações" });
-        }
+        if (error) throw error;
+        Toast.fire({ icon: "success", title: "Produto atualizado com sucesso" });
       }
+
+      setIsModalOpen(false);
+      fetchProducts();
+    } catch (err: any) {
+      console.error(err);
+      Toast.fire({ icon: "error", title: err.message || "Erro ao salvar produto" });
+    } finally {
+      setIsSaving(false);
     }
-    setIsModalOpen(false);
   };
 
   const handleExport = () => {
@@ -454,17 +474,7 @@ export default function ProdutosPage() {
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64String = reader.result as string;
-      setEditingProduct(prev => prev ? { ...prev, image_url: base64String } : { 
-        id: 0, 
-        name: "", 
-        category: categories[0]?.name || "Sem Categoria", 
-        price: 0, 
-        order: products.length + 1, 
-        description: "", 
-        image_url: base64String, 
-        status: "ativo",
-        removableIngredients: []
-      });
+      setEditingProduct(prev => prev ? { ...prev, image_url: base64String } : null);
       Toast.fire({ icon: "success", title: "Imagem selecionada com sucesso" });
     };
     reader.readAsDataURL(file);
@@ -647,7 +657,7 @@ export default function ProdutosPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-[10px] font-black text-white/50 bg-white/5 border border-white/5 px-2.5 py-1 rounded-md uppercase tracking-wide">
-                        {product.category}
+                        {categories.find(c => c.id === product.categoria_id)?.name || "Sem Categoria"}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-center">
@@ -763,7 +773,7 @@ export default function ProdutosPage() {
                     <input 
                       type="text" 
                       value={editingProduct?.name || ""} 
-                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, category: "", price: 0, order: products.length + 1, description: "", image_url: "", status: "ativo", removableIngredients: [] })} 
+                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, name: e.target.value } : null)} 
                       placeholder="Ex: Smash Burger" 
                       className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium" 
                       required 
@@ -773,16 +783,16 @@ export default function ProdutosPage() {
                     <label className="text-[13px] font-bold text-white/50 ml-1 block">Categoria</label>
                     <div className="relative">
                       <select 
-                        value={editingProduct?.category || ""}
-                        onChange={(e) => setEditingProduct(prev => prev ? { ...prev, category: e.target.value } : { id: 0, name: "", category: e.target.value, price: 0, order: products.length + 1, description: "", image_url: "", status: "ativo", removableIngredients: [] })}
+                        value={editingProduct?.categoria_id || ""}
+                        onChange={(e) => setEditingProduct(prev => prev ? { ...prev, categoria_id: e.target.value } : null)}
                         className="w-full bg-white/[0.05] border border-white/5 rounded-lg h-12 px-4 text-sm text-white focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 appearance-none font-bold uppercase tracking-tighter cursor-pointer"
                         required
                       >
                         <option value="" disabled className="bg-[#1f2937]">Selecione uma categoria</option>
                         {categories.map(cat => (
-                          <option key={cat.id} value={cat.name} className="bg-[#1f2937]">{cat.name.toUpperCase()}</option>
+                          <option key={cat.id} value={cat.id} className="bg-[#1f2937]">{cat.name.toUpperCase()}</option>
                         ))}
-                        {categories.length === 0 && <option value="Sem Categoria" className="bg-[#1f2937]">SEM CATEGORIA</option>}
+                        {categories.length === 0 && <option value="" className="bg-[#1f2937]">SEM CATEGORIAS DISPONÍVEIS</option>}
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
                     </div>
@@ -797,7 +807,7 @@ export default function ProdutosPage() {
                       type="number" 
                       step="0.01" 
                       value={editingProduct?.price || ""} 
-                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, price: parseFloat(e.target.value) || 0 } : { id: 0, name: "", category: "", price: parseFloat(e.target.value) || 0, order: products.length + 1, description: "", image_url: "", status: "ativo", removableIngredients: [] })} 
+                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, price: parseFloat(e.target.value) || 0 } : null)} 
                       placeholder="Ex: 34.90" 
                       className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-black text-primary" 
                       required 
@@ -808,7 +818,7 @@ export default function ProdutosPage() {
                     <input 
                       type="number" 
                       value={editingProduct?.order || ""} 
-                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, order: parseInt(e.target.value) || 0 } : { id: 0, name: "", category: "", price: 0, order: parseInt(e.target.value) || 0, description: "", image_url: "", status: "ativo", removableIngredients: [] })} 
+                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, order: parseInt(e.target.value) || 0 } : null)} 
                       placeholder="Ex: 1" 
                       className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg py-3 px-4 text-sm text-white focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-black text-center" 
                       required 
@@ -820,8 +830,8 @@ export default function ProdutosPage() {
               <div className="space-y-2">
                 <label className="text-[13px] font-bold text-white/50 ml-1 block">Descrição</label>
                 <textarea 
-                  value={editingProduct?.description || ""} 
-                  onChange={(e) => setEditingProduct(prev => prev ? { ...prev, description: e.target.value } : { id: 0, name: "", category: "", price: 0, order: products.length + 1, description: e.target.value, image_url: "", status: "ativo", removableIngredients: [] })} 
+                  value={editingProduct?.descricao || ""} 
+                  onChange={(e) => setEditingProduct(prev => prev ? { ...prev, descricao: e.target.value } : null)} 
                   placeholder="Descreva brevemente o produto..." 
                   className="w-full bg-white/[0.05] border border-white/5 rounded-lg p-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium min-h-[100px] resize-none leading-relaxed" 
                   required 
@@ -867,8 +877,8 @@ export default function ProdutosPage() {
 
                 {/* Lista de Tags */}
                 <div className="flex flex-wrap gap-2 min-h-[40px] p-2 bg-black/20 border border-white/5 rounded-lg">
-                  {editingProduct?.removableIngredients && editingProduct.removableIngredients.length > 0 ? (
-                    editingProduct.removableIngredients.map((ingredient, idx) => (
+                  {editingProduct?.removable_ingredients && editingProduct.removable_ingredients.length > 0 ? (
+                    editingProduct.removable_ingredients.map((ingredient, idx) => (
                       <div 
                         key={idx}
                         className="flex items-center gap-1.5 px-2.5 py-1.5 bg-primary/10 border border-primary/20 rounded-md group hover:bg-primary/20 transition-all animate-in zoom-in-90 duration-200"
