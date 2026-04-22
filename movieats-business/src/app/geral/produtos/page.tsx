@@ -98,6 +98,8 @@ export default function ProdutosPage() {
   const [importProgress, setImportProgress] = useState(0);
   const [importStatus, setImportStatus] = useState("");
   const [ingredientInput, setIngredientInput] = useState("");
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [userRole, setUserRole] = useState<string>("ADMIN");
   const [establishmentId, setEstablishmentId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -193,12 +195,16 @@ export default function ProdutosPage() {
       active: true,
       removable_ingredients: []
     });
+    setPreviewUrl("");
+    setSelectedFile(null);
     setIngredientInput("");
     setIsModalOpen(true);
   };
 
   const openEditModal = (product: Product) => {
     setEditingProduct({ ...product, removable_ingredients: [...(product.removable_ingredients || [])] });
+    setPreviewUrl("");
+    setSelectedFile(null);
     setIngredientInput("");
     setIsModalOpen(true);
   };
@@ -307,18 +313,26 @@ export default function ProdutosPage() {
     try {
       let finalImageUrl = editingProduct.image_url;
 
-      // Upload R2 se houver nova imagem
-      const file = fileInputRef.current?.files?.[0];
-      if (file) {
-        const formData = new FormData();
-        formData.append('file', file);
-        if (currentEstId) formData.append('establishment_id', currentEstId);
-
-        const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData });
-        if (!uploadRes.ok) throw new Error('Falha no upload da imagem');
+      // Se houver um novo arquivo selecionado, faz o upload para o R2 primeiro
+      if (selectedFile) {
+        setImportStatus("Fazendo upload da imagem...");
         
-        const { url } = await uploadRes.json();
-        finalImageUrl = url;
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        formData.append('establishment_id', currentEstId);
+
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!uploadResponse.ok) {
+          const errorData = await uploadResponse.json();
+          throw new Error(errorData.error || 'Erro no upload para R2');
+        }
+
+        const { url: publicUrl } = await uploadResponse.json();
+        finalImageUrl = publicUrl;
       }
 
       const productData = {
@@ -333,19 +347,24 @@ export default function ProdutosPage() {
         establishment_id: currentEstId
       };
 
-      if (editingProduct.id === 0) {
-        const { error } = await supabase.from('bd_produtos').insert([productData]);
-        if (error) throw error;
-        Toast.fire({ icon: "success", title: "Produto criado com sucesso" });
-      } else {
+      if (editingProduct.id !== 0) {
         const { error } = await supabase
           .from('bd_produtos')
           .update(productData)
           .eq('id', editingProduct.id);
         if (error) throw error;
         Toast.fire({ icon: "success", title: "Produto atualizado com sucesso" });
+      } else {
+        const { error } = await supabase.from('bd_produtos').insert([productData]);
+        if (error) throw error;
+        Toast.fire({ icon: "success", title: "Produto criado com sucesso" });
       }
 
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      setSelectedFile(null);
+      setPreviewUrl("");
       setIsModalOpen(false);
       fetchProducts();
     } catch (err: any) {
@@ -479,14 +498,6 @@ export default function ProdutosPage() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    if (file.size > 2 * 1024 * 1024) {
-      Toast.fire({
-        icon: "error",
-        title: "Tamanho excedido (Máx 2MB)"
-      });
-      return;
-    }
 
     const reader = new FileReader();
     reader.onloadend = () => {
