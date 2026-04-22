@@ -138,7 +138,6 @@ export default function ProdutosPage() {
       .from('bd_categorias')
       .select('id, name')
       .eq('establishment_id', establishmentId)
-      .eq('status', 'active')
       .order('order', { ascending: true });
 
     if (!error && data) {
@@ -769,7 +768,7 @@ export default function ProdutosPage() {
                   {editingProduct?.image_url && (
                     <img 
                       src={editingProduct.image_url} 
-                      className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" 
+                      className="absolute inset-0 w-full h-full object-cover opacity-100 transition-opacity" 
                       alt="" 
                     />
                   )}
