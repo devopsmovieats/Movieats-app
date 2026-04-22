@@ -134,7 +134,7 @@ export default function GruposAdicionaisPage() {
   }, [currentEstId]);
 
   const filteredGroups = groups.filter(g => 
-    g.nome.toLowerCase().includes(searchQuery.toLowerCase())
+    g.nome_grupo.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const openAddModal = () => {
