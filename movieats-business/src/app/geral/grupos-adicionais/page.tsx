@@ -187,15 +187,17 @@ export default function GruposAdicionaisPage() {
     console.log('Iniciando gravação do grupo...');
     
     if (!editingGroup || !currentEstId || !supabase) {
-      console.log('ERRO DE INICIALIZAÇÃO:', { editingGroup: !!editingGroup, currentEstId: !!currentEstId, supabase: !!supabase });
+      console.log('ERRO DE INICIALIZAÇÃO:', { editingGroup: !!editingGroup, currentEstId: !!currentEstId, supabase: !!supabase, currentEstId_value: currentEstId });
       if (!supabase) {
         alert('ERRO: Cliente Supabase não inicializado!');
+      } else if (!currentEstId) {
+        alert('ERRO: ID do estabelecimento não encontrado! Recarregue a página.');
       }
       return;
     }
 
     if (editingGroup.qtd_minima > editingGroup.qtd_maxima) {
-      Toast.fire({ icon: "error", title: "Mínimo maior que o Máximo" });
+      alert('ERRO: Qtd Mínima não pode ser maior que a Máxima');
       return;
     }
 
