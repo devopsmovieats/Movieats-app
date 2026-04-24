@@ -75,21 +75,23 @@ export default function GruposAdicionaisPage() {
   const [newItemName, setNewItemName] = useState("");
   const [newItemPrice, setNewItemPrice] = useState("");
 
-  // Buscar ID do estabelecimento
+  // Buscar ID do estabelecimento (Padronizado com Produtos)
   useEffect(() => {
-    async function getEst() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from('bd_perfis')
-          .select('establishment_id')
-          .eq('id', user.id)
-          .single();
-        if (profile?.establishment_id) {
-          setCurrentEstId(profile.establishment_id);
+    const getEst = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.id) {
+        setCurrentEstId(session.user.id);
+      } else {
+        // Fallback para localStorage
+        const userSaved = localStorage.getItem("movieats_user");
+        if (userSaved) {
+          try {
+            const user = JSON.parse(userSaved);
+            if (user.id) setCurrentEstId(user.id);
+          } catch (e) {}
         }
       }
-    }
+    };
     getEst();
   }, []);
 
@@ -183,15 +185,32 @@ export default function GruposAdicionaisPage() {
 
   const handleSaveGroup = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Botão clicado!'); // Alerta imediato para confirmar que a função foi disparada
-    console.log('Iniciando gravação do grupo...');
     
-    if (!editingGroup || !currentEstId || !supabase) {
-      console.log('ERRO DE INICIALIZAÇÃO:', { editingGroup: !!editingGroup, currentEstId: !!currentEstId, supabase: !!supabase, currentEstId_value: currentEstId });
+    // Garantia de establishment_id antes de salvar
+    let activeEstId = currentEstId;
+    if (!activeEstId) {
+      console.log('DEBUG - Tentando recuperar establishment_id via sessão/localStorage...');
+      const { data: { session } } = await supabase.auth.getSession();
+      activeEstId = session?.user?.id || null;
+      
+      if (!activeEstId) {
+        const userSaved = localStorage.getItem("movieats_user");
+        if (userSaved) {
+          try {
+            const user = JSON.parse(userSaved);
+            activeEstId = user.id || null;
+          } catch (e) {}
+        }
+      }
+      
+      if (activeEstId) setCurrentEstId(activeEstId);
+    }
+
+    if (!editingGroup || !activeEstId || !supabase) {
       if (!supabase) {
         alert('ERRO: Cliente Supabase não inicializado!');
-      } else if (!currentEstId) {
-        alert('ERRO: ID do estabelecimento não encontrado! Recarregue a página.');
+      } else if (!activeEstId) {
+        alert('ERRO: ID do estabelecimento não encontrado! Verifique seu login.');
       }
       return;
     }
@@ -202,8 +221,7 @@ export default function GruposAdicionaisPage() {
     }
 
     setIsSaving(true);
-    console.log('Iniciando gravação do grupo...');
-    console.log('Estabelecimento ID:', currentEstId);
+    console.log('Iniciando gravação do grupo para o estabelecimento:', activeEstId);
 
     try {
       // Tipagem forçada conforme solicitado
@@ -213,7 +231,7 @@ export default function GruposAdicionaisPage() {
         qtd_minima: Number(editingGroup.qtd_minima),
         qtd_maxima: Number(editingGroup.qtd_maxima),
         active: Boolean(editingGroup.active),
-        establishment_id: currentEstId
+        establishment_id: activeEstId
       };
 
       console.log('DEBUG - Dados do Grupo:', groupData);
@@ -273,7 +291,7 @@ export default function GruposAdicionaisPage() {
           name: String(item.nome),
           preco: Number(item.preco),
           grupo_id: groupId,
-          establishment_id: currentEstId,
+          establishment_id: activeEstId,
           active: true
         }));
 
