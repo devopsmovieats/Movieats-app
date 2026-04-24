@@ -183,9 +183,13 @@ export default function GruposAdicionaisPage() {
 
   const handleSaveGroup = async (e: React.FormEvent) => {
     e.preventDefault();
+    alert('Botão clicado!'); // Alerta imediato para confirmar que a função foi disparada
+    console.log('Iniciando gravação do grupo...');
+    
     if (!editingGroup || !currentEstId || !supabase) {
+      console.log('ERRO DE INICIALIZAÇÃO:', { editingGroup: !!editingGroup, currentEstId: !!currentEstId, supabase: !!supabase });
       if (!supabase) {
-        Toast.fire({ icon: "error", title: "Erro de Configuração", text: "Cliente Supabase não inicializado. Verifique as variáveis de ambiente." });
+        alert('ERRO: Cliente Supabase não inicializado!');
       }
       return;
     }
