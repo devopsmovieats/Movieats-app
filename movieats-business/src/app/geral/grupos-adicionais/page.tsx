@@ -196,6 +196,9 @@ export default function GruposAdicionaisPage() {
     }
 
     setIsSaving(true);
+    console.log('Iniciando gravação do grupo...');
+    console.log('Estabelecimento ID:', currentEstId);
+
     try {
       // Tipagem forçada conforme solicitado
       const groupData = {
@@ -207,12 +210,13 @@ export default function GruposAdicionaisPage() {
         establishment_id: currentEstId
       };
 
-      console.log('DEBUG - Tentando salvar Grupo:', groupData);
+      console.log('DEBUG - Dados do Grupo:', groupData);
 
       let groupId = editingGroup.id;
 
       if (editingGroup.id === 0) {
-        // Fluxo de Criação
+        // Fluxo de Criação Sequencial
+        console.log('Executando insert no banco (bd_grupos_adicionais)...');
         const { data: newGroup, error: groupError } = await supabase
           .from('bd_grupos_adicionais')
           .insert([groupData])
@@ -220,38 +224,43 @@ export default function GruposAdicionaisPage() {
           .single();
         
         if (groupError) {
-          console.error('Erro real do Supabase (Grupo):', groupError);
+          console.error('Erro ao criar grupo:', groupError);
           throw groupError;
         }
         
-        if (!newGroup) throw new Error("Erro ao recuperar o ID do grupo criado.");
+        if (!newGroup) throw new Error("O banco não retornou o grupo criado após o insert.");
+        
         groupId = newGroup.id;
+        console.log('ID do grupo gerado:', groupId);
       } else {
         // Fluxo de Atualização
+        console.log('Executando update no banco (bd_grupos_adicionais) ID:', groupId);
         const { error: groupError } = await supabase
           .from('bd_grupos_adicionais')
           .update(groupData)
           .eq('id', editingGroup.id);
         
         if (groupError) {
-          console.error('Erro real do Supabase (Grupo Update):', groupError);
+          console.error('Erro ao atualizar grupo:', groupError);
           throw groupError;
         }
       }
 
-      // Sincronizar itens (complementos)
-      console.log('Limpando complementos antigos para o grupo:', groupId);
+      // Sincronizar itens (complementos) SOMENTE APÓS ter o groupId
+      console.log('Iniciando sincronização de complementos para o grupo:', groupId);
+      
+      // Limpeza prévia
       const { error: deleteError } = await supabase
         .from('bd_complementos')
         .delete()
         .eq('grupo_id', groupId);
         
       if (deleteError) {
-        console.error('Erro real do Supabase (Delete Complementos):', deleteError);
+        console.error('Erro ao limpar complementos:', deleteError);
         throw deleteError;
       }
 
-      // Insere os novos com tipagem forçada
+      // Inserção dos itens vinculados ao groupId
       if (editingGroup.items && editingGroup.items.length > 0) {
         const itemsData = editingGroup.items.map(item => ({
           name: String(item.nome),
@@ -261,14 +270,14 @@ export default function GruposAdicionaisPage() {
           active: true
         }));
 
-        console.log('DEBUG - Tentando salvar Complementos:', itemsData);
+        console.log('Enviando itens para bd_complementos:', itemsData);
 
         const { error: itemsError } = await supabase
           .from('bd_complementos')
           .insert(itemsData);
         
         if (itemsError) {
-          console.error('Erro real do Supabase (Complementos):', itemsError);
+          console.error('Erro ao salvar complementos:', itemsError);
           throw itemsError;
         }
       }
@@ -277,8 +286,8 @@ export default function GruposAdicionaisPage() {
       setIsModalOpen(false);
       fetchGroups();
     } catch (error: any) {
-      console.error('ERRO CRÍTICO NO SUPABASE:', error);
-      alert('ERRO: ' + (error.message || "Erro desconhecido"));
+      console.error('ERRO TÉCNICO DETALHADO:', error);
+      alert('ERRO TÉCNICO: ' + (error.message || "Erro desconhecido"));
     } finally {
       setIsSaving(false);
     }
