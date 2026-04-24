@@ -95,7 +95,7 @@ export default function GruposAdicionaisPage() {
 
   // Carregar dados do Supabase
   const fetchGroups = async () => {
-    if (!currentEstId) return;
+    if (!currentEstId || !supabase) return;
     
     try {
       const { data: groupsData, error: groupsError } = await supabase
@@ -112,11 +112,14 @@ export default function GruposAdicionaisPage() {
           .from('bd_complementos')
           .select('*')
           .eq('grupo_id', group.id)
-          .order('nome', { ascending: true });
+          .order('name', { ascending: true });
         
         return {
           ...group,
-          items: itemsData || []
+          items: (itemsData || []).map((i: any) => ({
+            ...i,
+            nome: i.name // Mapeia name do banco para nome da interface
+          }))
         };
       }));
 
@@ -180,7 +183,12 @@ export default function GruposAdicionaisPage() {
 
   const handleSaveGroup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingGroup || !currentEstId) return;
+    if (!editingGroup || !currentEstId || !supabase) {
+      if (!supabase) {
+        Toast.fire({ icon: "error", title: "Erro de Configuração", text: "Cliente Supabase não inicializado. Verifique as variáveis de ambiente." });
+      }
+      return;
+    }
 
     if (editingGroup.qtd_minima > editingGroup.qtd_maxima) {
       Toast.fire({ icon: "error", title: "Mínimo maior que o Máximo" });
@@ -198,6 +206,8 @@ export default function GruposAdicionaisPage() {
         establishment_id: currentEstId
       };
 
+      console.log('Tentando salvar Grupo:', groupData);
+
       let groupId = editingGroup.id;
 
       if (editingGroup.id === 0) {
@@ -206,46 +216,67 @@ export default function GruposAdicionaisPage() {
           .insert([groupData])
           .select()
           .single();
-        if (groupError) throw groupError;
+        
+        if (groupError) {
+          console.error('Erro real do Supabase (Grupo):', groupError);
+          throw groupError;
+        }
         groupId = newGroup.id;
       } else {
         const { error: groupError } = await supabase
           .from('bd_grupos_adicionais')
           .update(groupData)
           .eq('id', editingGroup.id);
-        if (groupError) throw groupError;
+        
+        if (groupError) {
+          console.error('Erro real do Supabase (Grupo Update):', groupError);
+          throw groupError;
+        }
       }
 
       // Sincronizar itens (complementos)
-      // Primeiro remove os antigos
+      console.log('Limpando complementos antigos para o grupo:', groupId);
       const { error: deleteError } = await supabase
         .from('bd_complementos')
         .delete()
         .eq('grupo_id', groupId);
-      if (deleteError) throw deleteError;
+      if (deleteError) {
+        console.error('Erro real do Supabase (Delete Complementos):', deleteError);
+        throw deleteError;
+      }
 
       // Insere os novos
       if (editingGroup.items && editingGroup.items.length > 0) {
+        const itemsData = editingGroup.items.map(item => ({
+          name: item.nome, // Corrigido: 'name' em vez de 'nome' conforme especificação do banco
+          preco: item.preco,
+          grupo_id: groupId,
+          establishment_id: currentEstId,
+          active: true
+        }));
+
+        console.log('Tentando salvar Complementos:', itemsData);
+
         const { error: itemsError } = await supabase
           .from('bd_complementos')
-          .insert(editingGroup.items.map(item => ({
-            nome: item.nome,
-            preco: item.preco,
-            grupo_id: groupId,
-            establishment_id: currentEstId
-          })));
-        if (itemsError) throw itemsError;
+          .insert(itemsData);
+        
+        if (itemsError) {
+          console.error('Erro real do Supabase (Complementos):', itemsError);
+          throw itemsError;
+        }
       }
 
       Toast.fire({ icon: "success", title: editingGroup.id === 0 ? "Grupo criado com sucesso!" : "Alterações salvas com sucesso!" });
       setIsModalOpen(false);
       fetchGroups();
     } catch (error: any) {
-      console.error("Erro ao salvar:", error);
+      console.error('ERRO CRÍTICO NO SUPABASE:', error);
+      alert('ERRO NO SUPABASE: ' + (error.message || "Erro desconhecido"));
       Toast.fire({ 
         icon: "error", 
         title: "Erro ao salvar",
-        text: error.message || "Verifique a conexão e as colunas do banco."
+        text: `Erro: ${error.message || "Desconhecido"}. Verifique o console.`
       });
     } finally {
       setIsSaving(false);
@@ -662,9 +693,9 @@ export default function GruposAdicionaisPage() {
                   {isSaving ? (
                     <div className="flex items-center gap-2">
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Carregando...</span>
+                      <span>SALVANDO...</span>
                     </div>
-                  ) : (editingGroup.id ? "Salvar Alterações" : "Criar Grupo")}
+                  ) : (editingGroup.id ? "Salvar Alterações" : "CRIAR GRUPO")}
                 </button>
               </div>
             </form>
