@@ -291,7 +291,7 @@ export default function GruposAdicionaisPage() {
       fetchGroups();
     } catch (error: any) {
       console.error('ERRO TÉCNICO DETALHADO:', error);
-      alert('ERRO TÉCNICO: ' + (error.message || "Erro desconhecido"));
+      alert('ERRO DO BANCO: ' + JSON.stringify(error));
     } finally {
       setIsSaving(false);
     }
