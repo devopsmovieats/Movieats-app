@@ -218,7 +218,8 @@ export default function GruposAdicionaisPage() {
 
       let groupId = editingGroup.id;
 
-      if (editingGroup.id === 0) {
+      // Verificação de ID mais abrangente conforme solicitado
+      if (!editingGroup.id || editingGroup.id === 0 || editingGroup.id === '0') {
         // Fluxo de Criação Sequencial
         console.log('Executando insert no banco (bd_grupos_adicionais)...');
         const { data: newGroup, error: groupError } = await supabase
@@ -291,7 +292,7 @@ export default function GruposAdicionaisPage() {
       fetchGroups();
     } catch (error: any) {
       console.error('ERRO TÉCNICO DETALHADO:', error);
-      alert('ERRO DO BANCO: ' + JSON.stringify(error));
+      alert('ERRO: ' + (error.message || "Erro desconhecido"));
     } finally {
       setIsSaving(false);
     }
