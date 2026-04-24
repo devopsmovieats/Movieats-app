@@ -197,20 +197,22 @@ export default function GruposAdicionaisPage() {
 
     setIsSaving(true);
     try {
+      // Tipagem forçada conforme solicitado
       const groupData = {
-        nome_grupo: editingGroup.nome_grupo,
-        tipo_escolha: editingGroup.tipo_escolha,
-        qtd_minima: editingGroup.qtd_minima,
-        qtd_maxima: editingGroup.qtd_maxima,
-        active: editingGroup.active,
+        nome_grupo: String(editingGroup.nome_grupo),
+        tipo_escolha: String(editingGroup.tipo_escolha),
+        qtd_minima: Number(editingGroup.qtd_minima),
+        qtd_maxima: Number(editingGroup.qtd_maxima),
+        active: Boolean(editingGroup.active),
         establishment_id: currentEstId
       };
 
-      console.log('Tentando salvar Grupo:', groupData);
+      console.log('DEBUG - Tentando salvar Grupo:', groupData);
 
       let groupId = editingGroup.id;
 
       if (editingGroup.id === 0) {
+        // Fluxo de Criação
         const { data: newGroup, error: groupError } = await supabase
           .from('bd_grupos_adicionais')
           .insert([groupData])
@@ -221,8 +223,11 @@ export default function GruposAdicionaisPage() {
           console.error('Erro real do Supabase (Grupo):', groupError);
           throw groupError;
         }
+        
+        if (!newGroup) throw new Error("Erro ao recuperar o ID do grupo criado.");
         groupId = newGroup.id;
       } else {
+        // Fluxo de Atualização
         const { error: groupError } = await supabase
           .from('bd_grupos_adicionais')
           .update(groupData)
@@ -240,22 +245,23 @@ export default function GruposAdicionaisPage() {
         .from('bd_complementos')
         .delete()
         .eq('grupo_id', groupId);
+        
       if (deleteError) {
         console.error('Erro real do Supabase (Delete Complementos):', deleteError);
         throw deleteError;
       }
 
-      // Insere os novos
+      // Insere os novos com tipagem forçada
       if (editingGroup.items && editingGroup.items.length > 0) {
         const itemsData = editingGroup.items.map(item => ({
-          name: item.nome, // Corrigido: 'name' em vez de 'nome' conforme especificação do banco
-          preco: item.preco,
+          name: String(item.nome),
+          preco: Number(item.preco),
           grupo_id: groupId,
           establishment_id: currentEstId,
           active: true
         }));
 
-        console.log('Tentando salvar Complementos:', itemsData);
+        console.log('DEBUG - Tentando salvar Complementos:', itemsData);
 
         const { error: itemsError } = await supabase
           .from('bd_complementos')
@@ -267,17 +273,12 @@ export default function GruposAdicionaisPage() {
         }
       }
 
-      Toast.fire({ icon: "success", title: editingGroup.id === 0 ? "Grupo criado com sucesso!" : "Alterações salvas com sucesso!" });
+      alert('GRAVADO COM SUCESSO');
       setIsModalOpen(false);
       fetchGroups();
     } catch (error: any) {
       console.error('ERRO CRÍTICO NO SUPABASE:', error);
-      alert('ERRO NO SUPABASE: ' + (error.message || "Erro desconhecido"));
-      Toast.fire({ 
-        icon: "error", 
-        title: "Erro ao salvar",
-        text: `Erro: ${error.message || "Desconhecido"}. Verifique o console.`
-      });
+      alert('ERRO: ' + (error.message || "Erro desconhecido"));
     } finally {
       setIsSaving(false);
     }
