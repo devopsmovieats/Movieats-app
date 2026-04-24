@@ -208,20 +208,19 @@ export default function GruposAdicionaisPage() {
 
     if (!editingGroup || !activeEstId || !supabase) {
       if (!supabase) {
-        alert('ERRO: Cliente Supabase não inicializado!');
+        Toast.fire({ icon: "error", title: "Erro de Configuração", text: "Cliente Supabase não inicializado." });
       } else if (!activeEstId) {
-        alert('ERRO: ID do estabelecimento não encontrado! Verifique seu login.');
+        Toast.fire({ icon: "error", title: "Sessão Inválida", text: "ID do estabelecimento não encontrado. Faça login novamente." });
       }
       return;
     }
 
     if (editingGroup.qtd_minima > editingGroup.qtd_maxima) {
-      alert('ERRO: Qtd Mínima não pode ser maior que a Máxima');
+      Toast.fire({ icon: "error", title: "Mínimo maior que o Máximo" });
       return;
     }
 
     setIsSaving(true);
-    console.log('Iniciando gravação do grupo para o estabelecimento:', activeEstId);
 
     try {
       // Tipagem forçada conforme solicitado
@@ -265,25 +264,16 @@ export default function GruposAdicionaisPage() {
           .update(groupData)
           .eq('id', editingGroup.id);
         
-        if (groupError) {
-          console.error('Erro ao atualizar grupo:', groupError);
-          throw groupError;
-        }
+        if (groupError) throw groupError;
       }
 
-      // Sincronizar itens (complementos) SOMENTE APÓS ter o groupId
-      console.log('Iniciando sincronização de complementos para o grupo:', groupId);
-      
-      // Limpeza prévia
+      // Sincronizar itens (complementos)
       const { error: deleteError } = await supabase
         .from('bd_complementos')
         .delete()
         .eq('grupo_id', groupId);
         
-      if (deleteError) {
-        console.error('Erro ao limpar complementos:', deleteError);
-        throw deleteError;
-      }
+      if (deleteError) throw deleteError;
 
       // Inserção dos itens vinculados ao groupId
       if (editingGroup.items && editingGroup.items.length > 0) {
@@ -295,24 +285,23 @@ export default function GruposAdicionaisPage() {
           active: true
         }));
 
-        console.log('Enviando itens para bd_complementos:', itemsData);
-
         const { error: itemsError } = await supabase
           .from('bd_complementos')
           .insert(itemsData);
         
-        if (itemsError) {
-          console.error('Erro ao salvar complementos:', itemsError);
-          throw itemsError;
-        }
+        if (itemsError) throw itemsError;
       }
 
-      alert('GRAVADO COM SUCESSO');
+      Toast.fire({ icon: "success", title: "Grupo salvo com sucesso!" });
       setIsModalOpen(false);
       fetchGroups();
     } catch (error: any) {
-      console.error('ERRO TÉCNICO DETALHADO:', error);
-      alert('ERRO: ' + (error.message || "Erro desconhecido"));
+      console.error('ERRO TÉCNICO:', error);
+      Toast.fire({ 
+        icon: "error", 
+        title: "Erro ao salvar",
+        text: error.message || "Erro desconhecido"
+      });
     } finally {
       setIsSaving(false);
     }
