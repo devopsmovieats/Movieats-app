@@ -17,9 +17,6 @@ import {
 import Swal from "sweetalert2";
 import { supabase } from "@/lib/supabase";
 
-// ID Estático para garantir registro único (Sincronizado com a Sidebar)
-const CONFIG_ID = "00000000-0000-0000-0000-000000000001";
-
 interface SystemSettings {
   nome_loja: string;
   descricao: string;
@@ -80,10 +77,13 @@ export default function ConfigGeralPage() {
 
   const fetchSettings = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
       const { data, error } = await supabase
         .from("bd_config_estabelecimento")
         .select("*")
-        .eq("id", CONFIG_ID)
+        .eq("id", user.id)
         .single();
 
       if (error && error.code !== "PGRST116") throw error;
@@ -120,10 +120,13 @@ export default function ConfigGeralPage() {
     const fullAddress = `${settings.rua}, ${settings.numero} - ${settings.bairro}, ${settings.cidade}/${settings.uf}`;
 
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Usuário não autenticado");
+
       const { error } = await supabase
         .from("bd_config_estabelecimento")
         .upsert({
-          id: CONFIG_ID,
+          id: user.id, // Chave primária baseada no usuário
           nome_loja: settings.nome_loja,
           descricao: settings.descricao,
           url_logo: settings.url_logo,
@@ -149,7 +152,6 @@ export default function ConfigGeralPage() {
 
       console.log("Success: Configurações salvas no Supabase");
       
-      // Disparar evento para atualizar a Sidebar em tempo real
       window.dispatchEvent(new CustomEvent("movieats:branding_update", {
         detail: { name: settings.nome_loja, logo: settings.url_logo }
       }));
@@ -256,7 +258,7 @@ export default function ConfigGeralPage() {
             </div>
 
             <div className="space-y-4">
-              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Imagens</h3>
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Imagens</h3>
               <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-3">

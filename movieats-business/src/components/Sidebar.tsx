@@ -112,8 +112,6 @@ const menuGroups: MenuGroup[] = [
 
 import { supabase } from "@/lib/supabase";
 
-const CONFIG_ID = "00000000-0000-0000-0000-000000000001";
-
 export default function Sidebar() {
   const pathname = usePathname();
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
@@ -147,10 +145,13 @@ export default function Sidebar() {
 
   const fetchBranding = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
       const { data, error } = await supabase
         .from("bd_config_estabelecimento")
         .select("nome_loja, url_logo")
-        .eq("id", CONFIG_ID)
+        .eq("id", user.id)
         .single();
 
       if (data) {
