@@ -10,6 +10,7 @@ import {
   Camera, 
   Mail, 
   Image as ImageIcon, 
+  Save,
   Search,
   Globe,
   Loader2
@@ -38,10 +39,10 @@ const Toast = Swal.mixin({
   showConfirmButton: false,
   timer: 2000,
   timerProgressBar: true,
-  background: "#141414",
+  background: "#1a1a1a",
   color: "#fff",
   customClass: {
-    popup: "rounded-xl border border-white/5 shadow-2xl shadow-black/50"
+    popup: "rounded-lg border border-white/10 shadow-2xl"
   }
 });
 
@@ -142,259 +143,243 @@ export default function ConfigGeralPage() {
   const ImagePlaceholder = ({ label, type }: { label: string, type: 'logo' | 'banner' }) => (
     <div 
       onClick={() => type === 'logo' ? logoInputRef.current?.click() : bannerInputRef.current?.click()}
-      className={`relative group ${type === 'logo' ? 'w-24 h-24' : 'w-full h-32'} bg-white/[0.05] border border-white/5 rounded-2xl flex flex-col items-center justify-center transition-all cursor-pointer hover:bg-white/[0.08] hover:border-[#ff6b00]/40 overflow-hidden shadow-xl`}
+      className={`relative group ${type === 'logo' ? 'w-24 h-24' : 'w-full h-24'} bg-[#1a1a1a] border border-white/10 rounded-lg flex flex-col items-center justify-center transition-all cursor-pointer hover:bg-[#222] overflow-hidden`}
     >
-      <div className="flex flex-col items-center justify-center pointer-events-none">
-        <ImageIcon className="w-6 h-6 text-white/20 mb-2 group-hover:text-[#ff6b00] transition-colors" />
-        <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{label}</span>
-      </div>
-      <div className="absolute inset-0 bg-[#ff6b00]/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-        <Camera className="w-6 h-6 text-white" />
-      </div>
+      <ImageIcon className="w-5 h-5 text-gray-600 mb-1" />
+      <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">{label}</span>
     </div>
   );
 
   return (
     <DashboardLayout>
-      <div className="max-w-6xl mx-auto px-6 py-10 animate-in fade-in duration-700">
+      <div className="min-h-screen bg-[#121212] -m-8 p-8 animate-in fade-in duration-500">
         <input type="file" ref={logoInputRef} onChange={(e) => handleFileChange(e, 'logo')} accept="image/*" className="hidden" />
         <input type="file" ref={bannerInputRef} onChange={(e) => handleFileChange(e, 'banner')} accept="image/*" className="hidden" />
 
-        <form onSubmit={handleSave} className="space-y-12">
+        <form onSubmit={handleSave} className="max-w-6xl mx-auto space-y-8">
           
-          {/* Header Superior - Padronizado Elite */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 pb-10 border-b border-white/[0.03]">
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-[#ff6b00]/10 rounded-2xl border border-[#ff6b00]/20">
-                  <Settings className="text-[#ff6b00] w-6 h-6" />
-                </div>
-                <h1 className="text-2xl font-black text-white tracking-tight uppercase leading-none">CONFIGURAÇÕES GERAIS</h1>
-              </div>
-              <p className="text-muted-foreground/60 text-[11px] font-bold uppercase tracking-widest ml-1 opacity-50">Identidade Visual e Parâmetros da Loja</p>
+          {/* Header Superior Estilo Elite */}
+          <div className="flex items-center justify-between pb-6 border-b border-white/10">
+            <div className="flex items-center gap-3">
+              <Settings className="text-orange-600 w-6 h-6" />
+              <h1 className="text-2xl font-bold text-white uppercase tracking-tight">Configurações Gerais</h1>
             </div>
             
             <button 
               type="submit" 
               disabled={isSaving}
-              className="px-14 py-4 bg-[#ff6b00] hover:bg-[#e66000] disabled:opacity-50 disabled:hover:bg-[#ff6b00] text-white rounded-xl font-black text-[11px] uppercase tracking-[0.2em] transition-all active:scale-95 cursor-pointer shadow-xl shadow-[#ff6b00]/20 min-w-[280px] text-center border-none"
+              className="flex items-center gap-2 px-8 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-bold text-[11px] uppercase tracking-widest transition-all cursor-pointer shadow-lg active:scale-95"
             >
               {isSaving ? (
-                <div className="flex items-center justify-center gap-3">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Sincronizando...</span>
-                </div>
-              ) : "Salvar Alterações"}
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              <span>SALVAR ALTERAÇÕES</span>
             </button>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
-            {/* Coluna Esquerda: Dados e Localização */}
-            <div className="lg:col-span-7 space-y-10">
-              
-              {/* Card: Informações da Loja */}
-              <div className="bg-[#111827] border border-white/5 rounded-[32px] p-8 space-y-8 shadow-2xl">
-                <div className="flex items-center gap-3 pb-4 border-b border-white/[0.03]">
-                  <Store className="w-4 h-4 text-[#ff6b00]" />
-                  <h3 className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Dados do Estabelecimento</h3>
-                </div>
-
-                <div className="space-y-6">
-                  <div className="space-y-2.5">
-                    <label className="text-[11px] font-bold text-white/30 uppercase tracking-widest ml-1">Nome Fantasia</label>
-                    <input 
-                      type="text" 
-                      value={settings.name}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setSettings({...settings, name: val});
-                        syncBranding(val, settings.logo);
-                      }}
-                      placeholder="Nome da sua loja"
-                      className="w-full h-12 bg-white/[0.05] border border-white/10 rounded-xl px-5 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-[#ff6b00]/50 transition-all font-bold"
-                    />
-                  </div>
-
-                  <div className="space-y-2.5">
-                    <label className="text-[11px] font-bold text-white/30 uppercase tracking-widest ml-1">Slogan / Biografia</label>
-                    <textarea 
-                      rows={3}
-                      value={settings.description}
-                      onChange={(e) => setSettings({...settings, description: e.target.value})}
-                      placeholder="Ex: O melhor hambúrguer artesanal da região..."
-                      className="w-full bg-white/[0.05] border border-white/10 rounded-xl p-5 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-[#ff6b00]/50 transition-all font-medium resize-none leading-relaxed"
-                    />
-                  </div>
-                </div>
+            {/* Dados Básicos */}
+            <div className="bg-[#121212] border border-white/10 rounded-lg p-6 space-y-6 shadow-xl">
+              <div className="flex items-center gap-2 mb-2">
+                <Store className="w-4 h-4 text-orange-600" />
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider">Informações da Loja</h3>
               </div>
 
-              {/* Card: Endereço Operacional */}
-              <div className="bg-[#111827] border border-white/5 rounded-[32px] p-8 space-y-8 shadow-2xl">
-                <div className="flex items-center gap-3 pb-4 border-b border-white/[0.03]">
-                  <MapPin className="w-4 h-4 text-[#ff6b00]" />
-                  <h3 className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Localização Operacional</h3>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Nome Fantasia</label>
+                  <input 
+                    type="text" 
+                    value={settings.name}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setSettings({...settings, name: val});
+                      syncBranding(val, settings.logo);
+                    }}
+                    className="w-full bg-[#1a1a1a] border border-white/10 rounded-lg py-3 px-4 text-sm text-gray-400 focus:outline-none focus:border-orange-600 transition-all font-medium"
+                  />
                 </div>
 
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2.5">
-                      <label className="text-[11px] font-bold text-white/30 uppercase tracking-widest ml-1">CEP</label>
-                      <div className="relative">
-                        <input 
-                          type="text" 
-                          value={settings.cep}
-                          onBlur={handleCepBlur}
-                          onChange={(e) => setSettings({...settings, cep: e.target.value})}
-                          placeholder="00000-000"
-                          className="w-full h-12 bg-white/[0.05] border border-white/10 rounded-xl px-5 text-sm text-white focus:outline-none focus:border-[#ff6b00]/50 transition-all font-bold"
-                        />
-                        <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/10" />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2.5">
-                      <label className="text-[11px] font-bold text-white/30 uppercase tracking-widest ml-1">Cidade / UF</label>
-                      <div className="flex gap-3">
-                        <input 
-                          type="text" 
-                          value={settings.city}
-                          readOnly
-                          className="flex-1 h-12 bg-white/[0.02] border border-white/10 rounded-xl px-5 text-sm text-white/40 font-bold outline-none"
-                        />
-                        <input 
-                          type="text" 
-                          value={settings.uf}
-                          readOnly
-                          className="w-16 h-12 bg-white/[0.02] border border-white/10 rounded-xl text-center text-sm text-white/40 font-bold outline-none"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="md:col-span-2 space-y-2.5">
-                      <label className="text-[11px] font-bold text-white/30 uppercase tracking-widest ml-1">Rua / Logradouro</label>
-                      <input 
-                        type="text" 
-                        value={settings.street}
-                        onChange={(e) => setSettings({...settings, street: e.target.value})}
-                        className="w-full h-12 bg-white/[0.05] border border-white/10 rounded-xl px-5 text-sm text-white font-bold focus:border-[#ff6b00]/50 outline-none transition-all"
-                      />
-                    </div>
-                    <div className="space-y-2.5">
-                      <label className="text-[11px] font-bold text-white/30 uppercase tracking-widest ml-1">Bairro</label>
-                      <input 
-                        type="text" 
-                        value={settings.neighborhood}
-                        onChange={(e) => setSettings({...settings, neighborhood: e.target.value})}
-                        className="w-full h-12 bg-white/[0.05] border border-white/10 rounded-xl px-5 text-sm text-white font-bold focus:border-[#ff6b00]/50 outline-none transition-all"
-                      />
-                    </div>
-                  </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Slogan / Descrição</label>
+                  <textarea 
+                    rows={2}
+                    value={settings.description}
+                    onChange={(e) => setSettings({...settings, description: e.target.value})}
+                    className="w-full bg-[#1a1a1a] border border-white/10 rounded-lg py-3 px-4 text-sm text-gray-400 focus:outline-none focus:border-orange-600 transition-all font-medium resize-none"
+                  />
                 </div>
               </div>
             </div>
 
-            {/* Coluna Direita: Imagens e Canais */}
-            <div className="lg:col-span-5 space-y-10">
-              
-              {/* Card: Identidade Visual */}
-              <div className="bg-[#111827] border border-white/5 rounded-[32px] p-8 space-y-8 shadow-2xl">
-                <div className="flex items-center gap-3 pb-4 border-b border-white/[0.03]">
-                  <ImageIcon className="w-4 h-4 text-[#ff6b00]" />
-                  <h3 className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Mídias da Marca</h3>
-                </div>
-
-                <div className="space-y-10">
-                  <div className="space-y-4">
-                    <label className="text-[11px] font-bold text-white/30 uppercase tracking-widest ml-1">Logotipo (Square)</label>
-                    {settings.logo ? (
-                      <div className="relative group w-28 h-28 rounded-[24px] overflow-hidden border border-white/10 cursor-pointer shadow-2xl" onClick={() => logoInputRef.current?.click()}>
-                        <img src={settings.logo} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Logo" />
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                          <Camera className="w-6 h-6 text-white" />
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="w-28 h-28">
-                        <ImagePlaceholder label="Logo" type="logo" />
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="space-y-4">
-                    <label className="text-[11px] font-bold text-white/30 uppercase tracking-widest ml-1">Banner Principal</label>
-                    {settings.banner ? (
-                      <div className="relative group w-full h-40 rounded-[24px] overflow-hidden border border-white/10 cursor-pointer shadow-2xl" onClick={() => bannerInputRef.current?.click()}>
-                        <img src={settings.banner} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Banner" />
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                          <Camera className="w-6 h-6 text-white" />
-                        </div>
-                      </div>
-                    ) : (
-                      <ImagePlaceholder label="Banner" type="banner" />
-                    )}
-                  </div>
-                </div>
+            {/* Identidade Visual */}
+            <div className="bg-[#121212] border border-white/10 rounded-lg p-6 space-y-6 shadow-xl">
+              <div className="flex items-center gap-2 mb-2">
+                <ImageIcon className="w-4 h-4 text-orange-600" />
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider">Identidade Visual</h3>
               </div>
-
-              {/* Card: Canais Digitais */}
-              <div className="bg-[#111827] border border-white/5 rounded-[32px] p-8 space-y-8 shadow-2xl">
-                <div className="flex items-center gap-3 pb-4 border-b border-white/[0.03]">
-                  <Globe className="w-4 h-4 text-[#ff6b00]" />
-                  <h3 className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Canais Digitais</h3>
+              <div className="grid grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Logo</label>
+                  {settings.logo ? (
+                    <div className="relative group w-20 h-20 rounded-lg overflow-hidden border border-white/10 cursor-pointer" onClick={() => logoInputRef.current?.click()}>
+                      <img src={settings.logo} className="w-full h-full object-cover" alt="Logo" />
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                        <Camera className="w-5 h-5 text-white" />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-20 h-20">
+                      <ImagePlaceholder label="Logo" type="logo" />
+                    </div>
+                  )}
                 </div>
-
-                <div className="space-y-6">
-                  <div className="space-y-2.5">
-                    <label className="text-[11px] font-bold text-white/30 uppercase tracking-widest ml-1">WhatsApp Business</label>
-                    <div className="relative group">
-                      <input 
-                        type="text" 
-                        value={settings.whatsapp}
-                        onChange={(e) => setSettings({...settings, whatsapp: e.target.value})}
-                        placeholder="(00) 00000-0000"
-                        className="w-full h-12 bg-white/[0.05] border border-white/10 rounded-xl pl-12 pr-5 text-sm text-white font-bold focus:border-[#ff6b00]/50 outline-none transition-all"
-                      />
-                      <Phone className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-[#ff6b00] transition-colors" />
+                <div className="col-span-2 space-y-2">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Banner</label>
+                  {settings.banner ? (
+                    <div className="relative group h-20 rounded-lg overflow-hidden border border-white/10 cursor-pointer" onClick={() => bannerInputRef.current?.click()}>
+                      <img src={settings.banner} className="w-full h-full object-cover" alt="Banner" />
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                        <Camera className="w-5 h-5 text-white" />
+                      </div>
                     </div>
-                  </div>
-
-                  <div className="space-y-2.5">
-                    <label className="text-[11px] font-bold text-white/30 uppercase tracking-widest ml-1">Instagram Business</label>
-                    <div className="relative group">
-                      <input 
-                        type="text" 
-                        value={settings.instagram}
-                        onChange={(e) => setSettings({...settings, instagram: e.target.value})}
-                        placeholder="@seu.negocio"
-                        className="w-full h-12 bg-white/[0.05] border border-white/10 rounded-xl pl-12 pr-5 text-sm text-white font-bold focus:border-[#ff6b00]/50 outline-none transition-all"
-                      />
-                      <Camera className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-[#ff6b00] transition-colors" />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2.5">
-                    <label className="text-[11px] font-bold text-white/30 uppercase tracking-widest ml-1">E-mail Comercial</label>
-                    <div className="relative group">
-                      <input 
-                        type="email" 
-                        value={settings.email}
-                        onChange={(e) => setSettings({...settings, email: e.target.value})}
-                        placeholder="contato@empresa.com"
-                        className="w-full h-12 bg-white/[0.05] border border-white/10 rounded-xl pl-12 pr-5 text-sm text-white font-bold focus:border-[#ff6b00]/50 outline-none transition-all"
-                      />
-                      <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-[#ff6b00] transition-colors" />
-                    </div>
-                  </div>
+                  ) : (
+                    <ImagePlaceholder label="Banner" type="banner" />
+                  )}
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Endereço - Grid 4 Colunas */}
+          <div className="bg-[#121212] border border-white/10 rounded-lg p-6 space-y-6 shadow-xl">
+            <div className="flex items-center gap-2 mb-2">
+              <MapPin className="w-4 h-4 text-orange-600" />
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider">Endereço Operacional</h3>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="md:col-span-1 space-y-2">
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">CEP</label>
+                <div className="relative">
+                  <input 
+                    type="text" 
+                    value={settings.cep}
+                    onBlur={handleCepBlur}
+                    onChange={(e) => setSettings({...settings, cep: e.target.value})}
+                    placeholder="00000-000"
+                    className="w-full bg-[#1a1a1a] border border-white/10 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
+                  />
+                  <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-700" />
+                </div>
+              </div>
+
+              <div className="md:col-span-2 space-y-2">
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Rua / Logradouro</label>
+                <input 
+                  type="text" 
+                  value={settings.street}
+                  onChange={(e) => setSettings({...settings, street: e.target.value})}
+                  className="w-full bg-[#1a1a1a] border border-white/10 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
+                />
+              </div>
+
+              <div className="md:col-span-1 space-y-2">
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Bairro</label>
+                <input 
+                  type="text" 
+                  value={settings.neighborhood}
+                  onChange={(e) => setSettings({...settings, neighborhood: e.target.value})}
+                  className="w-full bg-[#1a1a1a] border border-white/10 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="md:col-span-2 space-y-2">
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Cidade</label>
+                <input 
+                  type="text" 
+                  value={settings.city}
+                  readOnly
+                  className="w-full bg-[#1a1a1a] border border-white/10 rounded-lg py-3 px-4 text-sm text-gray-600 cursor-not-allowed"
+                />
+              </div>
+              <div className="md:col-span-1 space-y-2">
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">UF</label>
+                <input 
+                  type="text" 
+                  value={settings.uf}
+                  readOnly
+                  className="w-full bg-[#1a1a1a] border border-white/10 rounded-lg py-3 px-4 text-sm text-gray-600 text-center"
+                />
+              </div>
+              <div className="md:col-span-1 space-y-2">
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Nº</label>
+                <input 
+                  type="text" 
+                  value={settings.number}
+                  onChange={(e) => setSettings({...settings, number: e.target.value})}
+                  className="w-full bg-[#1a1a1a] border border-white/10 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Atendimento */}
+          <div className="bg-[#121212] border border-white/10 rounded-lg p-6 space-y-6 shadow-xl">
+            <div className="flex items-center gap-2 mb-2">
+              <Globe className="w-4 h-4 text-orange-600" />
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider">Canais de Contato</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">WhatsApp</label>
+                <div className="relative">
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-700" />
+                  <input 
+                    type="text" 
+                    value={settings.whatsapp}
+                    onChange={(e) => setSettings({...settings, whatsapp: e.target.value})}
+                    placeholder="(00) 00000-0000"
+                    className="w-full bg-[#1a1a1a] border border-white/10 rounded-lg py-3 pl-12 pr-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Instagram (@)</label>
+                <div className="relative">
+                  <Camera className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-700" />
+                  <input 
+                    type="text" 
+                    value={settings.instagram}
+                    onChange={(e) => setSettings({...settings, instagram: e.target.value})}
+                    className="w-full bg-[#1a1a1a] border border-white/10 rounded-lg py-3 pl-12 pr-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">E-mail</label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-700" />
+                  <input 
+                    type="email" 
+                    value={settings.email}
+                    onChange={(e) => setSettings({...settings, email: e.target.value})}
+                    className="w-full bg-[#1a1a1a] border border-white/10 rounded-lg py-3 pl-12 pr-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
         </form>
       </div>
     </DashboardLayout>
   );
 }
+
 
