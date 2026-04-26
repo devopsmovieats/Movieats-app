@@ -18,7 +18,9 @@ import {
   ArrowLeft,
   ChevronDown,
   Loader2,
-  Truck
+  Truck,
+  Instagram,
+  MessageCircle
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { supabase } from "@/lib/supabase";
@@ -61,11 +63,24 @@ interface CartItem extends Product {
 }
 
 interface StoreBranding {
+  id: string;
   nome_loja: string;
   url_logo: string;
   url_banner: string;
   endereco: string;
+  cep: string;
+  telefone: string;
+  instagram: string;
+  email: string;
 }
+
+// Utilitário para formatar moeda brasileira
+const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  }).format(value);
+};
 
 export default function CardapioDigitalPage() {
   const [categories, setCategories] = useState<any[]>([]);
@@ -99,7 +114,7 @@ export default function CardapioDigitalPage() {
   const fetchInitialData = async () => {
     try {
       // 1. Fetch Branding
-      const { data: configData, error: configError } = await supabase
+      const { data: configData } = await supabase
         .from('bd_config_estabelecimento')
         .select('*')
         .limit(1)
@@ -156,7 +171,6 @@ export default function CardapioDigitalPage() {
 
       const now = new Date();
       const currentDay = now.toLocaleDateString('pt-BR', { weekday: 'long' });
-      // Normalizar para o formato salvo: "Segunda-feira" etc.
       const capitalizedDay = currentDay.charAt(0).toUpperCase() + currentDay.slice(1);
       
       const todaySchedule = schedules.find(s => s.dia_semana === capitalizedDay);
@@ -167,18 +181,13 @@ export default function CardapioDigitalPage() {
       }
 
       const currentTime = now.getHours() * 60 + now.getMinutes();
-      
       const [hStart, mStart] = todaySchedule.abertura.split(':').map(Number);
       const [hEnd, mEnd] = todaySchedule.fechamento.split(':').map(Number);
       
       const startTime = hStart * 60 + mStart;
       const endTime = hEnd * 60 + mEnd;
 
-      if (currentTime >= startTime && currentTime < endTime) {
-        setLojaAtiva(true);
-      } else {
-        setLojaAtiva(false);
-      }
+      setLojaAtiva(currentTime >= startTime && currentTime < endTime);
     } catch (error) {
       console.error("Erro ao verificar status da loja:", error);
       setLojaAtiva(true);
@@ -207,17 +216,8 @@ export default function CardapioDigitalPage() {
     setObservation("");
   };
 
-  const toggleAddOn = (addon: AddOn) => {
-    setSelectedAddOns(prev => 
-      prev.find(a => a.id === addon.id) 
-        ? prev.filter(a => a.id !== addon.id) 
-        : [...prev, addon]
-    );
-  };
-
   const handleAddToCart = () => {
     if (!selectedProduct) return;
-
     const itemUniqueId = `${selectedProduct.id}-${selectedAddOns.map(a => a.id).sort().join(',')}-${observation}`;
 
     setCart(prev => {
@@ -225,20 +225,10 @@ export default function CardapioDigitalPage() {
       if (existing) {
         return prev.map(item => item.uniqueId === itemUniqueId ? { ...item, quantity: item.quantity + 1 } : item);
       }
-      return [...prev, { 
-        ...selectedProduct, 
-        quantity: 1, 
-        selectedAddOns, 
-        observation,
-        uniqueId: itemUniqueId 
-      }];
+      return [...prev, { ...selectedProduct, quantity: 1, selectedAddOns, observation, uniqueId: itemUniqueId }];
     });
 
-    Toast.fire({
-      icon: "success",
-      title: `${selectedProduct.name} adicionado!`
-    });
-
+    Toast.fire({ icon: "success", title: `${selectedProduct.name} adicionado!` });
     setSelectedProduct(null);
   };
 
@@ -282,8 +272,7 @@ export default function CardapioDigitalPage() {
           total: totalPrice,
           status: 'PENDENTE'
         }])
-        .select()
-        .single();
+        .select().single();
 
       if (error) throw error;
 
@@ -292,7 +281,8 @@ export default function CardapioDigitalPage() {
       setIsCartOpen(false);
       setCart([]);
 
-      let message = `*PEDIDO #${data.id.toString().substring(0,4)} - ${branding?.nome_loja || 'MOVIEATS'}*\n\n`;
+      const storeName = branding?.nome_loja || 'MOVIEATS';
+      let message = `*PEDIDO #${data.id.toString().substring(0,4)} - ${storeName}*\n\n`;
       message += `👤 *Cliente:* ${customer.name}\n`;
       message += `📋 *Itens:*\n`;
       
@@ -302,7 +292,9 @@ export default function CardapioDigitalPage() {
           : "";
         message += `• ${item.quantity}x *${item.name}*${addOnsText}\n`;
       });
-      message += `\n💰 *Total: R$ ${totalPrice.toFixed(2)}*`;
+      message += `\n💰 *Total: ${formatCurrency(totalPrice)}*`;
+
+      const storePhone = branding?.telefone?.replace(/\D/g, '') || "5500000000000";
 
       Swal.fire({
         title: "Pedido Recebido!",
@@ -316,7 +308,7 @@ export default function CardapioDigitalPage() {
         confirmButtonColor: "#10b981"
       }).then(result => {
         if (result.isConfirmed) {
-          window.open(`https://wa.me/55${customer.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`, '_blank');
+          window.open(`https://wa.me/${storePhone}?text=${encodeURIComponent(message)}`, '_blank');
         }
       });
 
@@ -326,11 +318,16 @@ export default function CardapioDigitalPage() {
     }
   };
 
+  const handleSupportWhatsApp = () => {
+    const storePhone = branding?.telefone?.replace(/\D/g, '') || "5500000000000";
+    const message = "Olá, gostaria de tirar uma dúvida sobre meu pedido";
+    window.open(`https://wa.me/${storePhone}?text=${encodeURIComponent(message)}`, '_blank');
+  };
+
   const saveIdentity = (e: React.FormEvent) => {
     e.preventDefault();
     localStorage.setItem('movieats_visitor', JSON.stringify(customer));
     setIsIdentityModalOpen(false);
-    Toast.fire({ icon: "success", title: "Dados salvos!" });
     handleFinishOrder();
   };
 
@@ -347,7 +344,6 @@ export default function CardapioDigitalPage() {
 
       {/* 🏠 Header Professional */}
       <header className="relative w-full overflow-hidden">
-        {/* Banner de Fundo */}
         <div className="absolute inset-0 h-[300px] w-full overflow-hidden">
            <img 
              src={branding?.url_banner || "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1920&h=1080&auto=format&fit=crop"} 
@@ -370,7 +366,7 @@ export default function CardapioDigitalPage() {
                  <div className="flex items-center gap-1.5 opacity-60">
                    <MapPin className="w-3.5 h-3.5 text-primary" />
                    <span className="text-[10px] font-bold uppercase tracking-wider max-w-[200px] truncate">
-                     {branding?.endereco || "Av. Paulista, 1000 • São Paulo"}
+                     {branding?.endereco || "Endereço não configurado"}
                    </span>
                  </div>
                  <div className="h-4 w-[1px] bg-white/10" />
@@ -396,7 +392,7 @@ export default function CardapioDigitalPage() {
         </div>
       </header>
  
-      {/* 🔍 Search & Categories Premium */}
+      {/* 🔍 Search & Categories */}
       <div className="sticky top-0 z-40 bg-[#000000]/90 backdrop-blur-xl border-b border-white/5">
          <div className="max-w-7xl mx-auto px-6 py-5">
             <div className="flex flex-col md:flex-row gap-5">
@@ -445,35 +441,88 @@ export default function CardapioDigitalPage() {
                  className={`group relative bg-[#0a0a0a] border border-white/5 rounded-2xl overflow-hidden hover:border-primary/20 transition-all duration-500 cursor-pointer shadow-premium active:scale-[0.98] ${!lojaAtiva ? 'opacity-50 grayscale' : ''}`}
                >
                   <div className="relative aspect-video overflow-hidden">
-                     <img 
-                       src={product.image || "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=600&h=400&auto=format&fit=crop"} 
-                       alt={product.name}
-                       className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700 brightness-90 group-hover:brightness-100"
-                     />
+                     <img src={product.image} className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700 brightness-90 group-hover:brightness-100" alt="" />
                      <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md border border-white/10 px-4 py-2 rounded-lg">
-                        <span className="text-sm font-black italic">R$ {product.price.toFixed(2)}</span>
+                        <span className="text-sm font-black italic">{formatCurrency(product.price)}</span>
                      </div>
                   </div>
-                  
                   <div className="p-6 space-y-3">
-                     <h3 className="text-xl font-black uppercase tracking-tighter italic leading-none group-hover:text-primary transition-colors">
-                       {product.name}
-                     </h3>
-                     <p className="text-xs text-slate-500 font-medium leading-relaxed line-clamp-2">
-                       {product.description}
-                     </p>
+                     <h3 className="text-xl font-black uppercase tracking-tighter italic leading-none group-hover:text-primary transition-colors">{product.name}</h3>
+                     <p className="text-xs text-slate-500 font-medium leading-relaxed line-clamp-2">{product.description}</p>
                   </div>
                </div>
             ))}
          </div>
       </main>
 
+      {/* 🏁 Rodapé Informativo */}
+      <footer className="mt-12 bg-[#0a0a0a] border-t border-white/5 py-16 px-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
+           <div className="space-y-6">
+              <div className="flex flex-col items-center md:items-start gap-4">
+                 <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 overflow-hidden">
+                    <img src={branding?.url_logo || ""} className="w-full h-full object-cover" alt="" />
+                 </div>
+                 <h4 className="text-xl font-black italic uppercase tracking-tighter">{branding?.nome_loja || "Movieats Burgers"}</h4>
+              </div>
+              <p className="text-xs text-slate-500 font-medium leading-relaxed max-w-xs text-center md:text-left">
+                 O melhor sabor da cidade entregue com a velocidade que você merece. Qualidade Movieats em cada detalhe.
+              </p>
+           </div>
+
+           <div className="space-y-6">
+              <h5 className="text-[10px] font-black uppercase tracking-widest text-primary italic">Onde estamos</h5>
+              <div className="space-y-4">
+                 <div className="flex items-start gap-3">
+                    <MapPin className="w-5 h-5 text-slate-600 shrink-0" />
+                    <div>
+                       <p className="text-sm font-bold text-slate-300">{branding?.endereco || "Endereço não configurado"}</p>
+                       <p className="text-[10px] font-bold text-slate-600 mt-1 uppercase tracking-widest">CEP: {branding?.cep || "00000-000"}</p>
+                    </div>
+                 </div>
+              </div>
+           </div>
+
+           <div className="space-y-6">
+              <h5 className="text-[10px] font-black uppercase tracking-widest text-primary italic">Social & Contato</h5>
+              <div className="flex flex-col gap-4">
+                 <a 
+                   href={`https://instagram.com/${branding?.instagram?.replace('@', '')}`} 
+                   target="_blank" 
+                   rel="noreferrer"
+                   className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors"
+                 >
+                    <Instagram className="w-5 h-5" />
+                    <span className="text-sm font-bold">{branding?.instagram || "@movieats"}</span>
+                 </a>
+                 <div className="flex items-center gap-3 text-slate-300">
+                    <Phone className="w-5 h-5" />
+                    <span className="text-sm font-bold">{branding?.telefone || "(00) 00000-0000"}</span>
+                 </div>
+              </div>
+           </div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[9px] font-black uppercase tracking-widest text-slate-700">
+           <span>© {new Date().getFullYear()} {branding?.nome_loja} • Todos os direitos reservados</span>
+           <span className="flex items-center gap-2">Powered by <span className="text-white italic">Softcloudba</span></span>
+        </div>
+      </footer>
+
+      {/* 💬 Botão de Suporte WhatsApp Flutuante */}
+      <button 
+        onClick={handleSupportWhatsApp}
+        className="fixed bottom-24 right-6 md:bottom-8 md:right-8 w-16 h-16 bg-[#25D366] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-[90] shadow-emerald-500/20"
+      >
+        <MessageCircle className="w-8 h-8 fill-current" />
+      </button>
+
       {/* 🧾 Carrinho Flutuante */}
       {totalItems > 0 && !isCartOpen && (
-        <div className="fixed bottom-6 left-6 right-6 md:left-auto md:right-8 md:bottom-8 z-50">
+        <div className="fixed bottom-6 left-6 right-6 md:left-auto md:right-32 md:bottom-8 z-50">
            <button 
              onClick={() => setIsCartOpen(true)}
-             className="w-full md:w-[320px] h-16 bg-white text-black rounded-2xl shadow-2xl flex items-center justify-between px-6 group transition-all animate-in slide-in-from-bottom-5 active:scale-95"
+             className="w-full md:w-[280px] h-16 bg-white text-black rounded-2xl shadow-2xl flex items-center justify-between px-6 group transition-all animate-in slide-in-from-bottom-5 active:scale-95"
            >
               <div className="flex items-center gap-4">
                  <div className="relative">
@@ -482,42 +531,32 @@ export default function CardapioDigitalPage() {
                        {totalItems}
                     </span>
                  </div>
-                 <span className="text-[12px] font-black uppercase tracking-widest">Minha Sacola</span>
+                 <span className="text-[12px] font-black uppercase tracking-widest">Sacola</span>
               </div>
-              <div className="flex items-center gap-2">
-                 <span className="text-lg font-black italic">R$ {totalPrice.toFixed(2)}</span>
-              </div>
+              <span className="text-lg font-black italic">{formatCurrency(totalPrice)}</span>
            </button>
         </div>
       )}
 
-      {/* 🛒 Drawer de Itens do Carrinho */}
+      {/* 🛒 Drawer Carrinho */}
       {isCartOpen && (
         <div className="fixed inset-0 z-[120] flex justify-end">
-           <div className="absolute inset-0 bg-[#000000]/95 backdrop-blur-2xl animate-in fade-in duration-300" onClick={() => setIsCartOpen(false)} />
-           
-           <div className="relative w-full max-w-lg bg-[#0a0a0a] border-l border-white/10 flex flex-col animate-in slide-in-from-right duration-500 shadow-2xl">
+           <div className="absolute inset-0 bg-[#000000]/95 backdrop-blur-2xl" onClick={() => setIsCartOpen(false)} />
+           <div className="relative w-full max-w-lg bg-[#0a0a0a] border-l border-white/10 flex flex-col shadow-2xl">
               <div className="p-8 border-b border-white/5 flex items-center justify-between">
-                 <div>
-                    <h3 className="text-2xl font-black uppercase tracking-tighter italic">Seu Pedido</h3>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Revise seus itens antes de finalizar</p>
-                 </div>
-                 <button onClick={() => setIsCartOpen(false)} className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all">
-                    <X className="w-6 h-6" />
-                 </button>
+                 <h3 className="text-2xl font-black uppercase italic">Seu Pedido</h3>
+                 <button onClick={() => setIsCartOpen(false)} className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center"><X className="w-6 h-6" /></button>
               </div>
-
               <div className="flex-1 overflow-y-auto p-8 space-y-8 no-scrollbar">
                  {cart.map(item => (
                     <div key={item.uniqueId} className="space-y-4 p-5 bg-white/[0.02] rounded-2xl border border-white/5">
                        <div className="flex gap-4">
-                          <img src={item.image} alt="" className="w-20 h-20 rounded-xl object-cover shrink-0" />
+                          <img src={item.image} className="w-20 h-20 rounded-xl object-cover" alt="" />
                           <div className="flex-1">
                              <div className="flex justify-between">
                                 <h4 className="text-sm font-black uppercase italic">{item.name}</h4>
-                                <span className="text-sm font-black text-primary italic">R$ {item.price.toFixed(2)}</span>
+                                <span className="text-sm font-black text-primary italic">{formatCurrency(item.price)}</span>
                              </div>
-                             
                              {item.selectedAddOns.length > 0 && (
                                 <div className="mt-2 flex flex-wrap gap-2">
                                    {item.selectedAddOns.map(a => (
@@ -527,69 +566,57 @@ export default function CardapioDigitalPage() {
                              )}
                           </div>
                        </div>
-                       
                        <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                          <div className="flex items-center bg-white/5 rounded-xl border border-white/10 p-1">
-                             <button onClick={() => updateCartQuantity(item.uniqueId, -1)} className="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-white transition-all"><Minus className="w-4 h-4" /></button>
+                          <div className="flex items-center bg-white/5 rounded-xl p-1">
+                             <button onClick={() => updateCartQuantity(item.uniqueId, -1)} className="w-8 h-8 flex items-center justify-center text-slate-500"><Minus className="w-4 h-4" /></button>
                              <span className="w-10 text-center text-xs font-black">{item.quantity}</span>
-                             <button onClick={() => updateCartQuantity(item.uniqueId, 1)} className="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-white transition-all"><Plus className="w-4 h-4" /></button>
+                             <button onClick={() => updateCartQuantity(item.uniqueId, 1)} className="w-8 h-8 flex items-center justify-center text-slate-500"><Plus className="w-4 h-4" /></button>
                           </div>
-                          <span className="text-sm font-black italic">R$ {((item.price + item.selectedAddOns.reduce((s, a) => s + a.price, 0)) * item.quantity).toFixed(2)}</span>
+                          <span className="text-sm font-black italic">{formatCurrency((item.price + item.selectedAddOns.reduce((s, a) => s + a.price, 0)) * item.quantity)}</span>
                        </div>
                     </div>
                  ))}
               </div>
-
               <div className="p-8 border-t border-white/5 bg-black/40 space-y-6">
                  <div className="flex justify-between items-center bg-white/[0.03] p-6 rounded-2xl border border-white/5">
-                    <span className="text-[12px] font-black uppercase tracking-widest text-slate-500">Total a Pagar</span>
-                    <span className="text-3xl font-black text-emerald-500 italic">R$ {totalPrice.toFixed(2)}</span>
+                    <span className="text-[12px] font-black uppercase tracking-widest text-slate-500">Total</span>
+                    <span className="text-3xl font-black text-emerald-500 italic">{formatCurrency(totalPrice)}</span>
                  </div>
-
                  <button 
                     onClick={handleFinishOrder} 
                     disabled={cart.length === 0 || !lojaAtiva}
-                    className={`w-full h-16 rounded-2xl flex items-center justify-center gap-4 font-black text-sm uppercase tracking-widest shadow-2xl transition-all disabled:opacity-30 disabled:grayscale group
-                      ${lojaAtiva ? 'bg-emerald-500 hover:bg-emerald-600 text-white' : 'bg-red-600/20 text-red-500 border border-red-600/30'}
+                    className={`w-full h-16 rounded-2xl flex items-center justify-center gap-4 font-black text-sm uppercase tracking-widest transition-all
+                      ${lojaAtiva ? 'bg-emerald-500 text-white' : 'bg-red-600/20 text-red-500'}
                     `}
                  >
-                    {lojaAtiva ? (
-                      <>
-                        Finalizar via WhatsApp
-                        <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
-                      </>
-                    ) : (
-                      'Loja Fechada no Momento'
-                    )}
+                    {lojaAtiva ? 'Finalizar via WhatsApp' : 'Loja Fechada'}
                  </button>
               </div>
            </div>
         </div>
       )}
 
-      {/* 📱 Modal de Detalhes (Selected Product) */}
+      {/* 📱 Modal Detalhes */}
       {selectedProduct && (
-        <div className="fixed inset-0 z-[110] bg-[#000000] md:flex md:items-center md:justify-center md:bg-[#000000]/90 md:backdrop-blur-xl animate-in fade-in duration-300">
-           <div className="relative w-full h-full bg-[#0a0a0a] md:max-w-xl md:h-[90vh] md:rounded-3xl md:overflow-hidden md:border md:border-white/10 flex flex-col animate-in slide-in-from-bottom duration-500">
-              <div className="relative h-2/5 md:h-[400px]">
-                 <img src={selectedProduct.image} className="w-full h-full object-cover" alt="" />
-                 <button onClick={() => setSelectedProduct(null)} className="absolute top-6 left-6 w-12 h-12 bg-black/50 backdrop-blur-md rounded-2xl flex items-center justify-center text-white"><ArrowLeft className="w-6 h-6" /></button>
-              </div>
-              <div className="flex-1 overflow-y-auto px-6 py-8 space-y-8 no-scrollbar">
-                 <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">{selectedProduct.name}</h2>
-                 <p className="text-sm text-slate-500 leading-relaxed font-medium">{selectedProduct.description}</p>
-                 <textarea 
-                    value={observation}
-                    onChange={(e) => setObservation(e.target.value)}
-                    placeholder="Alguma observação? (Ex: Tirar cebola)"
-                    className="w-full bg-white/[0.03] border border-white/5 rounded-2xl p-5 text-sm font-semibold focus:outline-none min-h-[120px]"
-                 />
-              </div>
-              <div className="p-6 bg-white/[0.02] border-t border-white/5 backdrop-blur-md flex items-center gap-4">
-                 <button onClick={handleAddToCart} className="flex-1 h-16 bg-white text-black rounded-2xl flex items-center justify-center gap-3 font-black text-[13px] uppercase tracking-widest active:scale-95 transition-all">
-                    Adicionar Item • R$ {selectedProduct.price.toFixed(2)}
-                 </button>
-              </div>
+        <div className="fixed inset-0 z-[150] bg-[#000000] flex flex-col">
+           <div className="relative h-2/5">
+              <img src={selectedProduct.image} className="w-full h-full object-cover" alt="" />
+              <button onClick={() => setSelectedProduct(null)} className="absolute top-6 left-6 w-12 h-12 bg-black/50 rounded-2xl flex items-center justify-center"><ArrowLeft className="w-6 h-6" /></button>
+           </div>
+           <div className="flex-1 p-8 space-y-6 overflow-y-auto">
+              <h2 className="text-3xl font-black uppercase italic">{selectedProduct.name}</h2>
+              <p className="text-sm text-slate-500 font-medium">{selectedProduct.description}</p>
+              <textarea 
+                 value={observation}
+                 onChange={(e) => setObservation(e.target.value)}
+                 placeholder="Alguma observação?"
+                 className="w-full bg-white/[0.03] border border-white/5 rounded-2xl p-5 text-sm"
+              />
+           </div>
+           <div className="p-6 bg-white/[0.02] border-t border-white/5">
+              <button onClick={handleAddToCart} className="w-full h-16 bg-white text-black rounded-2xl font-black text-[13px] uppercase tracking-widest">
+                 Adicionar • {formatCurrency(selectedProduct.price)}
+              </button>
            </div>
         </div>
       )}
@@ -597,29 +624,13 @@ export default function CardapioDigitalPage() {
       {/* 👤 Modal Identity */}
       {isIdentityModalOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center px-6">
-           <div className="absolute inset-0 bg-black/95 backdrop-blur-2xl animate-in fade-in duration-500" onClick={() => setIsIdentityModalOpen(false)} />
-           <div className="relative w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-3xl shadow-2xl p-10 animate-in zoom-in-95 duration-500">
-              <h3 className="text-2xl font-black uppercase tracking-tighter italic text-center mb-8">Dados do Pedido</h3>
+           <div className="absolute inset-0 bg-black/95 backdrop-blur-2xl" onClick={() => setIsIdentityModalOpen(false)} />
+           <div className="relative w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-3xl p-10">
+              <h3 className="text-2xl font-black uppercase italic text-center mb-8">Dados do Pedido</h3>
               <form onSubmit={saveIdentity} className="space-y-6">
-                 <input 
-                   type="text" 
-                   value={customer.name}
-                   onChange={(e) => setCustomer(prev => ({ ...prev, name: e.target.value }))}
-                   placeholder="Seu Nome"
-                   className="w-full bg-white/[0.05] border border-white/5 rounded-2xl h-14 px-6 text-sm font-bold focus:outline-none"
-                   required
-                 />
-                 <input 
-                   type="tel" 
-                   value={customer.whatsapp}
-                   onChange={(e) => setCustomer(prev => ({ ...prev, whatsapp: e.target.value }))}
-                   placeholder="WhatsApp"
-                   className="w-full bg-white/[0.05] border border-white/5 rounded-2xl h-14 px-6 text-sm font-bold focus:outline-none"
-                   required
-                 />
-                 <button type="submit" className="w-full h-16 bg-primary text-white rounded-2xl mt-8 font-black text-xs uppercase tracking-widest">
-                    Continuar Pedido
-                 </button>
+                 <input type="text" value={customer.name} onChange={(e) => setCustomer(prev => ({ ...prev, name: e.target.value }))} placeholder="Seu Nome" className="w-full bg-white/[0.05] border border-white/5 rounded-2xl h-14 px-6 text-sm font-bold" required />
+                 <input type="tel" value={customer.whatsapp} onChange={(e) => setCustomer(prev => ({ ...prev, whatsapp: e.target.value }))} placeholder="WhatsApp" className="w-full bg-white/[0.05] border border-white/5 rounded-2xl h-14 px-6 text-sm font-bold" required />
+                 <button type="submit" className="w-full h-16 bg-primary text-white rounded-2xl mt-8 font-black text-xs uppercase tracking-widest">Continuar</button>
               </form>
            </div>
         </div>
