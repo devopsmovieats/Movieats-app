@@ -17,8 +17,8 @@ import {
 import Swal from "sweetalert2";
 import { supabase } from "@/lib/supabase";
 
-// ID Fixo para garantir registro único de configuração da loja
-const CONFIG_ID = "17db3a9f-f6c1-434d-8f4a-e40cd67035f2";
+// ID Estático para garantir registro único (Sincronizado com a Sidebar)
+const CONFIG_ID = "00000000-0000-0000-0000-000000000001";
 
 interface SystemSettings {
   nome_loja: string;
@@ -124,19 +124,18 @@ export default function ConfigGeralPage() {
         .from("bd_config_estabelecimento")
         .upsert({
           id: CONFIG_ID,
-          establishment_id: CONFIG_ID,
           nome_loja: settings.nome_loja,
           descricao: settings.descricao,
           url_logo: settings.url_logo,
           url_banner: settings.url_banner,
           endereco: fullAddress,
+          telefone: settings.telefone,
           cep: settings.cep,
           rua: settings.rua,
           numero: settings.numero,
           bairro: settings.bairro,
           cidade: settings.cidade,
           uf: settings.uf,
-          telefone: settings.telefone,
           instagram: settings.instagram,
           email: settings.email,
           entrega_ativa: settings.entrega_ativa,
@@ -149,10 +148,15 @@ export default function ConfigGeralPage() {
       }
 
       console.log("Success: Configurações salvas no Supabase");
+      
+      // Disparar evento para atualizar a Sidebar em tempo real
+      window.dispatchEvent(new CustomEvent("movieats:branding_update", {
+        detail: { name: settings.nome_loja, logo: settings.url_logo }
+      }));
+
       Toast.fire({ icon: "success", title: "Configurações salvas!" });
     } catch (err: any) {
       console.error("Erro ao salvar:", err);
-      // Se o erro for do Supabase, o detalhe já foi logado acima
       Toast.fire({ icon: "error", title: "Erro ao salvar no banco." });
     } finally {
       setIsSaving(false);
@@ -227,7 +231,7 @@ export default function ConfigGeralPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
             <div className="space-y-4">
-              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Informações</h3>
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Informações</h3>
               <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8 space-y-5">
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nome da Loja</label>
@@ -240,7 +244,7 @@ export default function ConfigGeralPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Descrição</label>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Descrição</label>
                   <textarea 
                     rows={3}
                     value={settings.descricao}

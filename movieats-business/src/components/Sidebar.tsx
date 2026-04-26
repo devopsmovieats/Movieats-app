@@ -110,6 +110,10 @@ const menuGroups: MenuGroup[] = [
   }
 ];
 
+import { supabase } from "@/lib/supabase";
+
+const CONFIG_ID = "00000000-0000-0000-0000-000000000001";
+
 export default function Sidebar() {
   const pathname = usePathname();
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
@@ -118,16 +122,11 @@ export default function Sidebar() {
   const [userRole, setUserRole] = useState<string>("ADMIN");
 
   useEffect(() => {
-    const saved = localStorage.getItem("movieats_system_settings");
+    fetchBranding();
+    
     const collapsedSaved = localStorage.getItem("movieats_sidebar_collapsed_mode");
     const userSaved = localStorage.getItem("movieats_user");
     
-    if (saved) {
-      const settings = JSON.parse(saved);
-      if (settings.name) setBrand(prev => ({ ...prev, name: settings.name }));
-      if (settings.logo) setBrand(prev => ({ ...prev, logo: settings.logo }));
-    }
-
     if (userSaved) {
       const user = JSON.parse(userSaved);
       if (user.role) setUserRole(user.role);
@@ -145,6 +144,25 @@ export default function Sidebar() {
     window.addEventListener("movieats:branding_update", handleBrandingUpdate);
     return () => window.removeEventListener("movieats:branding_update", handleBrandingUpdate);
   }, []);
+
+  const fetchBranding = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("bd_config_estabelecimento")
+        .select("nome_loja, url_logo")
+        .eq("id", CONFIG_ID)
+        .single();
+
+      if (data) {
+        setBrand({
+          name: data.nome_loja || "MoviEats",
+          logo: data.url_logo || ""
+        });
+      }
+    } catch (err) {
+      console.error("Erro Sidebar Branding:", err);
+    }
+  };
 
   const toggleSidebar = () => {
     const newState = !isCollapsed;
