@@ -138,8 +138,24 @@ export default function ConfigGeralPage() {
     }
   };
 
+  const maskPhone = (value: string) => {
+    return value
+      .replace(/\D/g, "")
+      .replace(/(\d{2})(\d)/, "($1) $2")
+      .replace(/(\d{5})(\d)/, "$1-$2")
+      .replace(/(-\d{4})\d+?$/, "$1");
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validação básica de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (settings.email && !emailRegex.test(settings.email)) {
+      Toast.fire({ icon: "error", title: "Formato de e-mail inválido" });
+      return;
+    }
+
     setIsSaving(true);
     
     const fullAddress = `${settings.rua}, ${settings.numero} - ${settings.bairro}, ${settings.cidade}/${settings.uf}`;
@@ -196,8 +212,14 @@ export default function ConfigGeralPage() {
       console.log("Success: Configurações salvas no Supabase");
       
       window.dispatchEvent(new CustomEvent("movieats:branding_update", {
-        detail: { name: settings.nome_loja, logo: settings.url_logo }
+        detail: { 
+          name: settings.nome_loja, 
+          logo: finalLogoUrl 
+        }
       }));
+
+      // Atualiza o estado local com as URLs finais para evitar dessincronia
+      setSettings(prev => ({ ...prev, url_logo: finalLogoUrl, url_banner: finalBannerUrl }));
 
       Toast.fire({ icon: "success", title: "Configurações salvas!" });
     } catch (err: any) {
@@ -414,8 +436,9 @@ export default function ConfigGeralPage() {
                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">WhatsApp</label>
                 <input 
                   type="text" 
+                  placeholder="(99) 99999-9999"
                   value={settings.telefone}
-                  onChange={(e) => setSettings({...settings, telefone: e.target.value})}
+                  onChange={(e) => setSettings({...settings, telefone: maskPhone(e.target.value)})}
                   className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
                 />
               </div>
@@ -423,8 +446,13 @@ export default function ConfigGeralPage() {
                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Instagram (@)</label>
                 <input 
                   type="text" 
+                  placeholder="@seu.perfil"
                   value={settings.instagram}
-                  onChange={(e) => setSettings({...settings, instagram: e.target.value})}
+                  onChange={(e) => {
+                    let val = e.target.value;
+                    if (val && !val.startsWith("@") && val.length > 0) val = "@" + val;
+                    setSettings({...settings, instagram: val});
+                  }}
                   className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
                 />
               </div>
@@ -432,6 +460,7 @@ export default function ConfigGeralPage() {
                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">E-mail</label>
                 <input 
                   type="email" 
+                  placeholder="contato@empresa.com"
                   value={settings.email}
                   onChange={(e) => setSettings({...settings, email: e.target.value})}
                   className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
