@@ -90,7 +90,7 @@ export default function LoginPage() {
         });
 
         // Redirecionamento obrigatório para o portal
-        window.location.href = "https://portal.movieats.com.br/dashboard";
+        window.location.href = "https://portal.movieats.com.br/";
       }
     } catch (error: any) {
       setIsLoading(false);
