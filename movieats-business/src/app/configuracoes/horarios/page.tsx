@@ -93,6 +93,21 @@ export default function HorariosPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
+      // Validação: Fechamento deve ser maior que Abertura
+      for (const item of schedule) {
+        if (item.esta_aberto && item.abertura && item.fechamento) {
+          if (item.fechamento <= item.abertura) {
+            Toast.fire({
+              icon: "error",
+              title: `Horário inválido na ${item.dia_semana}. O fechamento deve ser após a abertura.`,
+              iconColor: "#ef4444"
+            });
+            setIsSaving(false);
+            return;
+          }
+        }
+      }
+
       // Preparação dos dados para Upsert
       const upsertData = schedule.map(item => ({
         user_id: user.id,
