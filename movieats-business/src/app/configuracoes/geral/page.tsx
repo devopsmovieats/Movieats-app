@@ -143,12 +143,16 @@ export default function ConfigGeralPage() {
           updated_at: new Date().toISOString()
         }, { onConflict: "id" });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erro detalhado do Supabase:", JSON.stringify(error, null, 2));
+        throw error;
+      }
 
       console.log("Success: Configurações salvas no Supabase");
       Toast.fire({ icon: "success", title: "Configurações salvas!" });
-    } catch (err) {
+    } catch (err: any) {
       console.error("Erro ao salvar:", err);
+      // Se o erro for do Supabase, o detalhe já foi logado acima
       Toast.fire({ icon: "error", title: "Erro ao salvar no banco." });
     } finally {
       setIsSaving(false);
