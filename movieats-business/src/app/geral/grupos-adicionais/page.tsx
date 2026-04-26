@@ -451,7 +451,8 @@ export default function GruposAdicionaisPage() {
                     </th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Grupo</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Tipo</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Complementos</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Adicionais</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Preço</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-center">Status</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-right">Ações</th>
                   </tr>
@@ -482,23 +483,38 @@ export default function GruposAdicionaisPage() {
                       </td>
                       <td className="px-6 py-4 align-middle">
                         <div className="flex items-center gap-2">
-                          <div className={`w-1.5 h-1.5 rounded-full ${group.tipo_escolha === 'unica' ? 'bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]' : 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]'}`} />
+                          <div className={`w-1.5 h-1.5 rounded-full ${group.tipo_escolha === 'unica' ? 'bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]' : 'bg-purple-500 shadow-[0_0_8_rgba(168,85,247,0.5)]'}`} />
                           <span className="text-[10px] font-black text-white/50 uppercase tracking-widest">{group.tipo_escolha === 'unica' ? 'Seleção Única' : 'Múltipla Escolha'}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 align-middle min-w-[200px]">
+                      <td className="px-6 py-4 align-middle">
                         {group.items && group.items.length > 0 ? (
-                          <div className="flex flex-col gap-1 py-1">
+                          <div className="flex flex-col gap-1.5 py-1">
                             {group.items.map((item, idx) => (
-                              <div key={item.id || idx} className="flex items-center whitespace-nowrap">
+                              <div key={item.id || idx} className="h-4 flex items-center whitespace-nowrap">
                                 <span className="text-[11px] text-gray-400/70 font-medium uppercase tracking-tight">
-                                  • {item.nome} — R$ {item.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                  • {item.nome}
                                 </span>
                               </div>
                             ))}
                           </div>
                         ) : (
                           <span className="text-[11px] text-gray-400/30 italic font-medium">Nenhum item</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 align-middle">
+                        {group.items && group.items.length > 0 ? (
+                          <div className="flex flex-col gap-1.5 py-1">
+                            {group.items.map((item, idx) => (
+                              <div key={item.id || idx} className="h-4 flex items-center whitespace-nowrap">
+                                <span className="text-[11px] text-gray-400/40 font-black">
+                                  R$ {item.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-[11px] text-gray-400/30 italic font-medium">-</span>
                         )}
                       </td>
                       <td className="px-6 py-4 align-middle text-center">
