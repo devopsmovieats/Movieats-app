@@ -57,13 +57,8 @@ export default function HorariosPage() {
 
       const { data, error } = await supabase
         .from("bd_horarios_funcionamento")
-        .select("*")
+        .select("dia_semana, abertura, fechamento, esta_aberto")
         .eq("user_id", user.id);
-
-      if (error) {
-          // Se falhar por causa do cache do schema, tentamos ignorar o erro e mostrar a lista vazia
-          console.error("Erro ao carregar horários (Cache):", error);
-      }
 
       if (data && data.length > 0) {
         const updatedSchedule = daysOfWeek.map((day) => {
@@ -98,22 +93,22 @@ export default function HorariosPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
-      // Objeto com chaves em minúsculas conforme instrução técnica
+      // Limpeza de Objeto e Validação de Valores
       const upsertData = schedule.map(item => ({
-        id: `${user.id}_${item.dia_semana.toLowerCase()}`, // ID único minúsculo
         user_id: user.id,
         dia_semana: item.dia_semana,
         esta_aberto: item.esta_aberto,
-        abertura: item.abertura || null,
-        fechamento: item.fechamento || null
+        abertura: item.abertura ? item.abertura + ":00" : null,
+        fechamento: item.fechamento ? item.fechamento + ":00" : null
       }));
 
       const { error } = await supabase
         .from("bd_horarios_funcionamento")
-        .upsert(upsertData, { onConflict: "id" });
+        .upsert(upsertData, { onConflict: "user_id,dia_semana" });
 
       if (error) {
-        console.log("ERRO_DETALHADO_SUPABASE:", error);
+        // Log de Erro Real conforme pedido pelo usuário
+        alert('ERRO REAL: ' + error.message + ' | Coluna: ' + error.details);
         throw error;
       }
 
@@ -124,7 +119,6 @@ export default function HorariosPage() {
       });
     } catch (err: any) {
       console.error("Erro ao salvar:", err);
-      Toast.fire({ icon: "error", title: "Erro de salvamento. Verifique a tabela." });
     } finally {
       setIsSaving(false);
     }
