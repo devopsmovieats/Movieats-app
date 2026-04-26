@@ -16,9 +16,7 @@ import {
   MapPin,
   Circle,
   ArrowLeft,
-  ChevronDown,
   Loader2,
-  Truck,
   Instagram,
   MessageCircle
 } from "lucide-react";
@@ -83,6 +81,7 @@ const formatCurrency = (value: number) => {
 };
 
 export default function CardapioDigitalPage() {
+  const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useState<any[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [activeCategory, setActiveCategory] = useState("TODOS");
@@ -113,16 +112,18 @@ export default function CardapioDigitalPage() {
 
   const fetchInitialData = async () => {
     try {
+      setIsLoading(true);
+
       // 1. Fetch Branding
-      const { data: configData } = await supabase
+      const { data: configData, error: brandingError } = await supabase
         .from('bd_config_estabelecimento')
         .select('*')
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (configData) {
         setBranding(configData);
-        checkStoreStatus(configData.id);
+        await checkStoreStatus(configData.id);
       }
 
       // 2. Fetch Categories
@@ -153,7 +154,9 @@ export default function CardapioDigitalPage() {
       if (savedCustomer) setCustomer(JSON.parse(savedCustomer));
 
     } catch (error) {
-      console.error("Erro ao carregar dados:", error);
+      console.error("Erro ao carregar dados iniciais:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -162,7 +165,7 @@ export default function CardapioDigitalPage() {
       const { data: schedules } = await supabase
         .from('bd_horarios_funcionamento')
         .select('*')
-        .filter('id', 'like', `${establishmentId}%`);
+        .filter('user_id', 'eq', establishmentId); // Usando user_id como filtro de estabelecimento
 
       if (!schedules || schedules.length === 0) {
         setLojaAtiva(true);
@@ -170,8 +173,9 @@ export default function CardapioDigitalPage() {
       }
 
       const now = new Date();
-      const currentDay = now.toLocaleDateString('pt-BR', { weekday: 'long' });
-      const capitalizedDay = currentDay.charAt(0).toUpperCase() + currentDay.slice(1);
+      const currentDayRaw = now.toLocaleDateString('pt-BR', { weekday: 'long' });
+      // Formata para "Segunda-feira" etc.
+      const capitalizedDay = currentDayRaw.charAt(0).toUpperCase() + currentDayRaw.slice(1);
       
       const todaySchedule = schedules.find(s => s.dia_semana === capitalizedDay);
 
@@ -331,6 +335,21 @@ export default function CardapioDigitalPage() {
     handleFinishOrder();
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center gap-6">
+        <div className="w-20 h-20 relative">
+          <div className="absolute inset-0 border-4 border-white/5 rounded-full" />
+          <div className="absolute inset-0 border-4 border-t-primary rounded-full animate-spin" />
+        </div>
+        <div className="text-center">
+          <h2 className="text-xl font-black uppercase italic tracking-tighter text-white">Carregando Cardápio</h2>
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-2">Prepare-se para o melhor sabor...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#000000] text-white selection:bg-primary/20 pb-24 md:pb-8 font-sans">
       
@@ -356,7 +375,11 @@ export default function CardapioDigitalPage() {
         <div className="relative px-6 pt-24 pb-12 max-w-7xl mx-auto flex flex-col md:flex-row items-center md:justify-between gap-6">
           <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4">
              <div className="w-24 h-24 bg-white/10 rounded-3xl flex items-center justify-center border border-white/10 shadow-2xl overflow-hidden backdrop-blur-md">
-                <img src={branding?.url_logo || ""} className="w-full h-full object-cover" alt="Logo" />
+                {branding?.url_logo ? (
+                  <img src={branding.url_logo} className="w-full h-full object-cover" alt="Logo" />
+                ) : (
+                  <ShoppingBag className="text-white/20 w-10 h-10" />
+                )}
              </div>
              <div>
                <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none italic">
@@ -441,7 +464,7 @@ export default function CardapioDigitalPage() {
                  className={`group relative bg-[#0a0a0a] border border-white/5 rounded-2xl overflow-hidden hover:border-primary/20 transition-all duration-500 cursor-pointer shadow-premium active:scale-[0.98] ${!lojaAtiva ? 'opacity-50 grayscale' : ''}`}
                >
                   <div className="relative aspect-video overflow-hidden">
-                     <img src={product.image} className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700 brightness-90 group-hover:brightness-100" alt="" />
+                     <img src={product.image || "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=600&h=400&auto=format&fit=crop"} className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700 brightness-90 group-hover:brightness-100" alt="" />
                      <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md border border-white/10 px-4 py-2 rounded-lg">
                         <span className="text-sm font-black italic">{formatCurrency(product.price)}</span>
                      </div>
@@ -453,6 +476,13 @@ export default function CardapioDigitalPage() {
                </div>
             ))}
          </div>
+
+         {filteredProducts.length === 0 && !isLoading && (
+            <div className="py-24 text-center">
+               <ShoppingBag className="w-20 h-20 mx-auto text-slate-800 mb-6" />
+               <h3 className="text-xl font-black uppercase tracking-widest text-slate-700 italic">Nada encontrado por aqui...</h3>
+            </div>
+         )}
       </main>
 
       {/* 🏁 Rodapé Informativo */}
@@ -461,9 +491,9 @@ export default function CardapioDigitalPage() {
            <div className="space-y-6">
               <div className="flex flex-col items-center md:items-start gap-4">
                  <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 overflow-hidden">
-                    <img src={branding?.url_logo || ""} className="w-full h-full object-cover" alt="" />
+                    {branding?.url_logo && <img src={branding.url_logo} className="w-full h-full object-cover" alt="" />}
                  </div>
-                 <h4 className="text-xl font-black italic uppercase tracking-tighter">{branding?.nome_loja || "Movieats Burgers"}</h4>
+                 <h4 className="text-xl font-black italic uppercase tracking-tighter">{branding?.nome_lo_ja || branding?.nome_loja || "Movieats Burgers"}</h4>
               </div>
               <p className="text-xs text-slate-500 font-medium leading-relaxed max-w-xs text-center md:text-left">
                  O melhor sabor da cidade entregue com a velocidade que você merece. Qualidade Movieats em cada detalhe.
@@ -504,7 +534,7 @@ export default function CardapioDigitalPage() {
         </div>
         
         <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[9px] font-black uppercase tracking-widest text-slate-700">
-           <span>© {new Date().getFullYear()} {branding?.nome_loja} • Todos os direitos reservados</span>
+           <span>© {new Date().getFullYear()} {branding?.nome_loja || "Movieats"} • Todos os direitos reservados</span>
            <span className="flex items-center gap-2">Powered by <span className="text-white italic">Softcloudba</span></span>
         </div>
       </footer>
@@ -551,19 +581,12 @@ export default function CardapioDigitalPage() {
                  {cart.map(item => (
                     <div key={item.uniqueId} className="space-y-4 p-5 bg-white/[0.02] rounded-2xl border border-white/5">
                        <div className="flex gap-4">
-                          <img src={item.image} className="w-20 h-20 rounded-xl object-cover" alt="" />
+                          <img src={item.image || ""} className="w-20 h-20 rounded-xl object-cover" alt="" />
                           <div className="flex-1">
                              <div className="flex justify-between">
                                 <h4 className="text-sm font-black uppercase italic">{item.name}</h4>
                                 <span className="text-sm font-black text-primary italic">{formatCurrency(item.price)}</span>
                              </div>
-                             {item.selectedAddOns.length > 0 && (
-                                <div className="mt-2 flex flex-wrap gap-2">
-                                   {item.selectedAddOns.map(a => (
-                                      <span key={a.id} className="text-[9px] font-black uppercase bg-primary/10 text-primary px-2 py-0.5 rounded border border-primary/20">+{a.name}</span>
-                                   ))}
-                                </div>
-                             )}
                           </div>
                        </div>
                        <div className="flex items-center justify-between pt-4 border-t border-white/5">
@@ -598,23 +621,23 @@ export default function CardapioDigitalPage() {
 
       {/* 📱 Modal Detalhes */}
       {selectedProduct && (
-        <div className="fixed inset-0 z-[150] bg-[#000000] flex flex-col">
+        <div className="fixed inset-0 z-[150] bg-[#000000] flex flex-col animate-in fade-in duration-300">
            <div className="relative h-2/5">
-              <img src={selectedProduct.image} className="w-full h-full object-cover" alt="" />
+              <img src={selectedProduct.image || ""} className="w-full h-full object-cover" alt="" />
               <button onClick={() => setSelectedProduct(null)} className="absolute top-6 left-6 w-12 h-12 bg-black/50 rounded-2xl flex items-center justify-center"><ArrowLeft className="w-6 h-6" /></button>
            </div>
            <div className="flex-1 p-8 space-y-6 overflow-y-auto">
-              <h2 className="text-3xl font-black uppercase italic">{selectedProduct.name}</h2>
-              <p className="text-sm text-slate-500 font-medium">{selectedProduct.description}</p>
+              <h2 className="text-3xl font-black uppercase italic leading-none">{selectedProduct.name}</h2>
+              <p className="text-sm text-slate-500 font-medium leading-relaxed">{selectedProduct.description}</p>
               <textarea 
                  value={observation}
                  onChange={(e) => setObservation(e.target.value)}
                  placeholder="Alguma observação?"
-                 className="w-full bg-white/[0.03] border border-white/5 rounded-2xl p-5 text-sm"
+                 className="w-full bg-white/[0.03] border border-white/5 rounded-2xl p-5 text-sm focus:outline-none focus:border-primary/30"
               />
            </div>
-           <div className="p-6 bg-white/[0.02] border-t border-white/5">
-              <button onClick={handleAddToCart} className="w-full h-16 bg-white text-black rounded-2xl font-black text-[13px] uppercase tracking-widest">
+           <div className="p-6 bg-white/[0.02] border-t border-white/5 backdrop-blur-md">
+              <button onClick={handleAddToCart} className="w-full h-16 bg-white text-black rounded-2xl font-black text-[13px] uppercase tracking-widest active:scale-95 transition-all">
                  Adicionar • {formatCurrency(selectedProduct.price)}
               </button>
            </div>
@@ -625,12 +648,12 @@ export default function CardapioDigitalPage() {
       {isIdentityModalOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center px-6">
            <div className="absolute inset-0 bg-black/95 backdrop-blur-2xl" onClick={() => setIsIdentityModalOpen(false)} />
-           <div className="relative w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-3xl p-10">
+           <div className="relative w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-3xl p-10 animate-in zoom-in-95 duration-300">
               <h3 className="text-2xl font-black uppercase italic text-center mb-8">Dados do Pedido</h3>
               <form onSubmit={saveIdentity} className="space-y-6">
-                 <input type="text" value={customer.name} onChange={(e) => setCustomer(prev => ({ ...prev, name: e.target.value }))} placeholder="Seu Nome" className="w-full bg-white/[0.05] border border-white/5 rounded-2xl h-14 px-6 text-sm font-bold" required />
-                 <input type="tel" value={customer.whatsapp} onChange={(e) => setCustomer(prev => ({ ...prev, whatsapp: e.target.value }))} placeholder="WhatsApp" className="w-full bg-white/[0.05] border border-white/5 rounded-2xl h-14 px-6 text-sm font-bold" required />
-                 <button type="submit" className="w-full h-16 bg-primary text-white rounded-2xl mt-8 font-black text-xs uppercase tracking-widest">Continuar</button>
+                 <input type="text" value={customer.name} onChange={(e) => setCustomer(prev => ({ ...prev, name: e.target.value }))} placeholder="Seu Nome" className="w-full bg-white/[0.05] border border-white/5 rounded-2xl h-14 px-6 text-sm font-bold focus:outline-none focus:border-primary/30" required />
+                 <input type="tel" value={customer.whatsapp} onChange={(e) => setCustomer(prev => ({ ...prev, whatsapp: e.target.value }))} placeholder="WhatsApp" className="w-full bg-white/[0.05] border border-white/5 rounded-2xl h-14 px-6 text-sm font-bold focus:outline-none focus:border-primary/30" required />
+                 <button type="submit" className="w-full h-16 bg-primary text-white rounded-2xl mt-8 font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20">Continuar</button>
               </form>
            </div>
         </div>
