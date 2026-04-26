@@ -67,30 +67,30 @@ export default function LoginPage() {
       }
 
       if (data?.user) {
+        const fullName = data.user.user_metadata?.full_name || "Usuário";
+        
         // Define o papel (role) baseado no email ou em metadados se existirem
         let role = "ADMIN";
-        let name = "Lojista Master";
         let redirectPath = "/";
 
         if (email.includes("gerente")) {
           role = "GERENTE";
-          name = "Gerente Operacional";
         } else if (email.includes("atendente")) {
           role = "ATENDENTE";
-          name = "Atendente Comercial";
           redirectPath = "/operacao/pedidos";
         }
 
-        const userData = { email, role, name, id: data.user.id };
+        const userData = { email, role, name: fullName, id: data.user.id };
         localStorage.setItem("movieats_user", JSON.stringify(userData));
         Cookies.set("auth_token", "movieats-store-session", { expires: 1 });
         
         Toast.fire({
           icon: "success",
-          title: `Bem-vindo, ${name}!`,
+          title: `Bem-vindo, ${fullName}!`,
         });
 
-        router.push(redirectPath);
+        // Redirecionamento obrigatório para o portal
+        window.location.href = "https://portal.movieats.com.br/dashboard";
       }
     } catch (error: any) {
       setIsLoading(false);
@@ -111,18 +111,22 @@ export default function LoginPage() {
     const { value: userEmail } = await Modal.fire({
       title: "Recuperar Senha",
       input: "email",
-      inputLabel: "Informe seu e-mail de estabelecimento",
+      inputLabel: "Informe seu e-mail de acesso",
       inputPlaceholder: "contato@sualoja.com.br",
       showCancelButton: true,
       cancelButtonText: "Cancelar",
       confirmButtonText: "Enviar Link",
       showLoaderOnConfirm: true,
-      preConfirm: (login) => {
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            resolve(login);
-          }, 1500);
-        });
+      preConfirm: async (email) => {
+        try {
+          const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: "https://portal.movieats.com.br/reset-password",
+          });
+          if (error) throw new Error(error.message);
+          return email;
+        } catch (error: any) {
+          Swal.showValidationMessage(`Erro: ${error.message}`);
+        }
       },
       allowOutsideClick: () => !Swal.isLoading()
     });
@@ -130,7 +134,7 @@ export default function LoginPage() {
     if (userEmail) {
       Toast.fire({
         icon: "success",
-        title: "Link enviado para o seu e-mail!",
+        title: "Link de recuperação enviado!",
       });
     }
   };
@@ -202,9 +206,18 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 ml-1 mb-2 block" htmlFor="password">
-                Senha
-              </label>
+              <div className="flex items-center justify-between ml-1 mb-2">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 block" htmlFor="password">
+                  Senha
+                </label>
+                <button 
+                  type="button"
+                  onClick={handleRecoverPassword}
+                  className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#ff6b00] hover:text-orange-400 transition-colors cursor-pointer"
+                >
+                  Esqueci minha senha
+                </button>
+              </div>
               <div className="relative group">
                 <input 
                   id="password"
