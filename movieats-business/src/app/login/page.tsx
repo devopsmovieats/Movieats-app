@@ -197,6 +197,7 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 required
+                autoFocus
                 autoComplete="off"
                 placeholder="seu@estabelecimento.com"
                 value={email}
