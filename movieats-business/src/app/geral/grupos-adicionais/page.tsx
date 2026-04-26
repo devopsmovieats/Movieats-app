@@ -472,20 +472,23 @@ export default function GruposAdicionaisPage() {
                       </td>
                       <td className="px-6 py-4 align-middle">
                         <div className="flex flex-col">
+                          {/* Topo: Nome do Grupo */}
                           <span className="text-sm font-medium text-white group-hover:text-primary transition-colors uppercase tracking-tight">
                             {group.nome_grupo}
                           </span>
+                          
+                          {/* Meio: ID do Grupo */}
                           <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest opacity-40 mt-0.5">
                             #{group.id.toString().substring(0, 8).toUpperCase()}
                           </span>
 
-                          {/* Lista de Itens Vinculados */}
+                          {/* Base: Lista de Itens e Preços */}
                           {group.items && group.items.length > 0 && (
-                            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 max-w-xl">
+                            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 max-w-xl">
                               {group.items.map((item, idx) => (
                                 <div key={item.id || idx} className="flex items-center gap-1.5 whitespace-nowrap">
-                                  <div className="w-1 h-1 rounded-full bg-primary/30" />
-                                  <span className="text-[10px] text-muted-foreground/60 font-medium uppercase tracking-tight">
+                                  <span className="text-xs text-muted-foreground/40 font-bold">•</span>
+                                  <span className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-tight">
                                     {item.nome}
                                   </span>
                                   <span className="text-[10px] text-muted-foreground/30 font-bold">
