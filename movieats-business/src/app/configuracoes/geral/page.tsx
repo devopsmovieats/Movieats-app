@@ -182,7 +182,10 @@ export default function ConfigGeralPage() {
           url_logo: finalLogoUrl,
           url_banner: finalBannerUrl,
           endereco: fullAddress,
-          telefone: settings.telefone
+          telefone: settings.telefone,
+          cep: settings.cep,
+          instagram: settings.instagram,
+          email: settings.email
         }, { onConflict: "id" });
 
       if (error) {
