@@ -11,11 +11,10 @@ import Swal from "sweetalert2";
 import { supabase } from "@/lib/supabase";
 
 interface DaySchedule {
-  dia_semana: number;
-  dia_label: string;
-  esta_fechado: boolean;
-  hora_abertura: string;
-  hora_fechamento: string;
+  dia_semana: string;
+  esta_aberto: boolean;
+  abertura: string;
+  fechamento: string;
 }
 
 const Toast = Swal.mixin({
@@ -37,12 +36,11 @@ const daysOfWeek = [
 
 export default function HorariosPage() {
   const [schedule, setSchedule] = useState<DaySchedule[]>(
-    daysOfWeek.map((day, index) => ({
-      dia_semana: index,
-      dia_label: day,
-      esta_fechado: true,
-      hora_abertura: "",
-      hora_fechamento: ""
+    daysOfWeek.map((day) => ({
+      dia_semana: day,
+      esta_aberto: false,
+      abertura: "",
+      fechamento: ""
     }))
   );
   const [isLoading, setIsLoading] = useState(true);
@@ -57,32 +55,29 @@ export default function HorariosPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Usar o id do usuário como prefixo para buscar os horários deste lojista
       const { data, error } = await supabase
         .from("bd_horarios_funcionamento")
         .select("*")
-        .filter("id", "like", `${user.id}%`);
+        .eq("user_id", user.id);
 
       if (error) throw error;
 
       if (data && data.length > 0) {
-        const updatedSchedule = daysOfWeek.map((day, index) => {
-          const found = data.find((d: any) => d.dia_semana === index);
+        const updatedSchedule = daysOfWeek.map((day) => {
+          const found = data.find((d: any) => d.dia_semana === day);
           if (found) {
             return {
-              dia_semana: index,
-              dia_label: day,
-              esta_fechado: found.esta_fechado,
-              hora_abertura: found.hora_abertura?.substring(0, 5) || "",
-              hora_fechamento: found.hora_fechamento?.substring(0, 5) || ""
+              dia_semana: day,
+              esta_aberto: found.esta_aberto,
+              abertura: found.abertura?.substring(0, 5) || "",
+              fechamento: found.fechamento?.substring(0, 5) || ""
             };
           }
           return {
-            dia_semana: index,
-            dia_label: day,
-            esta_fechado: true,
-            hora_abertura: "",
-            hora_fechamento: ""
+            dia_semana: day,
+            esta_aberto: false,
+            abertura: "",
+            fechamento: ""
           };
         });
         setSchedule(updatedSchedule);
@@ -100,28 +95,34 @@ export default function HorariosPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
+      // Criar payload com os nomes exatos das colunas do SQL
       const upsertData = schedule.map(item => ({
-        id: `${user.id}_${item.dia_semana}`,
+        user_id: user.id,
         dia_semana: item.dia_semana,
-        esta_fechado: item.esta_fechado,
-        hora_abertura: item.hora_abertura ? item.hora_abertura + ":00" : null,
-        hora_fechamento: item.hora_fechamento ? item.hora_fechamento + ":00" : null
+        esta_aberto: item.esta_aberto,
+        abertura: item.abertura || null,
+        fechamento: item.fechamento || null
       }));
 
+      // Realizar o upsert. O Supabase usará a constraint de unicidade (user_id + dia_semana) se existir.
+      // Caso contrário, ele tentará inserir.
       const { error } = await supabase
         .from("bd_horarios_funcionamento")
-        .upsert(upsertData, { onConflict: "id" });
+        .upsert(upsertData, { onConflict: "user_id,dia_semana" });
 
-      if (error) throw error;
+      if (error) {
+        console.log("ERRO_DETALHADO_SUPABASE:", error);
+        throw error;
+      }
 
       Toast.fire({
         icon: "success",
         title: "Horários salvos com sucesso!",
         iconColor: "#ea580c"
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error("Erro ao salvar horários:", err);
-      Toast.fire({ icon: "error", title: "Erro ao salvar no banco." });
+      Toast.fire({ icon: "error", title: `Erro ao salvar: ${err.message || "Banco de Dados"}` });
     } finally {
       setIsSaving(false);
     }
@@ -176,40 +177,40 @@ export default function HorariosPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-700/50">
                   {schedule.map((item, index) => (
-                    <tr key={item.dia_label} className="hover:bg-slate-800/30 transition-colors">
+                    <tr key={item.dia_semana} className="hover:bg-slate-800/30 transition-colors">
                       <td className="px-8 py-6">
-                        <span className="text-sm font-bold text-white uppercase tracking-tight">{item.dia_label}</span>
+                        <span className="text-sm font-bold text-white uppercase tracking-tight">{item.dia_semana}</span>
                       </td>
                       <td className="px-8 py-6 text-center">
                         <label className="relative inline-flex items-center cursor-pointer">
                           <input 
                             type="checkbox" 
                             className="sr-only peer"
-                            checked={!item.esta_fechado}
-                            onChange={() => updateSchedule(index, "esta_fechado", !item.esta_fechado)}
+                            checked={item.esta_aberto}
+                            onChange={() => updateSchedule(index, "esta_aberto", !item.esta_aberto)}
                           />
                           <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
                           <span className="ms-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest min-w-[50px]">
-                            {item.esta_fechado ? 'Fechado' : 'Aberto'}
+                            {item.esta_aberto ? 'Aberto' : 'Fechado'}
                           </span>
                         </label>
                       </td>
                       <td className="px-8 py-6">
                         <input 
                           type="time" 
-                          disabled={item.esta_fechado}
-                          value={item.hora_abertura}
-                          onChange={(e) => updateSchedule(index, "hora_abertura", e.target.value)}
-                          className={`bg-slate-900 border border-slate-700 rounded-lg py-2 px-4 text-sm text-gray-400 focus:outline-none focus:border-orange-600 transition-all ${item.esta_fechado && 'opacity-20'}`}
+                          disabled={!item.esta_aberto}
+                          value={item.abertura}
+                          onChange={(e) => updateSchedule(index, "abertura", e.target.value)}
+                          className={`bg-slate-900 border border-slate-700 rounded-lg py-2 px-4 text-sm text-gray-400 focus:outline-none focus:border-orange-600 transition-all ${!item.esta_aberto && 'opacity-20'}`}
                         />
                       </td>
                       <td className="px-8 py-6">
                         <input 
                           type="time" 
-                          disabled={item.esta_fechado}
-                          value={item.hora_fechamento}
-                          onChange={(e) => updateSchedule(index, "hora_fechamento", e.target.value)}
-                          className={`bg-slate-900 border border-slate-700 rounded-lg py-2 px-4 text-sm text-gray-400 focus:outline-none focus:border-orange-600 transition-all ${item.esta_fechado && 'opacity-20'}`}
+                          disabled={!item.esta_aberto}
+                          value={item.fechamento}
+                          onChange={(e) => updateSchedule(index, "fechamento", e.target.value)}
+                          className={`bg-slate-900 border border-slate-700 rounded-lg py-2 px-4 text-sm text-gray-400 focus:outline-none focus:border-orange-600 transition-all ${!item.esta_aberto && 'opacity-20'}`}
                         />
                       </td>
                     </tr>
