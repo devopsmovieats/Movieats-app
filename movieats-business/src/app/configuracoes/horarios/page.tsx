@@ -93,22 +93,22 @@ export default function HorariosPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
-      // Limpeza de Objeto e Validação de Valores
+      // Preparação dos dados para Upsert
       const upsertData = schedule.map(item => ({
         user_id: user.id,
         dia_semana: item.dia_semana,
         esta_aberto: item.esta_aberto,
-        abertura: item.abertura ? item.abertura + ":00" : null,
-        fechamento: item.fechamento ? item.fechamento + ":00" : null
+        abertura: item.abertura || null, // Formato HH:mm conforme solicitado
+        fechamento: item.fechamento || null
       }));
 
+      // Executa o upsert usando a nova constraint de conflito (user_id + dia_semana)
       const { error } = await supabase
         .from("bd_horarios_funcionamento")
         .upsert(upsertData, { onConflict: "user_id,dia_semana" });
 
       if (error) {
-        // Log de Erro Real conforme pedido pelo usuário
-        alert('ERRO REAL: ' + error.message + ' | Coluna: ' + error.details);
+        alert('ERRO REAL: ' + error.message + ' | Detalhes: ' + error.details);
         throw error;
       }
 
