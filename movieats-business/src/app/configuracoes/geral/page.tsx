@@ -121,32 +121,21 @@ export default function ConfigGeralPage() {
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Usuário não autenticado");
+      if (!user) throw new Error("Usuário não autenticado no Supabase");
 
       const { error } = await supabase
         .from("bd_config_estabelecimento")
         .upsert({
-          id: user.id, // Chave primária baseada no usuário
+          id: user.id,
           nome_loja: settings.nome_loja,
-          descricao: settings.descricao,
           url_logo: settings.url_logo,
           url_banner: settings.url_banner,
           endereco: fullAddress,
-          telefone: settings.telefone,
-          cep: settings.cep,
-          rua: settings.rua,
-          numero: settings.numero,
-          bairro: settings.bairro,
-          cidade: settings.cidade,
-          uf: settings.uf,
-          instagram: settings.instagram,
-          email: settings.email,
-          entrega_ativa: settings.entrega_ativa,
-          updated_at: new Date().toISOString()
+          telefone: settings.telefone
         }, { onConflict: "id" });
 
       if (error) {
-        console.error("Erro detalhado do Supabase:", JSON.stringify(error, null, 2));
+        console.log("ERRO_SUPABASE_DETALHADO:", error);
         throw error;
       }
 
