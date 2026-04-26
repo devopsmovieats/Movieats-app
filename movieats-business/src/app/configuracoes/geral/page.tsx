@@ -70,6 +70,10 @@ export default function ConfigGeralPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [bannerFile, setBannerFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState("");
+  const [bannerPreview, setBannerPreview] = useState("");
 
   useEffect(() => {
     fetchSettings();
@@ -144,13 +148,39 @@ export default function ConfigGeralPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado no Supabase");
 
+      let finalLogoUrl = settings.url_logo;
+      let finalBannerUrl = settings.url_banner;
+
+      // Upload Logo para R2 se houver arquivo novo
+      if (logoFile) {
+        const formData = new FormData();
+        formData.append('file', logoFile);
+        formData.append('establishment_id', user.id);
+        const res = await fetch('/api/upload', { method: 'POST', body: formData });
+        if (!res.ok) throw new Error("Erro ao subir Logo para o Cloudflare");
+        const { url } = await res.json();
+        finalLogoUrl = url;
+      }
+
+      // Upload Banner para R2 se houver arquivo novo
+      if (bannerFile) {
+        const formData = new FormData();
+        formData.append('file', bannerFile);
+        formData.append('establishment_id', user.id);
+        const res = await fetch('/api/upload', { method: 'POST', body: formData });
+        if (!res.ok) throw new Error("Erro ao subir Banner para o Cloudflare");
+        const { url } = await res.json();
+        finalBannerUrl = url;
+      }
+
       const { error } = await supabase
         .from("bd_config_estabelecimento")
         .upsert({
           id: user.id,
           nome_loja: settings.nome_loja,
-          url_logo: settings.url_logo,
-          url_banner: settings.url_banner,
+          descricao: settings.descricao,
+          url_logo: finalLogoUrl,
+          url_banner: finalBannerUrl,
           endereco: fullAddress,
           telefone: settings.telefone
         }, { onConflict: "id" });
@@ -178,11 +208,13 @@ export default function ConfigGeralPage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'url_logo' | 'url_banner') => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSettings(prev => ({...prev, [type]: reader.result as string}));
-      };
-      reader.readAsDataURL(file);
+      if (type === 'url_logo') {
+        setLogoFile(file);
+        setLogoPreview(URL.createObjectURL(file));
+      } else {
+        setBannerFile(file);
+        setBannerPreview(URL.createObjectURL(file));
+      }
     }
   };
 
@@ -273,31 +305,31 @@ export default function ConfigGeralPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-3">
                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Logotipo</label>
-                    <div 
-                      onClick={() => logoInputRef.current?.click()}
-                      className="relative w-28 h-28 bg-slate-900 border-2 border-dashed border-slate-700 rounded-xl flex items-center justify-center cursor-pointer hover:border-orange-600 transition-all overflow-hidden"
-                    >
-                      {settings.url_logo ? (
-                        <img src={settings.url_logo} className="w-full h-full object-cover" />
-                      ) : (
-                        <Camera className="w-6 h-6 text-slate-700" />
-                      )}
+                      <div 
+                        onClick={() => logoInputRef.current?.click()}
+                        className="relative w-28 h-28 bg-slate-900 border-2 border-dashed border-slate-700 rounded-xl flex items-center justify-center cursor-pointer hover:border-orange-600 transition-all overflow-hidden"
+                      >
+                        {logoPreview || settings.url_logo ? (
+                          <img src={logoPreview || settings.url_logo} className="w-full h-full object-cover" />
+                        ) : (
+                          <Camera className="w-6 h-6 text-slate-700" />
+                        )}
+                      </div>
+                      <p className="text-[9px] text-gray-500 font-bold uppercase">Sugestão: Logo (512x512px)</p>
                     </div>
-                    <p className="text-[9px] text-gray-500 font-bold uppercase">Sugestão: Logo (512x512px)</p>
-                  </div>
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Banner</label>
-                    <div 
-                      onClick={() => bannerInputRef.current?.click()}
-                      className="relative h-28 bg-slate-900 border-2 border-dashed border-slate-700 rounded-xl flex items-center justify-center cursor-pointer hover:border-orange-600 transition-all overflow-hidden"
-                    >
-                      {settings.url_banner ? (
-                        <img src={settings.url_banner} className="w-full h-full object-cover" />
-                      ) : (
-                        <ImageIcon className="w-6 h-6 text-slate-700" />
-                      )}
-                    </div>
-                    <p className="text-[9px] text-gray-500 font-bold uppercase">Sugestão: Banner (1920x1080px)</p>
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Banner</label>
+                      <div 
+                        onClick={() => bannerInputRef.current?.click()}
+                        className="relative h-28 bg-slate-900 border-2 border-dashed border-slate-700 rounded-xl flex items-center justify-center cursor-pointer hover:border-orange-600 transition-all overflow-hidden"
+                      >
+                        {bannerPreview || settings.url_banner ? (
+                          <img src={bannerPreview || settings.url_banner} className="w-full h-full object-cover" />
+                        ) : (
+                          <ImageIcon className="w-6 h-6 text-slate-700" />
+                        )}
+                      </div>
+                      <p className="text-[9px] text-gray-500 font-bold uppercase">Sugestão: Banner (1920x1080px)</p>
                   </div>
                 </div>
               </div>
