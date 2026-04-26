@@ -493,7 +493,7 @@ export default function CardapioDigitalPage() {
                  <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 overflow-hidden">
                     {branding?.url_logo && <img src={branding.url_logo} className="w-full h-full object-cover" alt="" />}
                  </div>
-                 <h4 className="text-xl font-black italic uppercase tracking-tighter">{branding?.nome_lo_ja || branding?.nome_loja || "Movieats Burgers"}</h4>
+                 <h4 className="text-xl font-black italic uppercase tracking-tighter">{branding?.nome_loja || "Movieats Burgers"}</h4>
               </div>
               <p className="text-xs text-slate-500 font-medium leading-relaxed max-w-xs text-center md:text-left">
                  O melhor sabor da cidade entregue com a velocidade que você merece. Qualidade Movieats em cada detalhe.
