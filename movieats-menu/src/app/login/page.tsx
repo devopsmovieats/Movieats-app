@@ -70,7 +70,7 @@ export default function LoginPage() {
         // Define o papel (role) baseado no email ou em metadados se existirem
         let role = "ADMIN";
         let name = "Lojista Master";
-        let redirectPath = "/";
+        let redirectPath = "/admin";
 
         if (email.includes("gerente")) {
           role = "GERENTE";
