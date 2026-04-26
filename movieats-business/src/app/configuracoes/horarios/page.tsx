@@ -113,7 +113,7 @@ export default function HorariosPage() {
         user_id: user.id,
         dia_semana: item.dia_semana,
         esta_aberto: item.esta_aberto,
-        abertura: item.abertura || null, // Formato HH:mm conforme solicitado
+        abertura: item.abertura || null,
         fechamento: item.fechamento || null
       }));
 
@@ -212,7 +212,7 @@ export default function HorariosPage() {
                           disabled={!item.esta_aberto}
                           value={item.abertura}
                           onChange={(e) => updateSchedule(index, "abertura", e.target.value)}
-                          className={`bg-slate-900 border border-slate-700 rounded-lg py-2 px-4 text-sm text-gray-400 focus:outline-none focus:border-orange-600 transition-all ${!item.esta_aberto && 'opacity-20'}`}
+                          className={`bg-slate-900 border border-slate-700 rounded-lg py-2 px-4 text-sm text-gray-400 focus:outline-none focus:border-orange-600 transition-all [color-scheme:dark] ${!item.esta_aberto && 'opacity-20'}`}
                         />
                       </td>
                       <td className="px-8 py-6">
@@ -221,7 +221,7 @@ export default function HorariosPage() {
                           disabled={!item.esta_aberto}
                           value={item.fechamento}
                           onChange={(e) => updateSchedule(index, "fechamento", e.target.value)}
-                          className={`bg-slate-900 border border-slate-700 rounded-lg py-2 px-4 text-sm text-gray-400 focus:outline-none focus:border-orange-600 transition-all ${!item.esta_aberto && 'opacity-20'}`}
+                          className={`bg-slate-900 border border-slate-700 rounded-lg py-2 px-4 text-sm text-gray-400 focus:outline-none focus:border-orange-600 transition-all [color-scheme:dark] ${!item.esta_aberto && 'opacity-20'}`}
                         />
                       </td>
                     </tr>
@@ -231,8 +231,8 @@ export default function HorariosPage() {
             </div>
           </div>
 
-          <div className="bg-orange-600/10 border border-orange-600/20 rounded-xl p-6 flex items-start gap-4">
-             <div className="p-3 bg-orange-600/20 rounded-lg">
+          <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-6 flex items-start gap-4">
+             <div className="p-3 bg-slate-900/50 rounded-lg border border-slate-700/30">
                 <AlertCircle className="w-5 h-5 text-orange-600" />
              </div>
              <div>
