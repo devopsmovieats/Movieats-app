@@ -6,8 +6,8 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 async function test() {
-  const { data, error } = await supabase.from('bd_horarios_funcionamento').select('merchant_id').limit(1)
-  console.log('merchant_id exists?', !error)
+  const { data, error } = await supabase.from('bd_horarios_funcionamento').select('user_id').limit(1)
+  console.log('Error:', error)
 }
 
 test()

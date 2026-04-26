@@ -11,7 +11,8 @@ import Swal from "sweetalert2";
 import { supabase } from "@/lib/supabase";
 
 interface DaySchedule {
-  dia_semana: string;
+  dia_semana: number;
+  dia_label: string;
   esta_fechado: boolean;
   hora_abertura: string;
   hora_fechamento: string;
@@ -35,7 +36,15 @@ const daysOfWeek = [
 ];
 
 export default function HorariosPage() {
-  const [schedule, setSchedule] = useState<DaySchedule[]>([]);
+  const [schedule, setSchedule] = useState<DaySchedule[]>(
+    daysOfWeek.map((day, index) => ({
+      dia_semana: index,
+      dia_label: day,
+      esta_fechado: true,
+      hora_abertura: "",
+      hora_fechamento: ""
+    }))
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -48,6 +57,7 @@ export default function HorariosPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      // Usar o id do usuário como prefixo para buscar os horários deste lojista
       const { data, error } = await supabase
         .from("bd_horarios_funcionamento")
         .select("*")
@@ -56,20 +66,26 @@ export default function HorariosPage() {
       if (error) throw error;
 
       if (data && data.length > 0) {
-        // Ordenar para garantir a ordem dos dias
-        const sorted = daysOfWeek.map(day => {
-          const found = data.find((d: any) => d.dia_semana === day);
-          return found || { dia_semana: day, esta_fechado: true, hora_abertura: "", hora_fechamento: "" };
+        const updatedSchedule = daysOfWeek.map((day, index) => {
+          const found = data.find((d: any) => d.dia_semana === index);
+          if (found) {
+            return {
+              dia_semana: index,
+              dia_label: day,
+              esta_fechado: found.esta_fechado,
+              hora_abertura: found.hora_abertura?.substring(0, 5) || "",
+              hora_fechamento: found.hora_fechamento?.substring(0, 5) || ""
+            };
+          }
+          return {
+            dia_semana: index,
+            dia_label: day,
+            esta_fechado: true,
+            hora_abertura: "",
+            hora_fechamento: ""
+          };
         });
-        setSchedule(sorted);
-      } else {
-        // Inicializar se não houver dados
-        setSchedule(daysOfWeek.map(day => ({
-          dia_semana: day,
-          esta_fechado: true,
-          hora_abertura: "",
-          hora_fechamento: ""
-        })));
+        setSchedule(updatedSchedule);
       }
     } catch (err) {
       console.error("Erro ao carregar horários:", err);
@@ -88,8 +104,8 @@ export default function HorariosPage() {
         id: `${user.id}_${item.dia_semana}`,
         dia_semana: item.dia_semana,
         esta_fechado: item.esta_fechado,
-        hora_abertura: item.hora_abertura,
-        hora_fechamento: item.hora_fechamento
+        hora_abertura: item.hora_abertura ? item.hora_abertura + ":00" : null,
+        hora_fechamento: item.hora_fechamento ? item.hora_fechamento + ":00" : null
       }));
 
       const { error } = await supabase
@@ -160,9 +176,9 @@ export default function HorariosPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-700/50">
                   {schedule.map((item, index) => (
-                    <tr key={item.dia_semana} className="hover:bg-slate-800/30 transition-colors">
+                    <tr key={item.dia_label} className="hover:bg-slate-800/30 transition-colors">
                       <td className="px-8 py-6">
-                        <span className="text-sm font-bold text-white uppercase tracking-tight">{item.dia_semana}</span>
+                        <span className="text-sm font-bold text-white uppercase tracking-tight">{item.dia_label}</span>
                       </td>
                       <td className="px-8 py-6 text-center">
                         <label className="relative inline-flex items-center cursor-pointer">
