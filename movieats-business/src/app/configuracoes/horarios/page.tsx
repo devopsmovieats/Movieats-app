@@ -31,7 +31,7 @@ const Toast = Swal.mixin({
 });
 
 const daysOfWeek = [
-  "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"
+  "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado", "Domingo"
 ];
 
 export default function HorariosPage() {
@@ -59,16 +59,16 @@ export default function HorariosPage() {
         // Ordenar para garantir a ordem dos dias
         const sorted = daysOfWeek.map(day => {
           const found = data.find((d: any) => d.dia_semana === day);
-          return found || { dia_semana: day, esta_fechado: false, hora_abertura: "08:00", hora_fechamento: "18:00" };
+          return found || { dia_semana: day, esta_fechado: true, hora_abertura: "", hora_fechamento: "" };
         });
         setSchedule(sorted);
       } else {
         // Inicializar se não houver dados
         setSchedule(daysOfWeek.map(day => ({
           dia_semana: day,
-          esta_fechado: false,
-          hora_abertura: "08:00",
-          hora_fechamento: "18:00"
+          esta_fechado: true,
+          hora_abertura: "",
+          hora_fechamento: ""
         })));
       }
     } catch (err) {
