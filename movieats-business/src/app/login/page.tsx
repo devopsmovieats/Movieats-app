@@ -206,18 +206,9 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between ml-1 mb-2">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 block" htmlFor="password">
-                  Senha
-                </label>
-                <button 
-                  type="button"
-                  onClick={handleRecoverPassword}
-                  className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#ff6b00] hover:text-orange-400 transition-colors cursor-pointer"
-                >
-                  Esqueci minha senha
-                </button>
-              </div>
+              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 ml-1 mb-2 block" htmlFor="password">
+                Senha
+              </label>
               <div className="relative group">
                 <input 
                   id="password"
@@ -235,6 +226,15 @@ export default function LoginPage() {
                   className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 hover:bg-white/5 rounded-lg text-white/40 hover:text-white transition-all cursor-pointer"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              <div className="flex justify-end">
+                <button 
+                  type="button"
+                  onClick={handleRecoverPassword}
+                  className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#ff6b00] hover:text-orange-400 transition-colors cursor-pointer mt-2"
+                >
+                  Esqueci minha senha
                 </button>
               </div>
             </div>
