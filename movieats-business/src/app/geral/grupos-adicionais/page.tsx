@@ -189,7 +189,6 @@ export default function GruposAdicionaisPage() {
     // Garantia de establishment_id antes de salvar
     let activeEstId = currentEstId;
     if (!activeEstId) {
-      console.log('DEBUG - Tentando recuperar establishment_id via sessão/localStorage...');
       const { data: { session } } = await supabase.auth.getSession();
       activeEstId = session?.user?.id || null;
       
@@ -233,32 +232,23 @@ export default function GruposAdicionaisPage() {
         establishment_id: activeEstId
       };
 
-      console.log('DEBUG - Dados do Grupo:', groupData);
-
       let groupId = editingGroup.id;
 
       // Verificação de ID mais abrangente conforme solicitado
       if (!editingGroup.id || editingGroup.id === 0 || editingGroup.id === '0') {
         // Fluxo de Criação Sequencial
-        console.log('Executando insert no banco (bd_grupos_adicionais)...');
         const { data: newGroup, error: groupError } = await supabase
           .from('bd_grupos_adicionais')
           .insert([groupData])
           .select()
           .single();
         
-        if (groupError) {
-          console.error('Erro ao criar grupo:', groupError);
-          throw groupError;
-        }
-        
+        if (groupError) throw groupError;
         if (!newGroup) throw new Error("O banco não retornou o grupo criado após o insert.");
         
         groupId = newGroup.id;
-        console.log('ID do grupo gerado:', groupId);
       } else {
         // Fluxo de Atualização
-        console.log('Executando update no banco (bd_grupos_adicionais) ID:', groupId);
         const { error: groupError } = await supabase
           .from('bd_grupos_adicionais')
           .update(groupData)
@@ -451,79 +441,76 @@ export default function GruposAdicionaisPage() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-white/[0.02] border-b border-white/5">
-                    <th className="px-6 py-5 w-10">
-                      <div className="flex items-center justify-center">
-                        <input 
-                          type="checkbox" 
-                          checked={filteredGroups.length > 0 && selectedIds.size === filteredGroups.length}
-                          onChange={handleSelectAll}
-                          className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
-                        />
-                      </div>
+                    <th className="px-6 py-5 w-10 text-center">
+                      <input 
+                        type="checkbox" 
+                        checked={filteredGroups.length > 0 && selectedIds.size === filteredGroups.length}
+                        onChange={handleSelectAll}
+                        className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
+                      />
                     </th>
-                    <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Grupo</th>
-                    <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Tipo</th>
-                    <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-center">Itens</th>
-                    <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-center">Status</th>
-                    <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-right">Ações</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Grupo</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Tipo</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-center">Itens</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-center">Status</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-right">Ações</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {filteredGroups.map((group) => (
-                    <tr key={group.id} className={`hover:bg-white/[0.02] transition-colors group ${selectedIds.has(group.id) ? 'bg-primary/5' : ''}`}>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center justify-center">
-                          <input 
-                            type="checkbox" 
-                            checked={selectedIds.has(group.id)}
-                            onChange={() => handleSelectOne(group.id)}
-                            className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary cursor-pointer accent-primary" 
-                          />
-                        </div>
+                    <tr 
+                      key={group.id} 
+                      className={`hover:bg-white/[0.02] transition-colors group ${selectedIds.has(group.id) ? 'bg-primary/5' : ''}`}
+                    >
+                      <td className="px-6 py-4 align-middle text-center">
+                        <input 
+                          type="checkbox" 
+                          checked={selectedIds.has(group.id)}
+                          onChange={() => handleSelectOne(group.id)}
+                          className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
+                        />
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 align-middle">
                         <div className="flex flex-col">
-                          <span className="text-sm font-medium text-white group-hover:text-primary transition-colors tracking-tight uppercase">
+                          <span className="text-sm font-medium text-white group-hover:text-primary transition-colors uppercase tracking-tight">
                             {group.nome_grupo}
                           </span>
-                          <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest opacity-50 mt-0.5">#{group.id.toString().substring(0, 8)}</span>
+                          <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest opacity-40 mt-0.5">
+                            #{group.id.toString().substring(0, 8).toUpperCase()}
+                          </span>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 align-middle">
                         <div className="flex items-center gap-2">
                           <div className={`w-1.5 h-1.5 rounded-full ${group.tipo_escolha === 'unica' ? 'bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]' : 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]'}`} />
-                          <span className="text-[10px] font-black text-white uppercase tracking-wider">{group.tipo_escolha === 'unica' ? 'Seleção Única' : 'Múltipla Escolha'}</span>
+                          <span className="text-[10px] font-black text-white/50 uppercase tracking-widest">{group.tipo_escolha === 'unica' ? 'Seleção Única' : 'Múltipla Escolha'}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className="inline-flex items-center justify-center min-w-[32px] h-7 bg-white/5 border border-white/10 rounded-lg text-[11px] font-black text-white/60">
-                          {group.items?.length || 0}
+                      <td className="px-6 py-4 align-middle text-center">
+                        <span className="text-[10px] font-black text-white/50 bg-white/5 border border-white/5 px-2.5 py-1 rounded-md uppercase tracking-wide">
+                          {group.items?.length || 0} ITENS
                         </span>
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex justify-center">
-                          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md border transition-all ${
-                            group.active 
-                              ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" 
-                              : "bg-red-500/10 border-red-500/20 text-red-500"
-                          }`}>
-                            <span className="text-[9px] font-black uppercase tracking-widest">{group.active ? 'DISPONÍVEL' : 'INDISPONÍVEL'}</span>
-                          </div>
-                        </div>
+                      <td className="px-6 py-4 align-middle text-center">
+                        <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-md border ${group.active ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-red-500 bg-red-500/10 border-red-500/20'}`}>
+                          {group.active ? 'DISPONÍVEL' : 'INDISPONÍVEL'}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
+                      <td className="px-6 py-4 align-middle text-right">
+                        <div className="flex items-center justify-end gap-5">
                           <button 
-                            onClick={() => openEditModal(group)}
-                            className="p-2.5 rounded-lg bg-white/5 hover:bg-primary/10 text-muted-foreground hover:text-primary border border-white/5 hover:border-primary/20 transition-all cursor-pointer"
+                            onClick={() => openEditModal(group)} 
+                            className="text-muted-foreground hover:text-blue-400 transition-all duration-300 cursor-pointer"
+                            title="Editar"
                           >
-                            <Pencil className="w-3.5 h-3.5" />
+                            <Pencil className="w-4 h-4" />
                           </button>
                           <button 
-                            onClick={() => handleDelete(group)}
-                            className="p-2.5 rounded-lg bg-white/5 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 border border-white/5 hover:border-red-500/20 transition-all cursor-pointer"
+                            onClick={() => handleDelete(group)} 
+                            className="text-muted-foreground hover:text-red-400 transition-all duration-300 cursor-pointer"
+                            title="Excluir"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </td>
