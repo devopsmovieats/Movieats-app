@@ -89,17 +89,38 @@ export default function ConfigGeralPage() {
       if (error && error.code !== "PGRST116") throw error;
 
       if (data) {
+        // Tentar decompor o endereço para os campos individuais
+        let rua = "", numero = "", bairro = "", cidade = "", uf = "";
+        if (data.endereco) {
+          try {
+            // Padrão: "Rua, Numero - Bairro, Cidade/UF"
+            const [main, rest] = data.endereco.split(" - ");
+            const [street, num] = main.split(", ");
+            const [neighborhood, cityState] = rest.split(", ");
+            const [city, state] = cityState.split("/");
+            
+            rua = street || "";
+            numero = num || "";
+            bairro = neighborhood || "";
+            cidade = city || "";
+            uf = state || "";
+          } catch (e) {
+            // Fallback se o formato for diferente
+            rua = data.endereco;
+          }
+        }
+
         setSettings({
           nome_loja: data.nome_loja || "",
           descricao: data.descricao || "",
           url_logo: data.url_logo || "",
           url_banner: data.url_banner || "",
           cep: data.cep || "",
-          rua: data.rua || "",
-          numero: data.numero || "",
-          bairro: data.bairro || "",
-          cidade: data.cidade || "",
-          uf: data.uf || "",
+          rua: rua || data.rua || "",
+          numero: numero || data.numero || "",
+          bairro: bairro || data.bairro || "",
+          cidade: cidade || data.cidade || "",
+          uf: uf || data.uf || "",
           telefone: data.telefone || "",
           instagram: data.instagram || "",
           email: data.email || "",
