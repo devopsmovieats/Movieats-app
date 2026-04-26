@@ -5,21 +5,18 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("auth_token");
 
-  // Rotas públicas que NÃO precisam de autenticação
+  // 1. Rotas Públicas: Sempre liberadas
   const publicPaths = ["/pwa", "/garcom", "/entregador", "/login"];
-  const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
-
-  // Se for a raiz, o redirecionamento será feito pelo client component de src/app/page.tsx
-  if (pathname === "/") return NextResponse.next();
-
-  // Proteção do módulo /admin
-  if (pathname.startsWith("/admin") && !token) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  if (publicPaths.some(path => pathname.startsWith(path)) || pathname === "/") {
+    return NextResponse.next();
   }
 
-  // Se estiver logado e tentar acessar o login, redireciona para o dashboard do admin
-  if (token && pathname === "/login") {
-    return NextResponse.redirect(new URL("/admin", request.url));
+  // 2. Proteção do Admin
+  if (pathname.startsWith("/admin")) {
+    if (!token) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+    return NextResponse.next();
   }
 
   return NextResponse.next();
@@ -27,13 +24,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
     "/((?!api|_next/static|_next/image|favicon.ico).*)",
   ],
 };
