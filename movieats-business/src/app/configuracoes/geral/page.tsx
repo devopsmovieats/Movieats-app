@@ -17,7 +17,8 @@ import {
 import Swal from "sweetalert2";
 import { supabase } from "@/lib/supabase";
 
-const ESTABLISHMENT_ID = "17db3a9f-f6c1-434d-8f4a-e40cd67035f2";
+// ID Fixo para garantir registro único de configuração da loja
+const CONFIG_ID = "17db3a9f-f6c1-434d-8f4a-e40cd67035f2";
 
 interface SystemSettings {
   nome_loja: string;
@@ -82,7 +83,7 @@ export default function ConfigGeralPage() {
       const { data, error } = await supabase
         .from("bd_config_estabelecimento")
         .select("*")
-        .eq("establishment_id", ESTABLISHMENT_ID)
+        .eq("id", CONFIG_ID)
         .single();
 
       if (error && error.code !== "PGRST116") throw error;
@@ -122,12 +123,13 @@ export default function ConfigGeralPage() {
       const { error } = await supabase
         .from("bd_config_estabelecimento")
         .upsert({
-          establishment_id: ESTABLISHMENT_ID,
+          id: CONFIG_ID,
+          establishment_id: CONFIG_ID,
           nome_loja: settings.nome_loja,
           descricao: settings.descricao,
           url_logo: settings.url_logo,
           url_banner: settings.url_banner,
-          endereco: fullAddress, // Campo unificado solicitado
+          endereco: fullAddress,
           cep: settings.cep,
           rua: settings.rua,
           numero: settings.numero,
@@ -139,10 +141,11 @@ export default function ConfigGeralPage() {
           email: settings.email,
           entrega_ativa: settings.entrega_ativa,
           updated_at: new Date().toISOString()
-        }, { onConflict: "establishment_id" });
+        }, { onConflict: "id" });
 
       if (error) throw error;
 
+      console.log("Success: Configurações salvas no Supabase");
       Toast.fire({ icon: "success", title: "Configurações salvas!" });
     } catch (err) {
       console.error("Erro ao salvar:", err);
@@ -205,7 +208,7 @@ export default function ConfigGeralPage() {
           <div className="flex items-center justify-between pb-8 border-b border-slate-800">
             <div className="flex items-center gap-3">
               <Settings className="text-orange-600 w-5 h-5" />
-              <h1 className="text-2xl font-bold text-white tracking-tight uppercase">Configurações Gerais</h1>
+              <h1 className="text-xl font-bold text-white tracking-tight uppercase">Configurações Gerais</h1>
             </div>
             
             <button 
@@ -220,10 +223,10 @@ export default function ConfigGeralPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
             <div className="space-y-4">
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest ml-1">Informações</h3>
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Informações</h3>
               <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8 space-y-5">
                 <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Nome da Loja</label>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nome da Loja</label>
                   <input 
                     type="text" 
                     value={settings.nome_loja}
@@ -245,11 +248,11 @@ export default function ConfigGeralPage() {
             </div>
 
             <div className="space-y-4">
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest ml-1">Imagens</h3>
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Imagens</h3>
               <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-3">
-                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wider block">Logotipo</label>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Logotipo</label>
                     <div 
                       onClick={() => logoInputRef.current?.click()}
                       className="relative w-28 h-28 bg-slate-900 border-2 border-dashed border-slate-700 rounded-xl flex items-center justify-center cursor-pointer hover:border-orange-600 transition-all overflow-hidden"
@@ -260,10 +263,10 @@ export default function ConfigGeralPage() {
                         <Camera className="w-6 h-6 text-slate-700" />
                       )}
                     </div>
-                    <p className="text-[9px] text-gray-500 font-bold">Sugestão: Logo (512x512px)</p>
+                    <p className="text-[9px] text-gray-500 font-bold uppercase">Sugestão: Logo (512x512px)</p>
                   </div>
                   <div className="space-y-3">
-                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wider block">Banner</label>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Banner</label>
                     <div 
                       onClick={() => bannerInputRef.current?.click()}
                       className="relative h-28 bg-slate-900 border-2 border-dashed border-slate-700 rounded-xl flex items-center justify-center cursor-pointer hover:border-orange-600 transition-all overflow-hidden"
@@ -274,7 +277,7 @@ export default function ConfigGeralPage() {
                         <ImageIcon className="w-6 h-6 text-slate-700" />
                       )}
                     </div>
-                    <p className="text-[9px] text-gray-500 font-bold">Sugestão: Banner (1920x1080px)</p>
+                    <p className="text-[9px] text-gray-500 font-bold uppercase">Sugestão: Banner (1920x1080px)</p>
                   </div>
                 </div>
               </div>
@@ -282,11 +285,11 @@ export default function ConfigGeralPage() {
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest ml-1">Endereço</h3>
+            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Endereço</h3>
             <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">CEP</label>
+              <div className="grid grid-cols-4 gap-6">
+                <div className="col-span-1 space-y-2">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">CEP</label>
                   <input 
                     type="text" 
                     value={settings.cep}
@@ -296,8 +299,8 @@ export default function ConfigGeralPage() {
                   />
                 </div>
 
-                <div className="md:col-span-2 space-y-2">
-                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Rua</label>
+                <div className="col-span-2 space-y-2">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Rua</label>
                   <input 
                     type="text" 
                     value={settings.rua}
@@ -306,8 +309,8 @@ export default function ConfigGeralPage() {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Bairro</label>
+                <div className="col-span-1 space-y-2">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Bairro</label>
                   <input 
                     type="text" 
                     value={settings.bairro}
@@ -317,9 +320,9 @@ export default function ConfigGeralPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="md:col-span-2 space-y-2">
-                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Cidade</label>
+              <div className="grid grid-cols-4 gap-6">
+                <div className="col-span-2 space-y-2">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Cidade</label>
                   <input 
                     type="text" 
                     value={settings.cidade}
@@ -327,8 +330,8 @@ export default function ConfigGeralPage() {
                     className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">UF</label>
+                <div className="col-span-1 space-y-2">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">UF</label>
                   <input 
                     type="text" 
                     value={settings.uf}
@@ -336,8 +339,8 @@ export default function ConfigGeralPage() {
                     className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none text-center"
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Nº</label>
+                <div className="col-span-1 space-y-2">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nº</label>
                   <input 
                     type="text" 
                     value={settings.numero}
@@ -350,10 +353,10 @@ export default function ConfigGeralPage() {
           </div>
 
           <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8 space-y-6">
-            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest ml-1">Contato e Canais</h3>
+            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Contato</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Telefone / WhatsApp</label>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">WhatsApp</label>
                 <input 
                   type="text" 
                   value={settings.telefone}
@@ -362,7 +365,7 @@ export default function ConfigGeralPage() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Instagram (@)</label>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Instagram (@)</label>
                 <input 
                   type="text" 
                   value={settings.instagram}
@@ -371,7 +374,7 @@ export default function ConfigGeralPage() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">E-mail</label>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">E-mail</label>
                 <input 
                   type="email" 
                   value={settings.email}
