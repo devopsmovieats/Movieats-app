@@ -58,7 +58,7 @@ export default function HorariosPage() {
       if (data && data.length > 0) {
         // Ordenar para garantir a ordem dos dias
         const sorted = daysOfWeek.map(day => {
-          const found = data.find(d => d.dia_semana === day);
+          const found = data.find((d: any) => d.dia_semana === day);
           return found || { dia_semana: day, esta_fechado: false, hora_abertura: "08:00", hora_fechamento: "18:00" };
         });
         setSchedule(sorted);
