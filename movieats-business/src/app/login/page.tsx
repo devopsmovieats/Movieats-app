@@ -179,7 +179,7 @@ export default function LoginPage() {
               </div>
               <h1 className="font-headline text-3xl font-black tracking-tighter text-white">MOVIEATS</h1>
             </div>
-            <span className="text-[9px] mt-4 uppercase tracking-[0.5em] font-medium text-white/50 whitespace-nowrap">Portal do Estabelecimento</span>
+            <span className="text-[9px] mt-4 uppercase tracking-[0.5em] font-medium text-white/50 whitespace-nowrap">Portal do Administrador</span>
           </div>
 
           {/* Welcome Text */}

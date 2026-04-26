@@ -13,7 +13,7 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "MOVIEATS | Portal do Estabelecimento",
+  title: "MOVIEATS | Portal do Administrador",
   description: "Gestão operacional para lojistas Movieats",
 };
 

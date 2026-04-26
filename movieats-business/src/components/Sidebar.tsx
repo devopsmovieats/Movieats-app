@@ -198,7 +198,7 @@ export default function Sidebar() {
                 {brand.name}
               </span>
               <span className="text-[10px] font-medium text-white/50 tracking-wider mt-0.5 opacity-90">
-                {userRole === "Atendente" ? "Atendimento" : userRole === "Gerente" ? "Gestão Operacional" : "Portal do Estabelecimento"}
+                {userRole === "Atendente" ? "Atendimento" : userRole === "Gerente" ? "Gestão Operacional" : "Portal do Administrador"}
               </span>
             </div>
           )}
