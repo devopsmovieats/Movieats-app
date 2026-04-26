@@ -486,22 +486,19 @@ export default function GruposAdicionaisPage() {
                           <span className="text-[10px] font-black text-white/50 uppercase tracking-widest">{group.tipo_escolha === 'unica' ? 'Seleção Única' : 'Múltipla Escolha'}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 align-middle">
+                      <td className="px-6 py-4 align-middle min-w-[200px]">
                         {group.items && group.items.length > 0 ? (
-                          <div className="flex flex-col gap-1.5 py-1">
+                          <div className="flex flex-col gap-1 py-1">
                             {group.items.map((item, idx) => (
-                              <div key={item.id || idx} className="flex items-center gap-2 whitespace-nowrap">
-                                <span className="text-xs text-muted-foreground/60 font-medium uppercase tracking-tight">
-                                  {item.nome}
-                                </span>
-                                <span className="text-[10px] text-muted-foreground/30 font-bold">
-                                  — R$ {item.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                              <div key={item.id || idx} className="flex items-center whitespace-nowrap">
+                                <span className="text-[11px] text-gray-400/70 font-medium uppercase tracking-tight">
+                                  • {item.nome} — R$ {item.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                                 </span>
                               </div>
                             ))}
                           </div>
                         ) : (
-                          <span className="text-[10px] text-muted-foreground/20 italic font-medium">Sem itens vinculados</span>
+                          <span className="text-[11px] text-gray-400/30 italic font-medium">Nenhum item</span>
                         )}
                       </td>
                       <td className="px-6 py-4 align-middle text-center">
