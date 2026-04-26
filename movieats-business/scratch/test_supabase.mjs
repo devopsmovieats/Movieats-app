@@ -6,17 +6,14 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 async function test() {
-  // Test user_id
-  const { error: err1 } = await supabase.from('bd_horarios_funcionamento').select('user_id').limit(1)
-  console.log('user_id exists?', !err1)
-  
-  // Test abertura
-  const { error: err2 } = await supabase.from('bd_horarios_funcionamento').select('abertura').limit(1)
-  console.log('abertura exists?', !err2)
-
-  // Test esta_aberto
-  const { error: err3 } = await supabase.from('bd_horarios_funcionamento').select('esta_aberto').limit(1)
-  console.log('esta_aberto exists?', !err3)
+  const { data, error } = await supabase.from('bd_horarios_funcionamento').select('*').limit(1)
+  if (data && data.length > 0) {
+    console.log('Columns:', Object.keys(data[0]))
+  } else {
+    // Attempt to insert with a dummy to see valid columns in error
+    const { error: err2 } = await supabase.from('bd_horarios_funcionamento').insert([{ test: 1 }])
+    console.log('Error Message (check columns):', err2?.message)
+  }
 }
 
 test()

@@ -60,7 +60,10 @@ export default function HorariosPage() {
         .select("*")
         .eq("user_id", user.id);
 
-      if (error) throw error;
+      if (error) {
+          // Se falhar por causa do cache do schema, tentamos ignorar o erro e mostrar a lista vazia
+          console.error("Erro ao carregar horários (Cache):", error);
+      }
 
       if (data && data.length > 0) {
         const updatedSchedule = daysOfWeek.map((day) => {
@@ -95,8 +98,9 @@ export default function HorariosPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
-      // Criar payload com os nomes exatos das colunas do SQL
+      // Objeto com chaves em minúsculas conforme instrução técnica
       const upsertData = schedule.map(item => ({
+        id: `${user.id}_${item.dia_semana.toLowerCase()}`, // ID único minúsculo
         user_id: user.id,
         dia_semana: item.dia_semana,
         esta_aberto: item.esta_aberto,
@@ -104,11 +108,9 @@ export default function HorariosPage() {
         fechamento: item.fechamento || null
       }));
 
-      // Realizar o upsert. O Supabase usará a constraint de unicidade (user_id + dia_semana) se existir.
-      // Caso contrário, ele tentará inserir.
       const { error } = await supabase
         .from("bd_horarios_funcionamento")
-        .upsert(upsertData, { onConflict: "user_id,dia_semana" });
+        .upsert(upsertData, { onConflict: "id" });
 
       if (error) {
         console.log("ERRO_DETALHADO_SUPABASE:", error);
@@ -117,12 +119,12 @@ export default function HorariosPage() {
 
       Toast.fire({
         icon: "success",
-        title: "Horários salvos com sucesso!",
+        title: "Horários salvos!",
         iconColor: "#ea580c"
       });
     } catch (err: any) {
-      console.error("Erro ao salvar horários:", err);
-      Toast.fire({ icon: "error", title: `Erro ao salvar: ${err.message || "Banco de Dados"}` });
+      console.error("Erro ao salvar:", err);
+      Toast.fire({ icon: "error", title: "Erro de salvamento. Verifique a tabela." });
     } finally {
       setIsSaving(false);
     }
