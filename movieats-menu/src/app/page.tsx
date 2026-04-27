@@ -52,21 +52,22 @@ export default function IdentificacaoRootPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen p-4 md:p-8 items-center justify-center overflow-hidden">
-      <div className="w-full max-w-md flex flex-col justify-center py-4">
-        {/* Header/Logo - Tamanho reduzido para evitar scroll */}
+    <div className="flex flex-col min-h-screen p-6 md:p-12 items-center justify-center overflow-hidden">
+      <div className="w-full max-w-lg flex flex-col justify-center py-6">
+        {/* Header/Logo - Mais equilibrado */}
         <motion.div 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center mb-6 md:mb-8"
+          className="flex flex-col items-center mb-10 md:mb-12"
         >
-          <div className="p-3 bg-orange-600/20 backdrop-blur-md rounded-2xl border border-orange-600/30 mb-4">
-            <Flame className="w-8 h-8 text-orange-600 fill-orange-600" />
+          <div className="p-4 bg-orange-600/20 backdrop-blur-md rounded-3xl border border-orange-600/30 mb-6">
+            <Flame className="w-10 h-10 text-orange-600 fill-orange-600" />
           </div>
-          <h1 className="text-2xl md:text-3xl font-black italic uppercase tracking-tighter text-center text-white leading-none">
+          <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tighter text-center text-white leading-tight">
             {establishmentName}
           </h1>
-          <p className="text-white/50 text-[10px] font-bold uppercase tracking-[0.3em] mt-2 text-center">Identificação do Cliente</p>
+          <div className="h-[2px] w-12 bg-orange-600/50 mt-4 rounded-full" />
+          <p className="text-white/60 text-[11px] font-bold uppercase tracking-[0.4em] mt-4 text-center">Identificação do Cliente</p>
         </motion.div>
 
         {/* Form Container */}
@@ -74,16 +75,16 @@ export default function IdentificacaoRootPage() {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.1 }}
-          className="w-full"
+          className="w-full px-2"
         >
-          <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
-            <div className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
+            <div className="space-y-6">
               {/* Nome Input */}
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-black uppercase tracking-widest text-white/70 ml-1">Nome completo</label>
+              <div className="space-y-2.5">
+                <label className="text-[12px] font-black uppercase tracking-widest text-white/90 ml-1">Nome completo</label>
                 <div className="relative group">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-orange-600 transition-colors">
-                    <User size={18} />
+                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-orange-600 transition-colors">
+                    <User size={20} />
                   </div>
                   <input
                     type="text"
@@ -91,18 +92,18 @@ export default function IdentificacaoRootPage() {
                     placeholder="informe seu nome"
                     value={formData.nome}
                     onChange={handleInputChange}
-                    className="w-full bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl py-4 pl-12 pr-4 outline-none focus:border-orange-600/50 focus:bg-white/15 transition-all text-sm font-semibold placeholder:text-white/20 text-white"
+                    className="w-full h-16 bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl pl-14 pr-5 outline-none focus:border-orange-600/50 focus:bg-white/15 transition-all text-base font-semibold placeholder:text-white/20 text-white"
                     required
                   />
                 </div>
               </div>
 
               {/* Apelido Input */}
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-black uppercase tracking-widest text-white/70 ml-1">Como gostaria de ser chamado?</label>
+              <div className="space-y-2.5">
+                <label className="text-[12px] font-black uppercase tracking-widest text-white/90 ml-1">Como gostaria de ser chamado?</label>
                 <div className="relative group">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-orange-600 transition-colors">
-                    <Smile size={18} />
+                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-orange-600 transition-colors">
+                    <Smile size={20} />
                   </div>
                   <input
                     type="text"
@@ -110,48 +111,48 @@ export default function IdentificacaoRootPage() {
                     placeholder="informe seu apelido"
                     value={formData.apelido}
                     onChange={handleInputChange}
-                    className="w-full bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl py-4 pl-12 pr-4 outline-none focus:border-orange-600/50 focus:bg-white/15 transition-all text-sm font-semibold placeholder:text-white/20 text-white"
+                    className="w-full h-16 bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl pl-14 pr-5 outline-none focus:border-orange-600/50 focus:bg-white/15 transition-all text-base font-semibold placeholder:text-white/20 text-white"
                     required
                   />
                 </div>
               </div>
 
               {/* Data Nascimento Input */}
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-black uppercase tracking-widest text-white/70 ml-1">Data de nascimento</label>
+              <div className="space-y-2.5">
+                <label className="text-[12px] font-black uppercase tracking-widest text-white/90 ml-1">Data de nascimento</label>
                 <div className="relative group">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-orange-600 transition-colors">
-                    <Calendar size={18} />
+                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-orange-600 transition-colors">
+                    <Calendar size={20} />
                   </div>
                   <input
                     type="date"
                     name="dataNascimento"
                     value={formData.dataNascimento}
                     onChange={handleInputChange}
-                    className="w-full bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl py-4 pl-12 pr-4 outline-none focus:border-orange-600/50 focus:bg-white/15 transition-all text-sm font-semibold placeholder:text-white/20 text-white appearance-none"
+                    className="w-full h-16 bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl pl-14 pr-5 outline-none focus:border-orange-600/50 focus:bg-white/15 transition-all text-base font-semibold placeholder:text-white/20 text-white appearance-none"
                     required
                   />
                 </div>
               </div>
             </div>
 
-            <div className="pt-4">
+            <div className="pt-6">
               <motion.button
-                whileHover={{ scale: 1.01, backgroundColor: "#ea580c" }}
-                whileTap={{ scale: 0.99 }}
+                whileHover={{ scale: 1.02, backgroundColor: "#ea580c" }}
+                whileTap={{ scale: 0.98 }}
                 type="submit"
-                className="w-full bg-orange-600 text-white font-black uppercase italic tracking-widest py-4 rounded-xl shadow-[0_10px_40px_rgb(234,88,12,0.2)] flex items-center justify-center gap-2 transition-all text-base"
+                className="w-full h-16 md:h-20 bg-orange-600 text-white font-black uppercase italic tracking-widest rounded-2xl shadow-[0_10px_40px_rgb(234,88,12,0.3)] flex items-center justify-center gap-3 transition-all text-lg md:text-xl"
               >
                 VAMOS COMER?
-                <ArrowRight size={20} />
+                <ArrowRight size={24} />
               </motion.button>
             </div>
           </form>
         </motion.div>
 
-        {/* Footer - Compacto */}
-        <div className="mt-8 text-center">
-          <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.4em]">
+        {/* Footer - Branco Puro */}
+        <div className="mt-12 text-center">
+          <p className="text-[11px] font-black text-white uppercase tracking-[0.5em] opacity-80 hover:opacity-100 transition-opacity">
             © 2026 Movieats Technology
           </p>
         </div>
