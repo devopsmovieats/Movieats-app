@@ -102,6 +102,10 @@ export default function ProdutosPage() {
   const [previewUrl, setPreviewUrl] = useState("");
   const [originalImageUrl, setOriginalImageUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  
+  // Paginação
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6; // Limite fixo: 6 produtos por página conforme solicitado
   const [userRole, setUserRole] = useState<string>("ADMIN");
   const [establishmentId, setEstablishmentId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -184,6 +188,17 @@ export default function ProdutosPage() {
     const matchesCategory = categoryFilter === "todas" || catName === categoryFilter;
     return matchesSearch && matchesCategory;
   });
+
+  // Cálculo de Paginação
+  const totalItems = filteredProducts.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
+
+  // Resetar página ao filtrar
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, categoryFilter]);
 
   const openAddModal = () => {
     setEditingProduct({
@@ -640,18 +655,9 @@ export default function ProdutosPage() {
 
           <div className="flex-1" />
 
-          {/* Import/Export Actions */}
+          {/* Export Action */}
           {userRole !== "ATENDENTE" && (
             <div className="flex items-center gap-3">
-              <input type="file" ref={importFileRef} onChange={handleFileImport} accept=".csv, .xlsx" className="hidden" />
-              <button 
-                onClick={handleImportClick}
-                className="flex items-center gap-2 px-5 py-3 glass border-white/10 hover:border-white/30 hover:bg-white/5 rounded-lg text-[10px] font-bold text-white uppercase tracking-wider transition-all cursor-pointer active:scale-95 group"
-              >
-                <Upload className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
-                Importar
-              </button>
-
               <button 
                 onClick={handleExport}
                 className="flex items-center gap-2 px-5 py-3 glass border-white/10 hover:border-white/30 hover:bg-white/5 rounded-lg text-[10px] font-bold text-white uppercase tracking-wider transition-all cursor-pointer active:scale-95 group"
@@ -695,7 +701,7 @@ export default function ProdutosPage() {
                   </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {filteredProducts.length > 0 ? filteredProducts.map((product) => (
+                {paginatedProducts.length > 0 ? paginatedProducts.map((product) => (
                     <tr key={product.id} className={`hover:bg-white/[0.02] transition-colors group ${selectedIds.has(product.id) ? 'bg-primary/5' : ''}`}>
                     <td className="px-6 py-4 align-middle text-center">
                       <input 
@@ -781,12 +787,52 @@ export default function ProdutosPage() {
                 )) : (
                   <tr>
                     <td colSpan={9} className="px-6 py-20 text-center">
-                      <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest opacity-40">Nenhum produto encontrado.</p>
+                      <div className="flex flex-col items-center gap-3 opacity-20">
+                        <Box size={40} />
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em]">Nenhum produto encontrado</span>
+                      </div>
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
+          </div>
+          
+          {/* Paginação Fixa conforme regra do portal */}
+          <div className="bg-white/[0.02] border-t border-white/5 p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
+                disabled={currentPage === 1} 
+                className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer disabled:text-zinc-600 disabled:cursor-not-allowed hover:text-primary"
+              >
+                Anterior
+              </button>
+              
+              <div className="flex items-center gap-2">
+                {[...Array(totalPages)].map((_, i) => (
+                  <button 
+                    key={i} 
+                    onClick={() => setCurrentPage(i + 1)} 
+                    className={`w-8 h-8 flex items-center justify-center rounded-lg text-[11px] font-black transition-all cursor-pointer border ${currentPage === i + 1 ? "bg-primary border-primary text-white" : "bg-transparent border-white/10 text-white hover:border-white/30"}`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+              
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
+                disabled={currentPage === totalPages || totalPages === 0} 
+                className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer disabled:text-zinc-600 disabled:cursor-not-allowed hover:text-primary"
+              >
+                Próximo
+              </button>
+            </div>
+            
+            <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
+              Exibindo <span className="text-white">{startIndex + 1}</span>-<span className="text-white">{Math.min(startIndex + itemsPerPage, totalItems)}</span> de <span className="text-white">{totalItems}</span> produtos
+            </div>
           </div>
         </div>
         ) : (
