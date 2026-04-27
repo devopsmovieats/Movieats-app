@@ -5,6 +5,14 @@ import { supabase } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
 
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
+};
+
 const s3Client = new S3Client({
   region: 'auto',
   endpoint: process.env.R2_ENDPOINT!,
@@ -36,9 +44,11 @@ export async function POST(request: Request) {
         .single();
       
       if (config?.nome_loja) {
-        clientFolder = config.nome_loja;
-        // Correção solicitada: Villa Gourmet com dois L
-        if (clientFolder === 'Vila Gourmet') clientFolder = 'Villa Gourmet';
+        clientFolder = config.nome_loja.trim();
+        // Normalização garantida: Villa Gourmet (com dois L)
+        if (clientFolder.toLowerCase().includes('vila gourmet')) {
+          clientFolder = 'Villa Gourmet';
+        }
       }
     }
 
