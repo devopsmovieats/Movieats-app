@@ -500,12 +500,17 @@ export default function CategoriasPage() {
         });
 
         if (!uploadResponse.ok) {
-          const errorData = await uploadResponse.json();
-          throw new Error(errorData.error || 'Erro no upload para R2');
+          const contentType = uploadResponse.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            const errorData = await uploadResponse.json();
+            throw new Error(errorData.error || 'Erro no upload');
+          } else {
+            throw new Error("Erro: Limite de 4MB excedido para este servidor.");
+          }
         }
 
-        const { url: publicUrl } = await uploadResponse.json();
-        finalImageUrl = publicUrl;
+        const data = await uploadResponse.json();
+        finalImageUrl = data.url;
       }
 
       // Log específico solicitado para audição de URL
@@ -568,12 +573,12 @@ export default function CategoriasPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Limite estrito de 10MB
-    const MAX_SIZE = 10485760; 
+    // Limite estrito de 4MB para evitar erro 413 da Vercel
+    const MAX_SIZE = 4194304; 
     if (file.size > MAX_SIZE) {
       Toast.fire({
         icon: "warning",
-        title: "Erro: Limite máximo de 10MB permitido."
+        title: "Erro: Limite de 4MB excedido para este servidor."
       });
       if (fileInputRef.current) fileInputRef.current.value = "";
       return;
