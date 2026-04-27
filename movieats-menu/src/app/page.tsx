@@ -16,7 +16,7 @@ export default function RootPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
         <Link 
-          href="/pwa"
+          href="/pwa/identificacao"
           className="group p-8 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 hover:border-white/20 transition-all flex flex-col items-center text-center space-y-4"
         >
           <ShoppingBag className="w-8 h-8 text-white/60 group-hover:text-white transition-colors" />

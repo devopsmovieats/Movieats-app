@@ -1,5 +1,6 @@
 "use client";
 
+import { UserProvider } from "@/context/UserContext";
 import "./globals.css";
 
 export default function PWALayout({
@@ -8,8 +9,10 @@ export default function PWALayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-primary/20">
-      {children}
-    </div>
+    <UserProvider>
+      <div className="min-h-screen bg-black text-white selection:bg-primary/20">
+        {children}
+      </div>
+    </UserProvider>
   );
 }
