@@ -96,8 +96,8 @@ export async function POST(request: Request) {
       }, { status: 500 });
     }
 
-    // URL pública construída com a variável de ambiente necessária
-    const publicUrl = `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL!}/${filePath}`;
+    // URL pública construída com o novo domínio solicitado
+    const publicUrl = `https://cdn.movieats.com.br/${filePath}`;
 
     return NextResponse.json({ url: publicUrl });
   } catch (error: any) {
