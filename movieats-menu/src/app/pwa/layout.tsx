@@ -10,7 +10,7 @@ export default function PWALayout({
 }>) {
   return (
     <UserProvider>
-      <div className="min-h-screen bg-black text-white selection:bg-primary/20">
+      <div className="min-h-screen bg-transparent text-white selection:bg-primary/20">
         {children}
       </div>
     </UserProvider>

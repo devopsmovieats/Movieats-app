@@ -351,7 +351,7 @@ export default function CardapioDigitalPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#000000] text-white selection:bg-primary/20 pb-24 md:pb-8 font-sans">
+    <div className="min-h-screen bg-transparent text-white selection:bg-primary/20 pb-24 md:pb-8 font-sans">
       
       {/* 🚩 Banner de Status */}
       {!lojaAtiva && !isTracking && (
@@ -461,7 +461,7 @@ export default function CardapioDigitalPage() {
                <div 
                  key={product.id} 
                  onClick={() => handleOpenProduct(product)}
-                 className={`group relative bg-[#0a0a0a] border border-white/5 rounded-2xl overflow-hidden hover:border-primary/20 transition-all duration-500 cursor-pointer shadow-premium active:scale-[0.98] ${!lojaAtiva ? 'opacity-50 grayscale' : ''}`}
+                 className={`group relative bg-white/5 backdrop-blur-sm border border-white/5 rounded-2xl overflow-hidden hover:border-primary/20 transition-all duration-500 cursor-pointer shadow-premium active:scale-[0.98] ${!lojaAtiva ? 'opacity-50 grayscale' : ''}`}
                >
                   <div className="relative aspect-video overflow-hidden">
                      <img src={product.image || "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=600&h=400&auto=format&fit=crop"} className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700 brightness-90 group-hover:brightness-100" alt="" />
@@ -486,7 +486,7 @@ export default function CardapioDigitalPage() {
       </main>
 
       {/* 🏁 Rodapé Informativo */}
-      <footer className="mt-12 bg-[#0a0a0a] border-t border-white/5 py-16 px-6">
+      <footer className="mt-12 bg-black/40 backdrop-blur-md border-t border-white/5 py-16 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
            <div className="space-y-6">
               <div className="flex flex-col items-center md:items-start gap-4">
