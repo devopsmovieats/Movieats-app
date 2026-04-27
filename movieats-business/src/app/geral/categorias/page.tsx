@@ -825,7 +825,7 @@ export default function CategoriasPage() {
                       <button 
                         key={i} 
                         onClick={() => setCurrentPage(i + 1)} 
-                        className={`w-8 h-8 flex items-center justify-center text-[11px] font-black transition-all cursor-pointer ${currentPage === i + 1 ? "text-white font-black bg-white/10 rounded-lg" : "text-white/40 hover:text-white"}`}
+                        className={`w-8 h-8 flex items-center justify-center text-[11px] font-black transition-all cursor-pointer ${currentPage === i + 1 ? "text-primary font-black" : "text-white/40 hover:text-white"}`}
                       >
                         {i + 1}
                       </button>
