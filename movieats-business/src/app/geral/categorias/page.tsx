@@ -108,7 +108,7 @@ export default function CategoriasPage() {
   
   // Paginação
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Limite fixo conforme regra de negócio
+  const itemsPerPage = 6; // Limite fixo: 6 categorias por página conforme solicitado
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const importFileRef = useRef<HTMLInputElement>(null);
@@ -693,24 +693,6 @@ export default function CategoriasPage() {
 
           {/* Import/Export Actions */}
           {userRole !== "ATENDENTE" && (
-            <div className="flex items-center gap-3">
-              {/* Hidden Import Input */}
-              <input 
-                type="file" 
-                ref={importFileRef}
-                onChange={handleFileImport}
-                accept=".csv, .xlsx"
-                className="hidden"
-              />
-              
-              <button 
-                onClick={handleImportClick}
-                className="flex items-center gap-2 px-5 py-3 glass border-white/10 hover:border-primary/30 hover:bg-white/5 rounded-lg text-[10px] font-black text-white hover:text-primary uppercase tracking-[0.15em] transition-all cursor-pointer active:scale-95 group"
-              >
-                <Upload className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
-                Importar
-              </button>
-
               <button 
                 onClick={handleExport}
                 className="flex items-center gap-2 px-5 py-3 glass border-white/10 hover:border-primary/30 hover:bg-primary/5 rounded-lg text-[10px] font-black text-white hover:text-primary uppercase tracking-[0.15em] transition-all cursor-pointer active:scale-95 group"
@@ -718,7 +700,6 @@ export default function CategoriasPage() {
                 <Download className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
                 {selectedIds.size > 0 ? `Exportar (${selectedIds.size})` : "Exportar"}
               </button>
-            </div>
           )}
 
           <div className="h-8 w-[1px] bg-white/10 mx-2 hidden md:block" />
