@@ -600,9 +600,9 @@ export default function CategoriasPage() {
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <div className="flex items-center gap-5 mb-2">
-              <Tag className="text-white w-6 h-6 opacity-80" />
-              <h2 className="text-3xl font-headline font-black text-white tracking-tight leading-none">
+            <div className="flex items-center gap-6 mb-2">
+              <Tag className="text-white w-6 h-6" />
+              <h2 className="text-3xl font-headline font-black text-white tracking-tight leading-none ml-2">
                 Categorias
               </h2>
             </div>
@@ -753,12 +753,12 @@ export default function CategoriasPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-sm font-black text-white group-hover:text-primary transition-colors tracking-tight uppercase">
+                        <span className="text-[13px] font-black text-white group-hover:text-primary transition-colors tracking-tight uppercase">
                           {category.name}
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-lg text-muted-foreground font-medium line-clamp-1 max-w-[500px]">
+                        <span className="text-[13px] text-muted-foreground font-medium line-clamp-1 max-w-[500px]">
                           {category.descricao || "Sem descrição disponível"}
                         </span>
                       </td>
@@ -799,7 +799,7 @@ export default function CategoriasPage() {
                   <button 
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
                     disabled={currentPage === 1} 
-                    className="text-[11px] font-black uppercase tracking-[0.2em] transition-colors cursor-pointer text-[#FFFFFF] disabled:opacity-20 disabled:cursor-not-allowed hover:text-primary"
+                    className="text-[11px] font-black uppercase tracking-[0.2em] transition-colors cursor-pointer !text-white disabled:opacity-20 disabled:cursor-not-allowed hover:text-primary"
                   >
                     Anterior
                   </button>
@@ -808,7 +808,7 @@ export default function CategoriasPage() {
                       <button 
                         key={i} 
                         onClick={() => setCurrentPage(i + 1)} 
-                        className={`w-8 h-8 flex items-center justify-center text-[12px] font-black transition-all cursor-pointer ${currentPage === i + 1 ? "text-primary" : "text-[#FFFFFF] opacity-40 hover:opacity-100"}`}
+                        className={`w-8 h-8 flex items-center justify-center text-[12px] font-black transition-all cursor-pointer ${currentPage === i + 1 ? "text-primary" : "!text-white opacity-40 hover:opacity-100"}`}
                       >
                         {i + 1}
                       </button>
@@ -817,7 +817,7 @@ export default function CategoriasPage() {
                   <button 
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
                     disabled={currentPage === totalPages || totalPages === 0} 
-                    className="text-[11px] font-black uppercase tracking-[0.2em] transition-colors cursor-pointer text-[#FFFFFF] disabled:opacity-20 disabled:cursor-not-allowed hover:text-primary"
+                    className="text-[11px] font-black uppercase tracking-[0.2em] transition-colors cursor-pointer !text-white disabled:opacity-20 disabled:cursor-not-allowed hover:text-primary"
                   >
                     Próximo
                   </button>
