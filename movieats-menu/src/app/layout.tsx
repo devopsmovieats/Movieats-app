@@ -30,11 +30,11 @@ export default function RootLayout({
           {/* Global Background Image for the entire flow */}
           <div className="fixed inset-0 z-0">
             <img 
-              src="/images/bg-identificacao.png" 
+              src="/images/bg-gastronomia-neutra.png" 
               alt="Food Background" 
-              className="w-full h-full object-cover grayscale-[20%] brightness-[40%]"
+              className="w-full h-full object-cover grayscale-[10%] brightness-[50%]"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/90" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/70" />
           </div>
 
           {/* Content wrapper */}
