@@ -1,10 +1,4 @@
-// DEPLOY PRODUÇÃO R2 - ESTRUTURA FINALIZADA (FORCE PUSH)
-import { NextResponse } from 'next/server';
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
-import { supabase } from '@/lib/supabase';
-
-export const dynamic = 'force-dynamic';
-
+// CONFIGURAÇÃO DE LIMITE DE UPLOAD (SOLICITADO)
 export const config = {
   api: {
     bodyParser: {
@@ -12,6 +6,12 @@ export const config = {
     },
   },
 };
+
+import { NextResponse } from 'next/server';
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { supabase } from '@/lib/supabase';
+
+export const dynamic = 'force-dynamic';
 
 const s3Client = new S3Client({
   region: 'auto',
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     const file = formData.get('file') as File;
 
     if (!file) {
-      return NextResponse.json({ error: 'Arquivo não encontrado' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Arquivo não encontrado' }, { status: 400 });
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
@@ -37,14 +37,14 @@ export async function POST(request: Request) {
     let clientFolder = 'Geral';
 
     if (establishmentId && establishmentId !== 'unknown') {
-      const { data: config } = await supabase
+      const { data: configEst } = await supabase
         .from('bd_config_estabelecimento')
         .select('nome_loja')
         .eq('id', establishmentId)
         .single();
       
-      if (config?.nome_loja) {
-        clientFolder = config.nome_loja.trim();
+      if (configEst?.nome_loja) {
+        clientFolder = configEst.nome_loja.trim();
         // Normalização garantida: Villa Gourmet (com dois L)
         if (clientFolder.toLowerCase().includes('vila gourmet')) {
           clientFolder = 'Villa Gourmet';
@@ -69,10 +69,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, url: publicUrl }, { status: 200 });
 
   } catch (error: any) {
-    console.error('Erro no POST upload:', error);
+    console.error('Erro crítico no upload:', error);
     return NextResponse.json({ 
-      success: false,
-      error: error.message || 'Erro interno no upload'
+      success: false, 
+      error: error.message || 'Erro interno no servidor' 
     }, { status: 500 });
   }
 }
@@ -83,7 +83,7 @@ export async function DELETE(request: Request) {
     const { url } = body;
     
     if (!url) {
-      return NextResponse.json({ error: 'URL necessária' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'URL necessária' }, { status: 400 });
     }
 
     const filePath = url.replace('https://cdn.movieats.com.br/', '')
@@ -98,8 +98,8 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error: any) {
-    console.error('Erro no DELETE upload:', error);
-    return NextResponse.json({ success: true, warning: 'Ignorado' }, { status: 200 });
+    console.error('Erro no DELETE:', error);
+    return NextResponse.json({ success: true, warning: 'Operação ignorada' }, { status: 200 });
   }
 }
 

@@ -520,6 +520,18 @@ export default function ProdutosPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Limite estrito de 4MB para evitar erro 413 do Vercel/Next.js
+    const MAX_SIZE = 4194304; 
+    if (file.size > MAX_SIZE) {
+      Toast.fire({
+        icon: "warning",
+        title: "Arquivo muito grande",
+        text: "O limite máximo permitido é de 4MB para garantir a performance."
+      });
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
     // Gerar Preview Local IMEDIATO
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl);
