@@ -54,7 +54,8 @@ export default function IdentificacaoRootPage() {
       return;
     }
     setUserData(formData);
-    router.push("/selecao");
+    // Direciona direto para o cardápio digital
+    router.push("/pwa");
   };
 
   return (
