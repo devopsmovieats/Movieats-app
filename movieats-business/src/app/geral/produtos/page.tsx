@@ -9,17 +9,13 @@ import {
   Trash2, 
   Image as ImageIcon, 
   X, 
-  ChevronRight,
-  Search,
-  Box,
-  CheckCircle2,
-  XCircle,
-  Download,
-  ChevronDown,
-  Upload,
-  Loader2,
-  Tag,
-  FolderOpen,
+  Search, 
+  Box, 
+  CheckCircle2, 
+  Download, 
+  ChevronDown, 
+  Loader2, 
+  FolderOpen, 
   Camera
 } from "lucide-react";
 import Swal from "sweetalert2";
@@ -423,88 +419,7 @@ export default function ProdutosPage() {
     });
   };
 
-  const handleImportClick = () => {
-    importFileRef.current?.click();
-  };
 
-  const handleFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const fileName = file.name.toLowerCase();
-    if (!fileName.endsWith('.csv') && !fileName.endsWith('.xlsx')) {
-      Toast.fire({
-        icon: "error",
-        title: "Arquivo Inválido. Selecione .csv ou .xlsx"
-      });
-      return;
-    }
-
-    // Inicia simulação de importação "Elite"
-    setIsImporting(true);
-    setImportProgress(0);
-    setImportStatus("Iniciando...");
-
-    const phrases = [
-      "Processando dados...",
-      "Validando estoque...",
-      "Sincronizando produtos...",
-      "Otimizando cardápio...",
-      "Finalizando..."
-    ];
-
-    let currentPhraseIndex = 0;
-    const intervalTime = 3000; 
-    const steps = 100;
-    const stepTime = intervalTime / steps;
-
-    const progressInterval = setInterval(() => {
-      setImportProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          return 100;
-        }
-        return prev + 1;
-      });
-    }, stepTime);
-
-    const phraseInterval = setInterval(() => {
-      if (currentPhraseIndex < phrases.length - 1) {
-        currentPhraseIndex++;
-        setImportStatus(phrases[currentPhraseIndex]);
-      } else {
-        clearInterval(phraseInterval);
-      }
-    }, 600);
-    
-    setTimeout(() => {
-      // Simulação de novos produtos
-      const newItems: Product[] = [
-        { id: Date.now() + 1, name: "Pizza Calabresa", categoria_id: "", preco: 45.90, order_index: products.length + 1, descricao: "Molho de tomate, mussarela e calabresa.", image_url: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=150&h=150&auto=format&fit=crop", active: true, removable_ingredients: [] },
-        { id: Date.now() + 2, name: "Suco de Laranja", categoria_id: "", preco: 12.00, order_index: products.length + 2, descricao: "Suco natural 500ml.", image_url: "https://images.unsplash.com/photo-1621506821199-a996ee0fef8d?q=80&w=150&h=150&auto=format&fit=crop", active: true, removable_ingredients: [] },
-      ];
-
-      setProducts(prev => {
-        const newState = [...prev, ...newItems];
-        localStorage.setItem('movieats_products', JSON.stringify(newState));
-        return newState;
-      });
-
-      setIsImporting(false);
-      if (importFileRef.current) importFileRef.current.value = "";
-
-      Swal.fire({
-        title: "Importação Finalizada",
-        text: `${newItems.length} produtos importados com sucesso!`,
-        icon: "success",
-        background: "#1a1a1a",
-        color: "#fff",
-        confirmButtonColor: "#ff6b00",
-        timer: 3000,
-        customClass: { popup: "rounded-[8px]" }
-      });
-    }, intervalTime + 200);
-  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -815,8 +730,8 @@ export default function ProdutosPage() {
             onClick={() => setIsModalOpen(false)}
           />
           
-          {/* Modal Container - Tamanho Padronizado com Categorias */}
-          <div className="relative w-full max-w-2xl bg-[#111827]/95 backdrop-blur-[15px] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden">
+          {/* Modal Container - Tamanho Padronizado (450px) */}
+          <div className="relative w-full max-w-md bg-[#111827]/95 backdrop-blur-[15px] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden">
             
             {/* Modal Header Premium */}
             <div className="px-8 py-6 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01]">
@@ -834,8 +749,8 @@ export default function ProdutosPage() {
               </button>
             </div>
 
-            <form onSubmit={handleSaveProduct} className="p-8">
-              <div className="flex flex-col md:flex-row gap-8">
+            <form onSubmit={handleSaveProduct} className="p-8 space-y-6">
+              <div className="flex flex-col gap-6">
                 
                 {/* Coluna da Imagem (200x200) */}
                 <div className="flex flex-col items-center space-y-4">
