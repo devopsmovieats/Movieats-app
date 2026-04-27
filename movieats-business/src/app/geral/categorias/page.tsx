@@ -895,100 +895,67 @@ export default function CategoriasPage() {
             {/* Modal Body - Layout Lateral Equilibrado */}
             <form onSubmit={handleSaveCategory} className="p-8 pt-6 space-y-6">
               
-              <div className="flex flex-col md:flex-row gap-8">
-                {/* Coluna da Imagem (200x200) */}
-                <div className="shrink-0 space-y-3">
-                  <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Imagem de Destaque</label>
-                  <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
-                  <div 
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-[200px] h-[200px] bg-white/[0.05] hover:bg-white/[0.08] border border-white/5 hover:border-primary/40 rounded-2xl flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden shadow-2xl"
-                  >
-                    {(previewUrl || editingCategory?.image_url) ? (
-                      <div className="relative w-full h-full">
-                        <img 
-                          src={previewUrl || editingCategory?.image_url} 
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                          alt="Preview" 
-                        />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                          <Camera className="w-8 h-8 text-white" />
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center gap-3">
-                        <div className="p-4 bg-white/5 rounded-full group-hover:scale-110 transition-transform">
-                          <ImageIcon className="w-6 h-6 text-white/20 group-hover:text-primary transition-colors" />
-                        </div>
-                        <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Upload Imagem</span>
-                      </div>
-                    )}
-                  </div>
+              <div className="space-y-6">
+                {/* Nome da Categoria */}
+                <div className="space-y-2">
+                  <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Nome da Categoria</label>
+                  <input 
+                    type="text" 
+                    value={editingCategory?.name || ""}
+                    onChange={(e) => setEditingCategory(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, descricao: "", order: categories.length + 1, status: "ativo", image_url: "" })}
+                    placeholder="Ex: Hambúrgueres"
+                    className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 transition-all font-medium"
+                    required
+                  />
                 </div>
 
-                {/* Coluna de Dados */}
-                <div className="flex-1 space-y-5">
-                  {/* Nome da Categoria */}
+                {/* Descrição */}
+                <div className="space-y-2">
+                  <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Descrição Detalhada</label>
+                  <textarea 
+                    value={editingCategory?.descricao || ""}
+                    onChange={(e) => setEditingCategory(prev => prev ? { ...prev, descricao: e.target.value } : { id: 0, name: "", descricao: e.target.value, order: categories.length + 1, status: "ativo", image_url: "" })}
+                    placeholder="Descreva o que há nesta categoria..."
+                    className="w-full h-28 bg-white/[0.05] border border-white/5 rounded-xl py-4 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 transition-all font-medium resize-none leading-relaxed"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Ordem */}
                   <div className="space-y-2">
-                    <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Nome da Categoria</label>
+                    <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Ordem de Exibição</label>
                     <input 
-                      type="text" 
-                      value={editingCategory?.name || ""}
-                      onChange={(e) => setEditingCategory(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, descricao: "", order: categories.length + 1, status: "ativo", image_url: "" })}
-                      placeholder="Ex: Hambúrgueres"
-                      className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 transition-all font-medium"
+                      type="number" 
+                      min="0"
+                      value={editingCategory?.order || ""}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value);
+                        setEditingCategory(prev => prev ? { ...prev, order: isNaN(val) ? 0 : val } : { id: 0, name: "", descricao: "", order: isNaN(val) ? 0 : val, status: "ativo", image_url: "" });
+                      }}
+                      className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-primary/50 transition-all font-medium"
                       required
                     />
                   </div>
 
-                  {/* Descrição */}
+                  {/* Visibilidade */}
                   <div className="space-y-2">
-                    <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Descrição Detalhada</label>
-                    <textarea 
-                      value={editingCategory?.descricao || ""}
-                      onChange={(e) => setEditingCategory(prev => prev ? { ...prev, descricao: e.target.value } : { id: 0, name: "", descricao: e.target.value, order: categories.length + 1, status: "ativo", image_url: "" })}
-                      placeholder="Descreva o que há nesta categoria..."
-                      className="w-full h-24 bg-white/[0.05] border border-white/5 rounded-xl py-3 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 transition-all font-medium resize-none leading-relaxed"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-5">
-                    {/* Ordem */}
-                    <div className="space-y-2">
-                      <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Ordem</label>
-                      <input 
-                        type="number" 
-                        min="0"
-                        value={editingCategory?.order || ""}
-                        onChange={(e) => {
-                          const val = parseInt(e.target.value);
-                          setEditingCategory(prev => prev ? { ...prev, order: isNaN(val) ? 0 : val } : { id: 0, name: "", descricao: "", order: isNaN(val) ? 0 : val, status: "ativo", image_url: "" });
+                    <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Status de Visibilidade</label>
+                    <div className="flex items-center gap-4 h-12 px-5 bg-white/[0.03] border border-white/5 rounded-xl">
+                      <div 
+                        className="relative w-11 h-6 cursor-pointer"
+                        onClick={() => {
+                          setEditingCategory(prev => {
+                            if (!prev) return null;
+                            return { ...prev, status: prev.status === 'ativo' ? 'inativo' : 'ativo' };
+                          });
                         }}
-                        className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-primary/50 transition-all font-medium text-center"
-                        required
-                      />
-                    </div>
-
-                    {/* Visibilidade */}
-                    <div className="space-y-2">
-                      <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Visibilidade</label>
-                      <div className="flex items-center gap-3 h-12 px-4 bg-white/[0.03] border border-white/5 rounded-xl">
-                        <div 
-                          className="relative w-10 h-5.5 cursor-pointer"
-                          onClick={() => {
-                            setEditingCategory(prev => {
-                              if (!prev) return null;
-                              return { ...prev, status: prev.status === 'ativo' ? 'inativo' : 'ativo' };
-                            });
-                          }}
-                        >
-                          <div className={`w-10 h-5.5 rounded-full transition-all duration-300 border border-white/5 ${editingCategory?.status === 'ativo' ? 'bg-[#22c55e]' : 'bg-white/10'}`} />
-                          <div className={`absolute top-0.5 left-0.5 w-4.5 h-4.5 bg-white rounded-full transition-all duration-300 shadow-lg ${editingCategory?.status === 'ativo' ? 'translate-x-4.5' : 'translate-x-0'}`} />
-                        </div>
-                        <span className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${editingCategory?.status === 'ativo' ? 'text-[#22c55e]' : 'text-white/20'}`}>
-                          {editingCategory?.status === 'ativo' ? 'Ativo' : 'Inativo'}
-                        </span>
+                      >
+                        <div className={`w-11 h-6 rounded-full transition-all duration-300 border border-white/5 ${editingCategory?.status === 'ativo' ? 'bg-[#22c55e]' : 'bg-white/10'}`} />
+                        <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-all duration-300 shadow-lg ${editingCategory?.status === 'ativo' ? 'translate-x-5' : 'translate-x-0'}`} />
                       </div>
+                      <span className={`text-[11px] font-black uppercase tracking-widest transition-all duration-300 ${editingCategory?.status === 'ativo' ? 'text-[#22c55e]' : 'text-white/20'}`}>
+                        {editingCategory?.status === 'ativo' ? 'Categoria Ativa' : 'Categoria Oculta'}
+                      </span>
                     </div>
                   </div>
                 </div>
