@@ -422,8 +422,8 @@ export default function ProdutosPage() {
     
     if (productsToExport.length === 0) {
       Toast.fire({
-        icon: "info",
-        title: "Selecione produtos para exportar"
+        icon: "warning",
+        title: "Selecione produto para exportar"
       });
       return;
     }
@@ -804,7 +804,7 @@ export default function ProdutosPage() {
               <button 
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
                 disabled={currentPage === 1} 
-                className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer disabled:text-zinc-600 disabled:cursor-not-allowed hover:text-primary"
+                className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer text-white disabled:text-white/20 disabled:cursor-not-allowed hover:text-primary"
               >
                 Anterior
               </button>
@@ -814,7 +814,7 @@ export default function ProdutosPage() {
                   <button 
                     key={i} 
                     onClick={() => setCurrentPage(i + 1)} 
-                    className={`w-8 h-8 flex items-center justify-center rounded-lg text-[11px] font-black transition-all cursor-pointer border ${currentPage === i + 1 ? "bg-primary border-primary text-white" : "bg-transparent border-white/10 text-white hover:border-white/30"}`}
+                    className={`w-8 h-8 flex items-center justify-center text-[11px] font-black transition-all cursor-pointer ${currentPage === i + 1 ? "text-primary font-black" : "text-white/40 hover:text-white"}`}
                   >
                     {i + 1}
                   </button>
@@ -824,7 +824,7 @@ export default function ProdutosPage() {
               <button 
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
                 disabled={currentPage === totalPages || totalPages === 0} 
-                className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer disabled:text-zinc-600 disabled:cursor-not-allowed hover:text-primary"
+                className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer text-white disabled:text-white/20 disabled:cursor-not-allowed hover:text-primary"
               >
                 Próximo
               </button>

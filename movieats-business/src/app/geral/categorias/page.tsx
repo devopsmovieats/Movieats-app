@@ -309,10 +309,8 @@ export default function CategoriasPage() {
     const selectedRows = Array.from(selectedIds);
     if (selectedRows.length === 0) {
       Toast.fire({
-        icon: "error",
-        title: "Bloqueado",
-        text: "Para exportar o relatório, selecione as categorias desejadas primeiro.",
-        timer: 4000
+        icon: "warning",
+        title: "Selecione categoria para exportar"
       });
       return;
     }
@@ -815,17 +813,29 @@ export default function CategoriasPage() {
             {categories.length > itemsPerPage && (
               <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-5 px-6 border-t border-white/5 bg-white/[0.01]">
                 <div className="flex items-center gap-4">
-                  <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1} className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer disabled:text-zinc-600 disabled:cursor-not-allowed hover:text-primary">
+                  <button 
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
+                    disabled={currentPage === 1} 
+                    className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer text-white disabled:text-white/20 disabled:cursor-not-allowed hover:text-primary"
+                  >
                     Anterior
                   </button>
                   <div className="flex items-center gap-2">
                     {[...Array(totalPages)].map((_, i) => (
-                      <button key={i} onClick={() => setCurrentPage(i + 1)} className={`w-8 h-8 flex items-center justify-center rounded-lg text-[11px] font-black transition-all cursor-pointer border ${currentPage === i + 1 ? "bg-primary border-primary text-white" : "bg-transparent border-white/10 text-white hover:border-white/30"}`}>
+                      <button 
+                        key={i} 
+                        onClick={() => setCurrentPage(i + 1)} 
+                        className={`w-8 h-8 flex items-center justify-center text-[11px] font-black transition-all cursor-pointer ${currentPage === i + 1 ? "text-white font-black bg-white/10 rounded-lg" : "text-white/40 hover:text-white"}`}
+                      >
                         {i + 1}
                       </button>
                     ))}
                   </div>
-                  <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages || totalPages === 0} className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer disabled:text-zinc-600 disabled:cursor-not-allowed hover:text-primary">
+                  <button 
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
+                    disabled={currentPage === totalPages || totalPages === 0} 
+                    className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer text-white disabled:text-white/20 disabled:cursor-not-allowed hover:text-primary"
+                  >
                     Próximo
                   </button>
                 </div>
