@@ -48,10 +48,9 @@ export async function POST(request: Request) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
     
-    // R2 Path: {establishment_id}/categorias/{filename}
-    const establishment_id = formData.get('establishment_id') || formData.get('establishmentId') || 'unknown';
+    // R2 Path: clientes/Villa Gourmet/categorias/{filename}
     const filename = file.name;
-    const filePath = `${establishment_id}/categorias/${filename}`;
+    const filePath = `clientes/Villa Gourmet/categorias/${filename}`;
 
     console.log('Caminho Final no R2:', filePath);
 
