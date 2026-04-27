@@ -730,11 +730,11 @@ export default function ProdutosPage() {
             onClick={() => setIsModalOpen(false)}
           />
           
-          {/* Modal Container - Equilibrado e Profissional (Igual Categorias) */}
-          <div className="relative w-full max-w-2xl bg-[#111827]/95 backdrop-blur-[15px] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden">
+          {/* Modal Container - Equilibrado e Profissional */}
+          <div className="relative w-full max-w-2xl max-h-[90vh] bg-[#111827]/95 backdrop-blur-[15px] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden flex flex-col">
             
-            {/* Modal Header Premium */}
-            <div className="px-8 py-5 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01]">
+            {/* Modal Header Fixo */}
+            <div className="px-8 py-5 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01] shrink-0">
               <div className="flex flex-col">
                 <h3 className="text-base font-headline font-bold text-white uppercase tracking-tight leading-none mb-1">
                   {editingProduct?.id ? `Editar Produto` : "Novo Produto"}
@@ -749,134 +749,136 @@ export default function ProdutosPage() {
               </button>
             </div>
 
-            {/* Modal Body - Layout Lateral Equilibrado */}
-            <form onSubmit={handleSaveProduct} className="p-8 pt-6 space-y-6">
-              
-              <div className="flex flex-col md:flex-row gap-8">
-                {/* Coluna da Imagem (200x200) */}
-                <div className="shrink-0 space-y-3">
-                  <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Imagem de Destaque</label>
-                  <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
-                  <div 
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-[200px] h-[200px] bg-white/[0.05] hover:bg-white/[0.08] border border-white/5 hover:border-orange-500/40 rounded-2xl flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden shadow-2xl"
-                  >
-                    {(previewUrl || editingProduct?.image_url) ? (
-                      <div className="relative w-full h-full">
-                        <img 
-                          src={previewUrl || editingProduct?.image_url} 
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                          alt="Preview" 
+            <form onSubmit={handleSaveProduct} className="flex flex-col flex-1 overflow-hidden">
+              {/* Modal Body - Área com Scroll Interno */}
+              <div className="p-8 pt-6 overflow-y-auto flex-1 custom-scrollbar">
+                <div className="flex flex-col md:flex-row gap-8">
+                  {/* Coluna da Imagem (200x200) */}
+                  <div className="shrink-0 space-y-3">
+                    <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Imagem de Destaque</label>
+                    <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
+                    <div 
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-[200px] h-[200px] bg-white/[0.05] hover:bg-white/[0.08] border border-white/5 hover:border-orange-500/40 rounded-2xl flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden shadow-2xl"
+                    >
+                      {(previewUrl || editingProduct?.image_url) ? (
+                        <div className="relative w-full h-full">
+                          <img 
+                            src={previewUrl || editingProduct?.image_url} 
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                            alt="Preview" 
+                          />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                            <Camera className="w-8 h-8 text-white" />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center gap-3">
+                          <div className="p-4 bg-white/5 rounded-full group-hover:scale-110 transition-transform">
+                            <ImageIcon className="w-6 h-6 text-white/20 group-hover:text-orange-500 transition-colors" />
+                          </div>
+                          <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Upload Imagem</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Visibilidade no estilo Categorias */}
+                    <div className="space-y-2 pt-2">
+                      <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Visibilidade</label>
+                      <div className="flex items-center gap-3 h-12 px-4 bg-white/[0.03] border border-white/5 rounded-xl">
+                        <div 
+                          className="relative w-10 h-5.5 cursor-pointer"
+                          onClick={() => setEditingProduct(prev => prev ? { ...prev, active: !prev.active } : null)}
+                        >
+                          <div className={`w-10 h-5.5 rounded-full transition-all duration-300 border border-white/5 ${editingProduct?.active ? 'bg-[#22c55e]' : 'bg-white/10'}`} />
+                          <div className={`absolute top-0.5 left-0.5 w-4.5 h-4.5 bg-white rounded-full transition-all duration-300 shadow-lg ${editingProduct?.active ? 'translate-x-4.5' : 'translate-x-0'}`} />
+                        </div>
+                        <span className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${editingProduct?.active ? 'text-[#22c55e]' : 'text-white/20'}`}>
+                          {editingProduct?.active ? 'Ativo' : 'Inativo'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Coluna de Dados */}
+                  <div className="flex-1 space-y-5">
+                    {/* Nome do Produto */}
+                    <div className="space-y-2">
+                      <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Nome do Produto</label>
+                      <input 
+                        type="text" 
+                        value={editingProduct?.name || ""} 
+                        onChange={(e) => setEditingProduct(prev => prev ? { ...prev, name: e.target.value } : null)} 
+                        placeholder="Ex: Smash Burger" 
+                        className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 transition-all font-medium" 
+                        required 
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-5">
+                      {/* Preço */}
+                      <div className="space-y-2">
+                        <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Preço (R$)</label>
+                        <input 
+                          type="number" 
+                          step="0.01" 
+                          value={editingProduct?.preco || ""} 
+                          onChange={(e) => setEditingProduct(prev => prev ? { ...prev, preco: parseFloat(e.target.value) || 0 } : null)} 
+                          className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-orange-500 font-black focus:outline-none focus:border-orange-500/50 transition-all" 
+                          required 
                         />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                          <Camera className="w-8 h-8 text-white" />
-                        </div>
                       </div>
-                    ) : (
-                      <div className="flex flex-col items-center gap-3">
-                        <div className="p-4 bg-white/5 rounded-full group-hover:scale-110 transition-transform">
-                          <ImageIcon className="w-6 h-6 text-white/20 group-hover:text-orange-500 transition-colors" />
-                        </div>
-                        <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Upload Imagem</span>
-                      </div>
-                    )}
-                  </div>
 
-                  {/* Visibilidade no estilo Categorias */}
-                  <div className="space-y-2 pt-2">
-                    <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Visibilidade</label>
-                    <div className="flex items-center gap-3 h-12 px-4 bg-white/[0.03] border border-white/5 rounded-xl">
-                      <div 
-                        className="relative w-10 h-5.5 cursor-pointer"
-                        onClick={() => setEditingProduct(prev => prev ? { ...prev, active: !prev.active } : null)}
-                      >
-                        <div className={`w-10 h-5.5 rounded-full transition-all duration-300 border border-white/5 ${editingProduct?.active ? 'bg-[#22c55e]' : 'bg-white/10'}`} />
-                        <div className={`absolute top-0.5 left-0.5 w-4.5 h-4.5 bg-white rounded-full transition-all duration-300 shadow-lg ${editingProduct?.active ? 'translate-x-4.5' : 'translate-x-0'}`} />
+                      {/* Ordem */}
+                      <div className="space-y-2">
+                        <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Ordem</label>
+                        <input 
+                          type="number" 
+                          value={editingProduct?.order_index || ""} 
+                          onChange={(e) => setEditingProduct(prev => prev ? { ...prev, order_index: parseInt(e.target.value) || 0 } : null)} 
+                          className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-orange-500/50 font-black text-center" 
+                          required 
+                        />
                       </div>
-                      <span className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${editingProduct?.active ? 'text-[#22c55e]' : 'text-white/20'}`}>
-                        {editingProduct?.active ? 'Ativo' : 'Inativo'}
-                      </span>
                     </div>
-                  </div>
-                </div>
 
-                {/* Coluna de Dados */}
-                <div className="flex-1 space-y-5">
-                  {/* Nome do Produto */}
-                  <div className="space-y-2">
-                    <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Nome do Produto</label>
-                    <input 
-                      type="text" 
-                      value={editingProduct?.name || ""} 
-                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, name: e.target.value } : null)} 
-                      placeholder="Ex: Smash Burger" 
-                      className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 transition-all font-medium" 
-                      required 
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-5">
-                    {/* Preço */}
+                    {/* Categoria */}
                     <div className="space-y-2">
-                      <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Preço (R$)</label>
-                      <input 
-                        type="number" 
-                        step="0.01" 
-                        value={editingProduct?.preco || ""} 
-                        onChange={(e) => setEditingProduct(prev => prev ? { ...prev, preco: parseFloat(e.target.value) || 0 } : null)} 
-                        className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-orange-500 font-black focus:outline-none focus:border-orange-500/50 transition-all" 
+                      <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Categoria</label>
+                      <div className="relative">
+                        <select 
+                          value={editingProduct?.categoria_id || ""}
+                          onChange={(e) => setEditingProduct(prev => prev ? { ...prev, categoria_id: e.target.value } : null)}
+                          className="w-full bg-white/[0.05] border border-white/5 rounded-xl h-12 px-4 text-sm text-white focus:outline-none focus:border-orange-500/50 appearance-none font-bold uppercase tracking-tighter cursor-pointer"
+                          required
+                        >
+                          <option value="" disabled className="bg-[#1f2937]">Selecione...</option>
+                          {categories.map(cat => (
+                            <option key={cat.id} value={cat.id} className="bg-[#1f2937]">{cat.name.toUpperCase()}</option>
+                          ))}
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+                      </div>
+                    </div>
+
+                    {/* Descrição - Altura Reduzida */}
+                    <div className="space-y-2">
+                      <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Descrição</label>
+                      <textarea 
+                        rows={3}
+                        value={editingProduct?.descricao || ""} 
+                        onChange={(e) => setEditingProduct(prev => prev ? { ...prev, descricao: e.target.value } : null)} 
+                        placeholder="Breve descrição do produto..." 
+                        className="w-full bg-white/[0.05] border border-white/5 rounded-xl p-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 transition-all font-medium resize-none leading-relaxed" 
                         required 
                       />
                     </div>
-
-                    {/* Ordem */}
-                    <div className="space-y-2">
-                      <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Ordem</label>
-                      <input 
-                        type="number" 
-                        value={editingProduct?.order_index || ""} 
-                        onChange={(e) => setEditingProduct(prev => prev ? { ...prev, order_index: parseInt(e.target.value) || 0 } : null)} 
-                        className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-orange-500/50 font-black text-center" 
-                        required 
-                      />
-                    </div>
-                  </div>
-
-                  {/* Categoria */}
-                  <div className="space-y-2">
-                    <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Categoria</label>
-                    <div className="relative">
-                      <select 
-                        value={editingProduct?.categoria_id || ""}
-                        onChange={(e) => setEditingProduct(prev => prev ? { ...prev, categoria_id: e.target.value } : null)}
-                        className="w-full bg-white/[0.05] border border-white/5 rounded-xl h-12 px-4 text-sm text-white focus:outline-none focus:border-orange-500/50 appearance-none font-bold uppercase tracking-tighter cursor-pointer"
-                        required
-                      >
-                        <option value="" disabled className="bg-[#1f2937]">Selecione...</option>
-                        {categories.map(cat => (
-                          <option key={cat.id} value={cat.id} className="bg-[#1f2937]">{cat.name.toUpperCase()}</option>
-                        ))}
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
-                    </div>
-                  </div>
-
-                  {/* Descrição */}
-                  <div className="space-y-2">
-                    <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Descrição</label>
-                    <textarea 
-                      value={editingProduct?.descricao || ""} 
-                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, descricao: e.target.value } : null)} 
-                      placeholder="Breve descrição do produto..." 
-                      className="w-full bg-white/[0.05] border border-white/5 rounded-xl p-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 transition-all font-medium h-24 resize-none leading-relaxed" 
-                      required 
-                    />
                   </div>
                 </div>
               </div>
 
-              {/* Botões de Ação Premium (Estilo Categorias) */}
-              <div className="flex gap-4 pt-6 border-t border-white/[0.03]">
+              {/* Modal Footer Fixo */}
+              <div className="p-8 pt-6 border-t border-white/[0.03] flex gap-4 shrink-0">
                 <button 
                   type="button" 
                   onClick={() => setIsModalOpen(false)} 
@@ -889,7 +891,7 @@ export default function ProdutosPage() {
                   disabled={isSaving} 
                   className="flex-[2] h-12 bg-orange-600 hover:bg-orange-500 text-white font-bold text-[11px] uppercase tracking-widest rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50"
                 >
-                  {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                  {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                   {isSaving ? "SALVANDO..." : (editingProduct?.id ? "ATUALIZAR PRODUTO" : "CRIAR PRODUTO")}
                 </button>
               </div>
