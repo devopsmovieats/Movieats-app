@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { User, Smile, Calendar, ArrowRight, Flame } from "lucide-react";
+import { ArrowRight, Flame } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { supabase } from "@/lib/supabase";
 
 export default function IdentificacaoRootPage() {
   const router = useRouter();
   const { setUserData } = useUser();
+  const firstInputRef = useRef<HTMLInputElement>(null);
   const [establishmentName, setEstablishmentName] = useState("MovieEats");
   const [formData, setFormData] = useState({
     nome: "",
@@ -34,6 +35,11 @@ export default function IdentificacaoRootPage() {
       }
     }
     fetchBranding();
+
+    // Autofocus no primeiro campo
+    if (firstInputRef.current) {
+      firstInputRef.current.focus();
+    }
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,7 +60,7 @@ export default function IdentificacaoRootPage() {
   return (
     <div className="flex flex-col min-h-screen p-6 md:p-12 items-center justify-center overflow-hidden">
       <div className="w-full max-w-lg flex flex-col justify-center py-6">
-        {/* Header/Logo - Mais equilibrado */}
+        {/* Header/Logo */}
         <motion.div 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -75,64 +81,50 @@ export default function IdentificacaoRootPage() {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.1 }}
-          className="w-full px-2"
+          className="w-full"
         >
           <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
-            <div className="space-y-6">
+            <div className="space-y-5">
               {/* Nome Input */}
-              <div className="space-y-2.5">
-                <label className="text-[12px] font-black uppercase tracking-widest text-white/90 ml-1">Nome completo</label>
-                <div className="relative group">
-                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-orange-600 transition-colors">
-                    <User size={20} />
-                  </div>
-                  <input
-                    type="text"
-                    name="nome"
-                    placeholder="informe seu nome"
-                    value={formData.nome}
-                    onChange={handleInputChange}
-                    className="w-full h-16 bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl pl-14 pr-5 outline-none focus:border-orange-600/50 focus:bg-white/15 transition-all text-base font-semibold placeholder:text-white/20 text-white"
-                    required
-                  />
-                </div>
+              <div className="flex flex-col space-y-1.5">
+                <label className="text-[12px] font-black uppercase tracking-widest text-white/90 text-left px-1">Nome completo</label>
+                <input
+                  ref={firstInputRef}
+                  type="text"
+                  name="nome"
+                  placeholder="informe seu nome"
+                  value={formData.nome}
+                  onChange={handleInputChange}
+                  className="w-full h-16 bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl px-5 outline-none focus:border-orange-600/50 focus:bg-white/15 transition-all text-base font-semibold placeholder:text-white/20 text-white text-left"
+                  required
+                />
               </div>
 
               {/* Apelido Input */}
-              <div className="space-y-2.5">
-                <label className="text-[12px] font-black uppercase tracking-widest text-white/90 ml-1">Como gostaria de ser chamado?</label>
-                <div className="relative group">
-                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-orange-600 transition-colors">
-                    <Smile size={20} />
-                  </div>
-                  <input
-                    type="text"
-                    name="apelido"
-                    placeholder="informe seu apelido"
-                    value={formData.apelido}
-                    onChange={handleInputChange}
-                    className="w-full h-16 bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl pl-14 pr-5 outline-none focus:border-orange-600/50 focus:bg-white/15 transition-all text-base font-semibold placeholder:text-white/20 text-white"
-                    required
-                  />
-                </div>
+              <div className="flex flex-col space-y-1.5">
+                <label className="text-[12px] font-black uppercase tracking-widest text-white/90 text-left px-1">Como gostaria de ser chamado?</label>
+                <input
+                  type="text"
+                  name="apelido"
+                  placeholder="informe seu apelido"
+                  value={formData.apelido}
+                  onChange={handleInputChange}
+                  className="w-full h-16 bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl px-5 outline-none focus:border-orange-600/50 focus:bg-white/15 transition-all text-base font-semibold placeholder:text-white/20 text-white text-left"
+                  required
+                />
               </div>
 
               {/* Data Nascimento Input */}
-              <div className="space-y-2.5">
-                <label className="text-[12px] font-black uppercase tracking-widest text-white/90 ml-1">Data de nascimento</label>
-                <div className="relative group">
-                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-orange-600 transition-colors">
-                    <Calendar size={20} />
-                  </div>
-                  <input
-                    type="date"
-                    name="dataNascimento"
-                    value={formData.dataNascimento}
-                    onChange={handleInputChange}
-                    className="w-full h-16 bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl pl-14 pr-5 outline-none focus:border-orange-600/50 focus:bg-white/15 transition-all text-base font-semibold placeholder:text-white/20 text-white appearance-none"
-                    required
-                  />
-                </div>
+              <div className="flex flex-col space-y-1.5">
+                <label className="text-[12px] font-black uppercase tracking-widest text-white/90 text-left px-1">Data de nascimento</label>
+                <input
+                  type="date"
+                  name="dataNascimento"
+                  value={formData.dataNascimento}
+                  onChange={handleInputChange}
+                  className="w-full h-16 bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl px-5 outline-none focus:border-orange-600/50 focus:bg-white/15 transition-all text-base font-semibold placeholder:text-white/20 text-white text-left appearance-none"
+                  required
+                />
               </div>
             </div>
 
@@ -150,9 +142,9 @@ export default function IdentificacaoRootPage() {
           </form>
         </motion.div>
 
-        {/* Footer - Branco Puro */}
+        {/* Footer */}
         <div className="mt-12 text-center">
-          <p className="text-[11px] font-black text-white uppercase tracking-[0.5em] opacity-80 hover:opacity-100 transition-opacity">
+          <p className="text-[11px] font-black text-white uppercase tracking-[0.5em] opacity-80">
             © 2026 Movieats Technology
           </p>
         </div>
