@@ -34,6 +34,23 @@ export default function Home() {
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [establishmentId, setEstablishmentId] = useState<string | null>(null);
+  const [motivationalPhrase, setMotivationalPhrase] = useState("");
+
+  const phrases = [
+    "O sucesso é o melhor tempero!",
+    "Agilidade e qualidade: o segredo do melhor burger.",
+    "Foco no preparo, excelência na entrega.",
+    "Cada pedido é uma nova chance de encantar seu cliente.",
+    "O melhor atendimento começa com o melhor preparo.",
+    "Fast Food é rapidez, mas qualidade é o nosso diferencial.",
+    "Cozinhar com amor alimenta a alma e o negócio."
+  ];
+
+  useEffect(() => {
+    // Frase que muda a cada hora
+    const currentHour = new Date().getHours();
+    setMotivationalPhrase(phrases[currentHour % phrases.length]);
+  }, []);
 
   useEffect(() => {
     const getSession = async () => {
@@ -118,15 +135,22 @@ export default function Home() {
         const formattedChartData = Array.from(chartMap.entries()).map(([name, total]) => ({ name, total })).reverse();
         setChartData(formattedChartData);
 
-        // 6. Logs de Atividade
+        // 6. Logs de Atividade + Log Estático de Conexão
         const { data: logsData } = await supabase
           .from('bd_logs')
           .select('*')
           .eq('establishment_id', establishmentId)
           .order('created_at', { ascending: false })
-          .limit(6);
+          .limit(5);
         
-        setLogs(logsData || []);
+        const connectionLog = {
+          id: 'connection',
+          funcionario: 'SISTEMA',
+          acao: 'Sistema conectado com sucesso',
+          created_at: new Date().toISOString()
+        };
+
+        setLogs([connectionLog, ...(logsData || [])]);
 
       } catch (error) {
         console.error('ERRO DASHBOARD:', error);
@@ -187,18 +211,9 @@ export default function Home() {
             </h2>
             <div className="flex items-center gap-3 mt-2">
               <p className="text-white opacity-80 text-sm font-semibold tracking-wider">
-                Sua operação está 100% ativa.
+                "{motivationalPhrase}"
               </p>
-              <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Cardápio Online</span>
-              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
-             <button className="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl text-[11px] font-black text-white uppercase tracking-[0.2em] transition-all active:scale-95">
-                Configurações
-             </button>
           </div>
         </div>
 
@@ -321,10 +336,6 @@ export default function Home() {
                 </div>
               )}
             </div>
-            
-            <button className="w-full mt-6 py-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl text-[10px] font-black text-white/40 uppercase tracking-widest transition-all">
-               Ver todos os logs
-            </button>
           </div>
         </div>
 
