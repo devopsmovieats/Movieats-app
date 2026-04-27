@@ -72,6 +72,10 @@ export default function GruposAdicionaisPage() {
   const [selectedIds, setSelectedIds] = useState<Set<any>>(new Set());
   const [currentEstId, setCurrentEstId] = useState<string | null>(null);
   
+  // Paginação
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6; // Limite fixo: 6 grupos por página conforme solicitado
+  
   const [newItemName, setNewItemName] = useState("");
   const [newItemPrice, setNewItemPrice] = useState("");
 
@@ -141,6 +145,17 @@ export default function GruposAdicionaisPage() {
   const filteredGroups = groups.filter(g => 
     g.nome_grupo.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Cálculo de Paginação
+  const totalItems = filteredGroups.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedGroups = filteredGroups.slice(startIndex, startIndex + itemsPerPage);
+
+  // Resetar página ao filtrar
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   const openAddModal = () => {
     setEditingGroup({
@@ -346,7 +361,10 @@ export default function GruposAdicionaisPage() {
   const handleExport = () => {
     const groupsToExport = groups.filter(g => selectedIds.has(g.id));
     if (groupsToExport.length === 0) {
-      Toast.fire({ icon: "info", title: "Selecione grupos para exportar" });
+      Toast.fire({ 
+        icon: "warning", 
+        title: "Selecione grupo para exportar" 
+      });
       return;
     }
     
@@ -458,7 +476,7 @@ export default function GruposAdicionaisPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                  {filteredGroups.map((group) => (
+                  {paginatedGroups.map((group) => (
                     <tr 
                       key={group.id} 
                       className={`hover:bg-white/[0.02] transition-colors group ${selectedIds.has(group.id) ? 'bg-primary/5' : ''}`}
@@ -540,13 +558,50 @@ export default function GruposAdicionaisPage() {
                           </button>
                         </div>
                       </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Paginação Estrita - Fixa conforme padrão portal */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-5 px-6 border-t border-white/5 bg-white/[0.01]">
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
+                disabled={currentPage === 1} 
+                className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer text-white disabled:text-white/20 disabled:cursor-not-allowed hover:text-primary"
+              >
+                Anterior
+              </button>
+              
+              <div className="flex items-center gap-2">
+                {[...Array(totalPages)].map((_, i) => (
+                  <button 
+                    key={i} 
+                    onClick={() => setCurrentPage(i + 1)} 
+                    className={`w-8 h-8 flex items-center justify-center text-[11px] font-black transition-all cursor-pointer ${currentPage === i + 1 ? "text-primary font-black" : "text-white/40 hover:text-white"}`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+              
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
+                disabled={currentPage === totalPages || totalPages === 0} 
+                className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer text-white disabled:text-white/20 disabled:cursor-not-allowed hover:text-primary"
+              >
+                Próximo
+              </button>
+            </div>
+            
+            <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
+              Exibindo <span className="text-white">{startIndex + 1}</span>-<span className="text-white">{Math.min(startIndex + itemsPerPage, totalItems)}</span> de <span className="text-white">{totalItems}</span> grupos
             </div>
           </div>
-        ) : (
+        </div>
+      ) : (
           /* ESTADO VAZIO LIMPO E CENTRALIZADO */
           <div className="flex flex-col items-center justify-center min-h-[400px] bg-[#1f2937]/50 border border-white/5 rounded-2xl animate-in fade-in zoom-in duration-700 shadow-2xl py-20 px-4 text-center">
             <FolderOpen size={80} className="text-white opacity-10 mb-8" />
