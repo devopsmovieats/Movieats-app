@@ -1,55 +1,30 @@
 // DEPLOY PRODUÇÃO R2 - ESTRUTURA FINALIZADA (FORCE PUSH)
 import { NextResponse } from 'next/server';
-export const dynamic = 'force-dynamic';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { supabase } from '@/lib/supabase';
+
+export const dynamic = 'force-dynamic';
+
+const s3Client = new S3Client({
+  region: 'auto',
+  endpoint: process.env.R2_ENDPOINT!,
+  forcePathStyle: false,
+  credentials: {
+    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+  },
+});
 
 export async function POST(request: Request) {
   try {
-    // Log solicitado para conferência do Bucket
-    console.log("Bucket:", process.env.R2_BUCKET_NAME);
-
-    const s3Client = new S3Client({
-      region: 'auto',
-      endpoint: process.env.R2_ENDPOINT!,
-      forcePathStyle: false,
-      credentials: {
-        accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
-      },
-    });
-
     const formData = await request.formData();
-    
-    // Log detalhado do FormData para depuração exaustiva
-    console.log('--- DEBUG UPLOAD: DADOS RECEBIDOS ---');
-    const formDataEntries = Array.from(formData.entries());
-    formDataEntries.forEach(([key, value]) => {
-      if (value instanceof File) {
-        console.log(`Campo: ${key} | Tipo: Arquivo | Nome: ${value.name} | Tamanho: ${value.size} bytes`);
-      } else {
-        console.log(`Campo: ${key} | Valor: ${value}`);
-      }
-    });
-
-    // Verificação de presença de variáveis de ambiente no Runtime
-    console.log('--- DEBUG UPLOAD: AMBIENTE ---');
-    console.log('R2_ENDPOINT:', !!process.env.R2_ENDPOINT);
-    console.log('R2_ACCESS_KEY_ID:', !!process.env.R2_ACCESS_KEY_ID);
-    console.log('R2_SECRET_ACCESS_KEY:', !!process.env.R2_SECRET_ACCESS_KEY);
-    console.log('Bucket presente:', !!process.env.R2_BUCKET_NAME);
-    console.log('NEXT_PUBLIC_R2_PUBLIC_URL:', !!process.env.NEXT_PUBLIC_R2_PUBLIC_URL);
-
     const file = formData.get('file') as File;
 
     if (!file) {
-      console.error('ERRO: Campo "file" não encontrado no FormData');
-      return NextResponse.json({ error: 'Nenhum arquivo enviado' }, { status: 400 });
+      return NextResponse.json({ error: 'Arquivo não encontrado' }, { status: 400 });
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    
-    // Busca dinâmica do nome do cliente para o Path do R2
     const establishmentId = formData.get('establishment_id') || formData.get('establishmentId');
     let clientFolder = 'Geral';
 
@@ -62,6 +37,8 @@ export async function POST(request: Request) {
       
       if (config?.nome_loja) {
         clientFolder = config.nome_loja;
+        // Correção solicitada: Villa Gourmet com dois L
+        if (clientFolder === 'Vila Gourmet') clientFolder = 'Villa Gourmet';
       }
     }
 
@@ -69,85 +46,50 @@ export async function POST(request: Request) {
     const filename = file.name;
     const filePath = `clientes/${clientFolder}/${folder}/${filename}`;
 
-    console.log('Caminho Final no R2:', filePath);
-
     const bucketName = process.env.R2_BUCKET_NAME || 'movieats-prod';
 
-    const uploadParams = {
-      Bucket: bucketName!,
+    await s3Client.send(new PutObjectCommand({
+      Bucket: bucketName,
       Key: filePath,
       Body: buffer,
       ContentType: file.type,
-    };
+    }));
 
-    try {
-      console.log(`Tentando upload para o bucket: ${bucketName}`);
-      await s3Client.send(new PutObjectCommand(uploadParams));
-    } catch (s3Error: any) {
-      console.error('--- ERRO CRÍTICO CLOUDFLARE R2 ---');
-      console.error('R2 Error Details:', s3Error);
-      console.error('Bucket Tentado:', bucketName);
-      console.error('Mensagem:', s3Error.message);
-      console.error('Código:', s3Error.Code || s3Error.name);
-      
-      return NextResponse.json({ 
-        error: 'R2 rejection', 
-        details: s3Error.message,
-        code: s3Error.Code || s3Error.name 
-      }, { status: 500 });
-    }
-
-    // URL pública construída com o novo domínio solicitado
     const publicUrl = `https://cdn.movieats.com.br/${filePath}`;
+    return NextResponse.json({ success: true, url: publicUrl }, { status: 200 });
 
-    return NextResponse.json({ url: publicUrl });
   } catch (error: any) {
-    console.error('--- ERRO FATAL API UPLOAD ---', error);
+    console.error('Erro no POST upload:', error);
     return NextResponse.json({ 
-      error: 'API_UPLOAD_ERROR',
-      message: error.message,
-      code: error.Code || error.name || '500',
-      details: error.stack
+      success: false,
+      error: error.message || 'Erro interno no upload'
     }, { status: 500 });
   }
 }
 
 export async function DELETE(request: Request) {
   try {
-    const { url } = await request.json();
-    if (!url) return NextResponse.json({ error: 'URL is required' }, { status: 400 });
+    const body = await request.json();
+    const { url } = body;
+    
+    if (!url) {
+      return NextResponse.json({ error: 'URL necessária' }, { status: 400 });
+    }
 
-    // Extrair o path da URL: https://cdn.movieats.com.br/clientes/... -> clientes/...
-    // Também lidamos com o domínio antigo se necessário, mas o foco é o novo
     const filePath = url.replace('https://cdn.movieats.com.br/', '')
                         .replace('https://cdn.softcloudba.com/', '');
 
-    const s3Client = new S3Client({
-      region: 'auto',
-      endpoint: process.env.R2_ENDPOINT!,
-      forcePathStyle: false,
-      credentials: {
-        accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
-      },
-    });
-
     const bucketName = process.env.R2_BUCKET_NAME || 'movieats-prod';
-
-    console.log('--- DELETE R2: INICIANDO ---');
-    console.log('Key para deletar:', filePath);
-
-    const { DeleteObjectCommand } = await import('@aws-sdk/client-s3');
 
     await s3Client.send(new DeleteObjectCommand({
       Bucket: bucketName,
       Key: filePath,
     }));
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true }, { status: 200 });
   } catch (error: any) {
-    console.error('--- ERRO AO DELETAR NO R2 ---', error);
-    // Ignoramos o erro e prosseguimos com o fluxo conforme solicitado
-    return NextResponse.json({ success: true, warning: 'File deletion ignored' });
+    console.error('Erro no DELETE upload:', error);
+    return NextResponse.json({ success: true, warning: 'Ignorado' }, { status: 200 });
   }
 }
+
