@@ -724,12 +724,11 @@ export default function CategoriasPage() {
                         />
                       </div>
                     </th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-center">Ordem</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-center">Imagem</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Nome</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Descrição</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-center">Status</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-right">Ações</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-wider text-center">Ordem</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-wider">Nome da Categoria</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-wider">Descrição Detalhada</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-wider text-center">Status</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-wider text-right">Ações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -756,26 +755,13 @@ export default function CategoriasPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center justify-center">
-                          <div className="w-12 h-12 rounded-lg border-2 border-white/5 overflow-hidden shadow-inner group-hover:border-primary/30 transition-colors bg-white/5 flex items-center justify-center">
-                            {category.image_url && (
-                              <img 
-                                src={category.image_url} 
-                                alt={category.name} 
-                                className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" 
-                              />
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm font-medium text-white group-hover:text-primary transition-colors tracking-tight uppercase">
+                        <span className="text-sm font-black text-white group-hover:text-primary transition-colors tracking-tight uppercase">
                           {category.name}
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-[11px] text-muted-foreground font-medium line-clamp-1 max-w-[200px]">
-                          {category.descricao || "Sem descrição"}
+                        <span className="text-base text-muted-foreground font-medium line-clamp-1 max-w-[400px]">
+                          {category.descricao || "Sem descrição disponível"}
                         </span>
                       </td>
                       <td className="px-6 py-4">
@@ -815,7 +801,7 @@ export default function CategoriasPage() {
                   <button 
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
                     disabled={currentPage === 1} 
-                    className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer text-white disabled:text-white/20 disabled:cursor-not-allowed hover:text-primary"
+                    className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer text-[#FFFFFF] disabled:text-white/20 disabled:cursor-not-allowed hover:text-primary"
                   >
                     Anterior
                   </button>
@@ -824,7 +810,7 @@ export default function CategoriasPage() {
                       <button 
                         key={i} 
                         onClick={() => setCurrentPage(i + 1)} 
-                        className={`w-8 h-8 flex items-center justify-center text-[11px] font-black transition-all cursor-pointer ${currentPage === i + 1 ? "text-primary font-black" : "text-white/40 hover:text-white"}`}
+                        className={`w-8 h-8 flex items-center justify-center text-[11px] font-black transition-all cursor-pointer ${currentPage === i + 1 ? "text-primary font-black" : "text-[#FFFFFF] opacity-40 hover:opacity-100 hover:text-white"}`}
                       >
                         {i + 1}
                       </button>
@@ -833,7 +819,7 @@ export default function CategoriasPage() {
                   <button 
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
                     disabled={currentPage === totalPages || totalPages === 0} 
-                    className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer text-white disabled:text-white/20 disabled:cursor-not-allowed hover:text-primary"
+                    className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer text-[#FFFFFF] disabled:text-white/20 disabled:cursor-not-allowed hover:text-primary"
                   >
                     Próximo
                   </button>
