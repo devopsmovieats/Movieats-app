@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { supabase } from '@/lib/supabase';
 
 export async function POST(request: Request) {
   try {
@@ -48,9 +49,24 @@ export async function POST(request: Request) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
     
-    // R2 Path: clientes/Villa Gourmet/categorias/{filename}
+    // Busca dinâmica do nome do cliente para o Path do R2
+    const establishmentId = formData.get('establishment_id') || formData.get('establishmentId');
+    let clientFolder = 'Geral';
+
+    if (establishmentId && establishmentId !== 'unknown') {
+      const { data: config } = await supabase
+        .from('bd_config_estabelecimento')
+        .select('nome_loja')
+        .eq('id', establishmentId)
+        .single();
+      
+      if (config?.nome_loja) {
+        clientFolder = config.nome_loja;
+      }
+    }
+
     const filename = file.name;
-    const filePath = `clientes/Villa Gourmet/categorias/${filename}`;
+    const filePath = `clientes/${clientFolder}/categorias/${filename}`;
 
     console.log('Caminho Final no R2:', filePath);
 
