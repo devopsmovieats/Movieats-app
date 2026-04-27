@@ -809,9 +809,8 @@ export default function CategoriasPage() {
               </table>
             </div>
 
-            {/* Paginação Estrita */}
-            {categories.length > itemsPerPage && (
-              <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-5 px-6 border-t border-white/5 bg-white/[0.01]">
+            {/* Paginação Estrita - Fixa conforme solicitado */}
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-5 px-6 border-t border-white/5 bg-white/[0.01]">
                 <div className="flex items-center gap-4">
                   <button 
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
@@ -843,7 +842,6 @@ export default function CategoriasPage() {
                   Exibindo <span className="text-white">{startIndex + 1}</span>-<span className="text-white">{Math.min(startIndex + itemsPerPage, categories.length)}</span> de <span className="text-white">{categories.length}</span> categorias
                 </div>
               </div>
-            )}
           </div>
         ) : (
           /* ESTADO VAZIO LIMPO E CENTRALIZADO */
