@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Utilidades compartilhadas em todo o ecossistema */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    font-family: var(--font-manrope), var(--font-inter), sans-serif;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.shadow-premium {
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+}
