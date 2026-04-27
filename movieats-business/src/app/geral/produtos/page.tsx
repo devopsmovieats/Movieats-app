@@ -321,6 +321,7 @@ export default function ProdutosPage() {
         const formData = new FormData();
         formData.append('file', selectedFile);
         formData.append('establishment_id', currentEstId);
+        formData.append('folder', 'produtos');
 
         const uploadResponse = await fetch('/api/upload', {
           method: 'POST',
@@ -500,13 +501,16 @@ export default function ProdutosPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64String = reader.result as string;
-      setEditingProduct(prev => prev ? { ...prev, image_url: base64String } : null);
-      Toast.fire({ icon: "success", title: "Imagem selecionada com sucesso" });
-    };
-    reader.readAsDataURL(file);
+    // Gerar Preview Local IMEDIATO
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    const localUrl = URL.createObjectURL(file);
+    setPreviewUrl(localUrl);
+    setSelectedFile(file);
+
+    setEditingProduct(prev => prev ? { ...prev, image_url: localUrl } : null);
+    Toast.fire({ icon: "success", title: "Imagem selecionada com sucesso" });
   };
 
   return (

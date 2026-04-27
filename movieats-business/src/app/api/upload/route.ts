@@ -65,8 +65,9 @@ export async function POST(request: Request) {
       }
     }
 
+    const folder = (formData.get('folder') as string) || 'categorias';
     const filename = file.name;
-    const filePath = `clientes/${clientFolder}/categorias/${filename}`;
+    const filePath = `clientes/${clientFolder}/${folder}/${filename}`;
 
     console.log('Caminho Final no R2:', filePath);
 
