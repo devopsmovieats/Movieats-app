@@ -14,8 +14,8 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Movieats | Cardápio Digital",
-  description: "Experiência gastronômica digital Movieats",
+  title: "Movieats | Painel do Garçom",
+  description: "Sistema de atendimento para colaboradores Movieats",
 };
 
 export const viewport = {
@@ -37,11 +37,11 @@ export default function RootLayout({
           {/* Global Background Image for the entire flow */}
           <div className="fixed inset-0 z-0">
             <img 
-              src="/images/bg-gastronomia-neutra.png" 
-              alt="Food Background" 
-              className="w-full h-full object-cover grayscale-[10%] brightness-[50%]"
+              src="/images/bg-painel-garcom.png" 
+              alt="Waiter Background" 
+              className="w-full h-full object-cover grayscale-[20%] brightness-[40%]"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/70" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80" />
           </div>
 
           {/* Content wrapper */}
