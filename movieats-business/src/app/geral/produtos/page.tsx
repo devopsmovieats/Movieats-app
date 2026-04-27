@@ -100,6 +100,7 @@ export default function ProdutosPage() {
   const [importStatus, setImportStatus] = useState("");
   const [ingredientInput, setIngredientInput] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
+  const [originalImageUrl, setOriginalImageUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [userRole, setUserRole] = useState<string>("ADMIN");
   const [establishmentId, setEstablishmentId] = useState<string | null>(null);
@@ -197,6 +198,7 @@ export default function ProdutosPage() {
       removable_ingredients: []
     });
     setPreviewUrl("");
+    setOriginalImageUrl("");
     setSelectedFile(null);
     setIngredientInput("");
     setIsModalOpen(true);
@@ -204,6 +206,7 @@ export default function ProdutosPage() {
 
   const openEditModal = (product: Product) => {
     setEditingProduct({ ...product, removable_ingredients: [...(product.removable_ingredients || [])] });
+    setOriginalImageUrl(product.image_url);
     setPreviewUrl("");
     setSelectedFile(null);
     setIngredientInput("");
@@ -277,6 +280,14 @@ export default function ProdutosPage() {
       }
     }).then(async (result) => {
       if (result.isConfirmed) {
+        // Limpeza física no R2 (SaaS Compliance)
+        if (product.image_url && (product.image_url.includes('cdn.movieats.com.br') || product.image_url.includes('softcloudba.com'))) {
+          await fetch('/api/upload', {
+            method: 'DELETE',
+            body: JSON.stringify({ url: product.image_url })
+          }).catch(err => console.error("Erro ao deletar arquivo R2:", err));
+        }
+
         const { error } = await supabase
           .from('bd_produtos')
           .delete()
@@ -318,6 +329,14 @@ export default function ProdutosPage() {
       if (selectedFile) {
         setImportStatus("Fazendo upload da imagem...");
         
+        // Substituição ao Alterar: Deleta o arquivo antigo do R2 antes de subir o novo
+        if (originalImageUrl && (originalImageUrl.includes('cdn.movieats.com.br') || originalImageUrl.includes('softcloudba.com'))) {
+          await fetch('/api/upload', {
+            method: 'DELETE',
+            body: JSON.stringify({ url: originalImageUrl })
+          }).catch(err => console.error("Erro ao limpar arquivo antigo:", err));
+        }
+
         const formData = new FormData();
         formData.append('file', selectedFile);
         formData.append('establishment_id', currentEstId);

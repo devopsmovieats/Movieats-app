@@ -111,3 +111,43 @@ export async function POST(request: Request) {
     }, { status: 500 });
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const { url } = await request.json();
+    if (!url) return NextResponse.json({ error: 'URL is required' }, { status: 400 });
+
+    // Extrair o path da URL: https://cdn.movieats.com.br/clientes/... -> clientes/...
+    // Também lidamos com o domínio antigo se necessário, mas o foco é o novo
+    const filePath = url.replace('https://cdn.movieats.com.br/', '')
+                        .replace('https://cdn.softcloudba.com/', '');
+
+    const s3Client = new S3Client({
+      region: 'auto',
+      endpoint: process.env.R2_ENDPOINT!,
+      forcePathStyle: false,
+      credentials: {
+        accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+      },
+    });
+
+    const bucketName = process.env.R2_BUCKET_NAME || 'movieats-prod';
+
+    console.log('--- DELETE R2: INICIANDO ---');
+    console.log('Key para deletar:', filePath);
+
+    const { DeleteObjectCommand } = await import('@aws-sdk/client-s3');
+
+    await s3Client.send(new DeleteObjectCommand({
+      Bucket: bucketName,
+      Key: filePath,
+    }));
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error('--- ERRO AO DELETAR NO R2 ---', error);
+    // Ignoramos o erro e prosseguimos com o fluxo conforme solicitado
+    return NextResponse.json({ success: true, warning: 'File deletion ignored' });
+  }
+}

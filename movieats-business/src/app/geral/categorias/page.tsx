@@ -269,6 +269,14 @@ export default function CategoriasPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
+          // Limpeza física no R2 (SaaS Compliance)
+          if (category.image_url && (category.image_url.includes('cdn.movieats.com.br') || category.image_url.includes('softcloudba.com'))) {
+            await fetch('/api/upload', {
+              method: 'DELETE',
+              body: JSON.stringify({ url: category.image_url })
+            }).catch(err => console.error("Erro silencioso ao deletar R2:", err));
+          }
+
           const { error } = await supabase
             .from('bd_categorias')
             .delete()
@@ -471,6 +479,14 @@ export default function CategoriasPage() {
       // Se houver um novo arquivo selecionado, faz o upload para o R2 primeiro
       if (selectedFile) {
         setImportStatus("Fazendo upload da imagem...");
+
+        // Substituição ao Alterar: Deleta o arquivo antigo do R2 antes de subir o novo
+        if (editingCategory.image_url && (editingCategory.image_url.includes('cdn.movieats.com.br') || editingCategory.image_url.includes('softcloudba.com'))) {
+          await fetch('/api/upload', {
+            method: 'DELETE',
+            body: JSON.stringify({ url: editingCategory.image_url })
+          }).catch(err => console.error("Erro ao limpar arquivo antigo:", err));
+        }
         
         const formData = new FormData();
         formData.append('file', selectedFile);
