@@ -52,7 +52,6 @@ interface Product {
   descricao: string;
   image_url: string;
   active: boolean;
-  removable_ingredients: string[];
 }
 
 interface Category {
@@ -69,8 +68,7 @@ const initialProducts: Product[] = [
     order_index: 1, 
     descricao: "Pão brioche, dois blends de 80g, queijo cheddar e maionese da casa.", 
     image_url: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150&h=150&auto=format&fit=crop", 
-    active: true,
-    removable_ingredients: ["Cebola", "Picles", "Maionese"]
+    active: true
   },
   { 
     id: 2, 
@@ -80,8 +78,7 @@ const initialProducts: Product[] = [
     order_index: 2, 
     descricao: "Batatas fritas com casca, temperadas com páprica e alecrim.", 
     image_url: "https://images.unsplash.com/photo-1573015084245-7da883204507?q=80&w=150&h=150&auto=format&fit=crop", 
-    active: true,
-    removable_ingredients: ["Páprica", "Alecrim"]
+    active: true
   }
 ];
 
@@ -98,7 +95,6 @@ export default function ProdutosPage() {
   const [isImporting, setIsImporting] = useState(false);
   const [importProgress, setImportProgress] = useState(0);
   const [importStatus, setImportStatus] = useState("");
-  const [ingredientInput, setIngredientInput] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
   const [originalImageUrl, setOriginalImageUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -209,48 +205,23 @@ export default function ProdutosPage() {
       order_index: products.length + 1,
       descricao: "",
       image_url: "",
-      active: true,
-      removable_ingredients: []
+      active: true
     });
     setPreviewUrl("");
     setOriginalImageUrl("");
     setSelectedFile(null);
-    setIngredientInput("");
     setIsModalOpen(true);
   };
 
   const openEditModal = (product: Product) => {
-    setEditingProduct({ ...product, removable_ingredients: [...(product.removable_ingredients || [])] });
+    setEditingProduct({ ...product });
     setOriginalImageUrl(product.image_url);
     setPreviewUrl("");
     setSelectedFile(null);
-    setIngredientInput("");
     setIsModalOpen(true);
   };
 
-  const handleAddIngredient = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!ingredientInput.trim() || !editingProduct) return;
-    
-    if (editingProduct.removable_ingredients.includes(ingredientInput.trim())) {
-      setIngredientInput("");
-      return;
-    }
 
-    setEditingProduct({
-      ...editingProduct,
-      removable_ingredients: [...editingProduct.removable_ingredients, ingredientInput.trim()]
-    });
-    setIngredientInput("");
-  };
-
-  const handleRemoveIngredient = (ingredient: string) => {
-    if (!editingProduct) return;
-    setEditingProduct({
-      ...editingProduct,
-      removable_ingredients: editingProduct.removable_ingredients.filter(i => i !== ingredient)
-    });
-  };
 
   const handleSelectOne = (id: any) => {
     const newSelected = new Set(selectedIds);
@@ -384,7 +355,6 @@ export default function ProdutosPage() {
         order_index: editingProduct.order_index,
         active: editingProduct.active,
         image_url: finalImageUrl,
-        removable_ingredients: editingProduct.removable_ingredients,
         establishment_id: currentEstId
       };
 
@@ -695,7 +665,6 @@ export default function ProdutosPage() {
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Produto</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Categoria</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Preço</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Ingredientes</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-center">Status</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-right">Ações</th>
                   </tr>
@@ -744,17 +713,6 @@ export default function ProdutosPage() {
                       <span className="text-sm font-bold text-white tracking-tighter">
                         R$ {product.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 align-middle">
-                      <div className="flex flex-wrap gap-1.5 max-w-[220px]">
-                        {product.removable_ingredients && product.removable_ingredients.length > 0 ? product.removable_ingredients.map((ing, i) => (
-                          <span key={i} className="text-[10px] font-bold text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-md uppercase tracking-tight">
-                            {ing}
-                          </span>
-                        )) : (
-                          <span className="text-[10px] text-muted-foreground/30 italic font-medium">Nenhum</span>
-                        )}
-                      </div>
                     </td>
                     <td className="px-6 py-4 align-middle text-center">
                       <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-md border ${product.active ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-red-500 bg-red-500/10 border-red-500/20'}`}>
@@ -857,8 +815,8 @@ export default function ProdutosPage() {
             onClick={() => setIsModalOpen(false)}
           />
           
-          {/* Modal Container - Layout Horizontal (Grid 2 Colunas) */}
-          <div className="relative w-full max-w-4xl max-h-[95vh] overflow-hidden bg-[#111827]/95 backdrop-blur-[15px] border border-white/10 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 flex flex-col">
+          {/* Modal Container - Tamanho Padronizado com Categorias */}
+          <div className="relative w-full max-w-2xl bg-[#111827]/95 backdrop-blur-[15px] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden">
             
             {/* Modal Header Premium */}
             <div className="px-8 py-6 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01]">
@@ -876,178 +834,136 @@ export default function ProdutosPage() {
               </button>
             </div>
 
-            <form onSubmit={handleSaveProduct} className="flex flex-col flex-1 overflow-hidden">
-              <div className="p-8 pt-6 overflow-y-auto custom-scrollbar flex-1">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  
-                  {/* Coluna Esquerda: Imagem e Descrição */}
-                  <div className="space-y-6">
-                    <div className="flex flex-col items-center">
-                      <label className="text-[12px] font-bold text-white/40 mb-3 block uppercase tracking-widest text-center">Imagem do Produto</label>
-                      <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
-                      <div 
-                        onClick={() => fileInputRef.current?.click()}
-                        className="w-[200px] h-[200px] bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 hover:border-orange-500/40 rounded-2xl flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden shadow-2xl"
-                      >
-                        {(previewUrl || editingProduct?.image_url) ? (
-                          <div className="relative w-full h-full">
-                            <img 
-                              src={previewUrl || editingProduct?.image_url} 
-                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-100" 
-                              alt="Preview" 
-                            />
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                              <Camera className="w-8 h-8 text-white" />
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="flex flex-col items-center gap-3">
-                            <div className="p-4 bg-white/5 rounded-full group-hover:scale-110 transition-transform">
-                              <ImageIcon className="w-6 h-6 text-white/20 group-hover:text-primary transition-colors" />
-                            </div>
-                            <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Upload Imagem</span>
-                          </div>
-                        )}
+            <form onSubmit={handleSaveProduct} className="p-8">
+              <div className="flex flex-col md:flex-row gap-8">
+                
+                {/* Coluna da Imagem (200x200) */}
+                <div className="flex flex-col items-center space-y-4">
+                  <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
+                  <div 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-[200px] h-[200px] bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 hover:border-orange-500/40 rounded-2xl flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden shadow-2xl"
+                  >
+                    {(previewUrl || editingProduct?.image_url) ? (
+                      <div className="relative w-full h-full">
+                        <img 
+                          src={previewUrl || editingProduct?.image_url} 
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                          alt="Preview" 
+                        />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                          <Camera className="w-8 h-8 text-white" />
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-[13px] font-bold text-white/50 ml-1 block">Descrição Detalhada</label>
-                      <textarea 
-                        value={editingProduct?.descricao || ""} 
-                        onChange={(e) => setEditingProduct(prev => prev ? { ...prev, descricao: e.target.value } : null)} 
-                        placeholder="Descreva brevemente o produto..." 
-                        className="w-full bg-white/[0.05] border border-white/10 rounded-xl p-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium min-h-[160px] resize-none leading-relaxed" 
-                        required 
-                      />
-                    </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-3">
+                        <div className="p-4 bg-white/5 rounded-full group-hover:scale-110 transition-transform">
+                          <ImageIcon className="w-6 h-6 text-white/20 group-hover:text-primary transition-colors" />
+                        </div>
+                        <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Upload</span>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Coluna Direita: Dados Técnicos e Ingredientes */}
-                  <div className="space-y-5">
-                    <div className="space-y-2">
-                      <label className="text-[13px] font-bold text-white/50 ml-1 block">Nome do Produto</label>
-                      <input 
-                        type="text" 
-                        value={editingProduct?.name || ""} 
-                        onChange={(e) => setEditingProduct(prev => prev ? { ...prev, name: e.target.value } : null)} 
-                        placeholder="Ex: Smash Burger" 
-                        className="w-full h-12 bg-white/[0.05] border border-white/10 rounded-xl py-3 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium" 
-                        required 
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-[13px] font-bold text-white/50 ml-1 block">Preço (R$)</label>
-                        <input 
-                          type="number" 
-                          step="0.01" 
-                          value={editingProduct?.preco || ""} 
-                          onChange={(e) => setEditingProduct(prev => prev ? { ...prev, preco: parseFloat(e.target.value) || 0 } : null)} 
-                          placeholder="Ex: 34.90" 
-                          className="w-full h-12 bg-white/[0.05] border border-white/10 rounded-xl py-3 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-black text-orange-500" 
-                          required 
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[13px] font-bold text-white/50 ml-1 block">Ordem</label>
-                        <input 
-                          type="number" 
-                          value={editingProduct?.order_index || ""} 
-                          onChange={(e) => setEditingProduct(prev => prev ? { ...prev, order_index: parseInt(e.target.value) || 0 } : null)} 
-                          placeholder="Ex: 1" 
-                          className="w-full h-12 bg-white/[0.05] border border-white/10 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-black text-center" 
-                          required 
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-[13px] font-bold text-white/50 ml-1 block">Categoria</label>
-                      <div className="relative">
-                        <select 
-                          value={editingProduct?.categoria_id || ""}
-                          onChange={(e) => setEditingProduct(prev => prev ? { ...prev, categoria_id: e.target.value } : null)}
-                          className="w-full bg-white/[0.05] border border-white/10 rounded-xl h-12 px-4 text-sm text-white focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 appearance-none font-bold uppercase tracking-tighter cursor-pointer"
-                          required
-                        >
-                          <option value="" disabled className="bg-[#1f2937]">Selecione uma categoria</option>
-                          {categories.map(cat => (
-                            <option key={cat.id} value={cat.id} className="bg-[#1f2937]">{cat.name.toUpperCase()}</option>
-                          ))}
-                        </select>
-                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <label className="text-[13px] font-bold text-white/50 ml-1 block">Ingredientes (Para retirada)</label>
-                      <div className="flex gap-2">
-                        <div className="relative flex-1 group">
-                          <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                          <input 
-                            type="text"
-                            value={ingredientInput}
-                            onChange={(e) => setIngredientInput(e.target.value)}
-                            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddIngredient(); } }}
-                            placeholder="Ex: Cebola..."
-                            className="w-full h-11 bg-white/[0.05] border border-white/10 rounded-xl pl-10 pr-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium"
-                          />
-                        </div>
-                        <button 
-                          type="button"
-                          onClick={handleAddIngredient}
-                          className="w-11 h-11 flex items-center justify-center bg-orange-600/10 hover:bg-[#FF8C00] text-orange-500 hover:text-white border border-orange-600/20 rounded-xl transition-all duration-200 active:scale-90"
-                        >
-                          <Plus className="w-4 h-4" />
-                        </button>
-                      </div>
-                      <div className="flex flex-wrap gap-2 min-h-[40px] p-2 bg-black/20 border border-white/5 rounded-lg">
-                        {editingProduct?.removable_ingredients && editingProduct.removable_ingredients.length > 0 ? (
-                          editingProduct.removable_ingredients.map((ingredient, idx) => (
-                            <div key={idx} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-primary/10 border border-primary/20 rounded-md group hover:bg-primary/20 transition-all animate-in zoom-in-90 duration-200">
-                              <span className="text-[10px] font-black text-primary uppercase tracking-tight">{ingredient}</span>
-                              <button type="button" onClick={() => handleRemoveIngredient(ingredient)} className="text-primary/40 hover:text-primary transition-colors"><X className="w-2.5 h-2.5" /></button>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="w-full flex items-center justify-center py-1"><span className="text-[9px] text-white/10 font-black uppercase tracking-widest">Nenhum item</span></div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between h-14 px-5 bg-white/[0.03] border border-white/10 rounded-2xl">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-bold text-white tracking-tight">Produto Disponível</span>
-                        <span className="text-[10px] text-muted-foreground font-medium uppercase opacity-50">Cardápio Digital</span>
-                      </div>
-                      <div 
-                        className="relative w-12 h-6.5 cursor-pointer"
-                        onClick={() => setEditingProduct(prev => prev ? { ...prev, active: !prev.active } : null)}
-                      >
-                        <div className={`w-12 h-6.5 rounded-full transition-all duration-500 border border-white/10 ${editingProduct?.active ? 'bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)]' : 'bg-white/10'}`} />
-                        <div className={`absolute top-1 left-1 w-4.5 h-4.5 bg-white rounded-full transition-all duration-500 shadow-xl ${editingProduct?.active ? 'translate-x-5.5' : 'translate-x-0'}`} />
+                  <div className="w-full space-y-2">
+                    <label className="text-[13px] font-bold text-white/50 ml-1 block">Visibilidade</label>
+                    <div 
+                      className="flex items-center justify-between h-12 px-4 bg-white/[0.03] border border-white/10 rounded-xl cursor-pointer hover:bg-white/[0.05] transition-all"
+                      onClick={() => setEditingProduct(prev => prev ? { ...prev, active: !prev.active } : null)}
+                    >
+                      <span className="text-[10px] font-black text-white uppercase tracking-widest">{editingProduct?.active ? 'Ativo' : 'Pausado'}</span>
+                      <div className={`relative w-10 h-5 rounded-full transition-all duration-500 ${editingProduct?.active ? 'bg-orange-500' : 'bg-white/10'}`}>
+                        <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all duration-500 ${editingProduct?.active ? 'left-6' : 'left-1'}`} />
                       </div>
                     </div>
                   </div>
                 </div>
+
+                {/* Coluna de Dados */}
+                <div className="flex-1 space-y-5">
+                  <div className="space-y-2">
+                    <label className="text-[13px] font-bold text-white/50 ml-1 block">Nome do Produto</label>
+                    <input 
+                      type="text" 
+                      value={editingProduct?.name || ""} 
+                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, name: e.target.value } : null)} 
+                      placeholder="Ex: Smash Burger" 
+                      className="w-full h-11 bg-white/[0.05] border border-white/10 rounded-xl px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 transition-all font-medium" 
+                      required 
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[13px] font-bold text-white/50 ml-1 block">Categoria</label>
+                    <div className="relative">
+                      <select 
+                        value={editingProduct?.categoria_id || ""}
+                        onChange={(e) => setEditingProduct(prev => prev ? { ...prev, categoria_id: e.target.value } : null)}
+                        className="w-full bg-white/[0.05] border border-white/10 rounded-xl h-11 px-4 text-sm text-white focus:outline-none focus:border-orange-500/50 appearance-none font-bold uppercase tracking-tighter cursor-pointer"
+                        required
+                      >
+                        <option value="" disabled className="bg-[#1f2937]">Selecione...</option>
+                        {categories.map(cat => (
+                          <option key={cat.id} value={cat.id} className="bg-[#1f2937]">{cat.name.toUpperCase()}</option>
+                        ))}
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-[13px] font-bold text-white/50 ml-1 block">Preço (R$)</label>
+                      <input 
+                        type="number" 
+                        step="0.01" 
+                        value={editingProduct?.preco || ""} 
+                        onChange={(e) => setEditingProduct(prev => prev ? { ...prev, preco: parseFloat(e.target.value) || 0 } : null)} 
+                        className="w-full h-11 bg-white/[0.05] border border-white/10 rounded-xl px-4 text-sm text-orange-500 font-black focus:outline-none focus:border-orange-500/50" 
+                        required 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[13px] font-bold text-white/50 ml-1 block">Ordem</label>
+                      <input 
+                        type="number" 
+                        value={editingProduct?.order_index || ""} 
+                        onChange={(e) => setEditingProduct(prev => prev ? { ...prev, order_index: parseInt(e.target.value) || 0 } : null)} 
+                        className="w-full h-11 bg-white/[0.05] border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-orange-500/50 font-black text-center" 
+                        required 
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[13px] font-bold text-white/50 ml-1 block">Descrição</label>
+                    <textarea 
+                      value={editingProduct?.descricao || ""} 
+                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, descricao: e.target.value } : null)} 
+                      placeholder="Breve descrição..." 
+                      className="w-full bg-white/[0.05] border border-white/10 rounded-xl p-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 transition-all font-medium h-24 resize-none leading-relaxed" 
+                      required 
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div className="px-8 py-6 border-t border-white/[0.03] flex gap-4 bg-white/[0.01]">
+              {/* Botões de Ação */}
+              <div className="mt-8 flex gap-4">
                 <button 
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-8 py-3 bg-white/5 hover:bg-white/10 text-white font-bold text-[11px] uppercase tracking-[0.2em] rounded-xl transition-all border border-white/5 active:scale-95 cursor-pointer"
+                  type="button" 
+                  onClick={() => setIsModalOpen(false)} 
+                  className="flex-1 py-3 bg-white/5 hover:bg-white/10 text-white font-bold text-[11px] uppercase tracking-[0.2em] rounded-xl transition-all border border-white/5 active:scale-95 cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button 
                   type="submit" 
-                  disabled={isSaving}
-                  className="flex-1 px-8 py-3 bg-orange-600 hover:bg-orange-500 text-white font-bold text-[11px] uppercase tracking-[0.2em] rounded-xl transition-all shadow-[0_10px_20px_rgba(234,88,12,0.2)] active:scale-95 flex items-center justify-center cursor-pointer disabled:opacity-50"
+                  disabled={isSaving} 
+                  className="flex-[2] py-3 bg-orange-600 hover:bg-orange-500 text-white font-bold text-[11px] uppercase tracking-widest rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50"
                 >
-                  {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : (editingProduct?.id ? "Atualizar Produto" : "Criar Produto")}
+                  {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                  {isSaving ? "SALVANDO..." : (editingProduct?.id ? "ATUALIZAR PRODUTO" : "CRIAR PRODUTO")}
                 </button>
               </div>
             </form>
