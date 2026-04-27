@@ -414,9 +414,10 @@ export default function GruposAdicionaisPage() {
 
           <button 
             onClick={openAddModal}
-            className="flex items-center gap-2 px-4 py-2.5 bg-orange-600 hover:bg-orange-500 text-white rounded-[8px] font-bold text-[13px] transition-all active:scale-95 cursor-pointer shadow-sm border-none"
+            className="flex items-center gap-2.5 px-5 py-2.5 bg-white hover:bg-primary text-slate-900 hover:text-white rounded-lg font-bold text-sm transition-all shadow-sm border border-white/5 active:scale-95 group cursor-pointer"
           >
-            + Novo Grupo
+            <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
+            Novo Grupo
           </button>
         </div>
 
