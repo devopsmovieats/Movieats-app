@@ -568,13 +568,12 @@ export default function CategoriasPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Limite estrito de 4MB
-    const MAX_SIZE = 4194304; 
+    // Limite estrito de 10MB
+    const MAX_SIZE = 10485760; 
     if (file.size > MAX_SIZE) {
       Toast.fire({
         icon: "warning",
-        title: "Arquivo muito grande",
-        text: "O limite máximo permitido é de 4MB."
+        title: "Erro: Limite máximo de 10MB permitido."
       });
       if (fileInputRef.current) fileInputRef.current.value = "";
       return;
