@@ -270,6 +270,16 @@ export default function FornecedoresPage() {
     e.preventDefault();
     if (!editingSupplier?.name) return;
 
+    // Validações de Segurança
+    const cleanDoc = editingSupplier.document.replace(/\D/g, "");
+    if (cleanDoc && /^0+$/.test(cleanDoc)) {
+      return Toast.fire({ icon: "warning", title: "Documento inválido (apenas zeros)." });
+    }
+
+    if (editingSupplier.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editingSupplier.email)) {
+      return Toast.fire({ icon: "warning", title: "E-mail com formato inválido." });
+    }
+
     setIsSaving(true);
     
     try {
@@ -311,9 +321,14 @@ export default function FornecedoresPage() {
       }
 
       setIsModalOpen(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro:", error);
-      Toast.fire({ icon: "error", title: "Erro ao salvar" });
+      const msg = error.message || "Erro desconhecido";
+      if (msg.includes("unique")) {
+        Toast.fire({ icon: "error", title: "Documento já cadastrado!" });
+      } else {
+        Toast.fire({ icon: "error", title: `Erro ao salvar: ${msg}` });
+      }
     } finally {
       setIsSaving(false);
     }
