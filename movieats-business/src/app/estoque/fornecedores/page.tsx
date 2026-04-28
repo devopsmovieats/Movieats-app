@@ -27,7 +27,13 @@ interface Supplier {
   phone: string;
   email: string;
   category: string;
+  category_id: string;
   status: 'ativo' | 'inativo';
+}
+
+interface Category {
+  id: string;
+  nome: string;
 }
 
 const Toast = Swal.mixin({
@@ -84,7 +90,7 @@ export default function FornecedoresPage() {
   const [isSaving, setIsSaving] = useState(false);
   
   const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
-  const [categories, setCategories] = useState<string[]>(["Alimentos", "Bebidas", "Embalagens", "Manutenção", "Outros"]);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   // Paginação
   const [currentPage, setCurrentPage] = useState(1);
@@ -107,6 +113,7 @@ export default function FornecedoresPage() {
             phone: p.telefone || "",
             email: p.email || "",
             category: p.categoria || "Outros",
+            category_id: p.categoria_id || "",
             status: p.status || 'ativo'
           })));
         }
@@ -121,11 +128,11 @@ export default function FornecedoresPage() {
         if (!supabase) return;
         const { data, error } = await supabase
           .from("bd_fornecedores_categorias")
-          .select("nome")
+          .select("id, nome")
           .order("nome");
           
-        if (data && !error && data.length > 0) {
-          setCategories(data.map(c => c.nome));
+        if (data && !error) {
+          setCategories(data);
         }
       } catch (e) {}
     };
@@ -148,29 +155,70 @@ export default function FornecedoresPage() {
       preConfirm: async (newCat) => {
         const trimmed = newCat.trim();
         if (!trimmed) return Swal.showValidationMessage("Nome inválido");
-        if (categories.includes(trimmed)) return trimmed;
+        if (categories.some(c => c.nome === trimmed)) return trimmed;
         
         if (!supabase) return Swal.showValidationMessage("Erro: Supabase não conectado.");
 
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("bd_fornecedores_categorias")
-          .insert([{ nome: trimmed }]);
+          .insert([{ nome: trimmed }])
+          .select()
+          .single();
           
         if (error && error.code !== '23505') {
           return Swal.showValidationMessage(`Erro: ${error.message}`);
         }
-        return trimmed;
+        return data || trimmed;
       }
     }).then((result) => {
       if (result.isConfirmed && result.value) {
         const newCat = result.value;
-        if (!categories.includes(newCat)) {
-          setCategories(prev => [...prev, newCat].sort());
-        }
-        if (editingSupplier) {
-          setEditingSupplier({ ...editingSupplier, category: newCat });
+        if (typeof newCat === 'object') {
+          setCategories(prev => [...prev, newCat].sort((a, b) => a.nome.localeCompare(b.nome)));
+          if (editingSupplier) {
+            setEditingSupplier({ ...editingSupplier, category_id: newCat.id, category: newCat.nome });
+          }
         }
         Toast.fire({ icon: "success", title: "Categoria adicionada!" });
+      }
+    });
+  };
+
+  const handleEditCategory = () => {
+    if (!editingSupplier?.category_id) return;
+    const currentCat = categories.find(c => c.id === editingSupplier.category_id);
+    
+    Swal.fire({
+      title: 'Editar Categoria',
+      input: 'text',
+      inputValue: currentCat?.nome || "",
+      showCancelButton: true,
+      confirmButtonText: 'Salvar',
+      cancelButtonText: 'Cancelar',
+      background: "#141414",
+      color: "#fff",
+      confirmButtonColor: "#ea580c",
+      customClass: { popup: "rounded-xl border border-white/5 shadow-2xl" },
+      showLoaderOnConfirm: true,
+      preConfirm: async (newName) => {
+        const trimmed = newName.trim();
+        if (!trimmed) return Swal.showValidationMessage("Nome inválido");
+        
+        if (!supabase) return;
+        const { error } = await supabase
+          .from("bd_fornecedores_categorias")
+          .update({ nome: trimmed })
+          .eq("id", editingSupplier.category_id);
+          
+        if (error) return Swal.showValidationMessage(`Erro: ${error.message}`);
+        return trimmed;
+      }
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        const newName = result.value;
+        setCategories(prev => prev.map(c => c.id === editingSupplier.category_id ? { ...c, nome: newName } : c));
+        setEditingSupplier({ ...editingSupplier, category: newName });
+        Toast.fire({ icon: "success", title: "Categoria atualizada!" });
       }
     });
   };
@@ -199,7 +247,8 @@ export default function FornecedoresPage() {
       document: "",
       phone: "",
       email: "",
-      category: "Outros",
+      category: "",
+      category_id: "",
       status: 'ativo'
     });
     setIsModalOpen(true);
@@ -223,6 +272,7 @@ export default function FornecedoresPage() {
         telefone: editingSupplier.phone,
         email: editingSupplier.email,
         categoria: editingSupplier.category,
+        categoria_id: editingSupplier.category_id || null,
         status: editingSupplier.status
       };
 
@@ -704,24 +754,39 @@ export default function FornecedoresPage() {
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <select 
-                          value={editingSupplier.category}
-                          onChange={(e) => setEditingSupplier({ ...editingSupplier, category: e.target.value })}
+                          value={editingSupplier.category_id}
+                          onChange={(e) => {
+                            const cat = categories.find(c => c.id === e.target.value);
+                            setEditingSupplier({ ...editingSupplier, category_id: e.target.value, category: cat?.nome || "" });
+                          }}
                           className="w-full bg-white/[0.05] border border-white/10 rounded-xl h-12 px-4 text-sm text-white focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium appearance-none cursor-pointer"
                         >
+                          <option value="" className="bg-[#1a1a1a]">Selecionar Tipo...</option>
                           {categories.map(cat => (
-                            <option key={cat} value={cat} className="bg-[#1a1a1a]">{cat}</option>
+                            <option key={cat.id} value={cat.id} className="bg-[#1a1a1a]">{cat.nome}</option>
                           ))}
                         </select>
                         <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white opacity-40 pointer-events-none" />
                       </div>
-                      <button 
-                        type="button"
-                        onClick={handleAddCategory}
-                        className="h-12 w-12 flex items-center justify-center bg-white/[0.05] border border-white/10 rounded-xl text-white hover:bg-orange-500/20 hover:text-orange-500 hover:border-orange-500/30 transition-all cursor-pointer"
-                        title="Adicionar Novo Tipo"
-                      >
-                        <Plus className="w-5 h-5" />
-                      </button>
+                      <div className="flex gap-2">
+                        <button 
+                          type="button"
+                          onClick={handleEditCategory}
+                          className={`h-12 w-12 flex items-center justify-center bg-white/[0.05] border border-white/10 rounded-xl text-white transition-all cursor-pointer ${!editingSupplier.category_id ? 'opacity-20 cursor-not-allowed' : 'hover:bg-blue-500/20 hover:text-blue-400 hover:border-blue-500/30'}`}
+                          title="Editar Categoria Selecionada"
+                          disabled={!editingSupplier.category_id}
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button 
+                          type="button"
+                          onClick={handleAddCategory}
+                          className="h-12 w-12 flex items-center justify-center bg-white/[0.05] border border-white/10 rounded-xl text-white hover:bg-orange-500/20 hover:text-orange-500 hover:border-orange-500/30 transition-all cursor-pointer"
+                          title="Adicionar Novo Tipo"
+                        >
+                          <Plus className="w-5 h-5" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
