@@ -25,6 +25,8 @@ import {
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { supabase } from "@/lib/supabase";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 // Configuração do Toast elegante conforme o padrão Movieats
 const Toast = Swal.mixin({
@@ -358,16 +360,76 @@ export default function GruposAdicionaisPage() {
     else setSelectedIds(new Set(filteredGroups.map(g => g.id)));
   };
 
-  const handleExport = () => {
+  const handleExportChoice = () => {
     const groupsToExport = groups.filter(g => selectedIds.has(g.id));
     if (groupsToExport.length === 0) {
-      Toast.fire({ 
-        icon: "warning", 
-        title: "Selecione grupo para exportar" 
-      });
+      Toast.fire({ icon: "warning", title: "Selecione grupo para exportar" });
       return;
     }
+
+    Swal.fire({
+      title: 'Exportar Grupos',
+      text: 'Escolha o formato de exportação:',
+      icon: 'info',
+      showCancelButton: true,
+      showDenyButton: true,
+      confirmButtonText: 'Exportar para PDF',
+      denyButtonText: 'Exportar para Excel',
+      cancelButtonText: 'Cancelar',
+      background: "#1a1a1a",
+      color: "#fff",
+      confirmButtonColor: "#ff6b00",
+      denyButtonColor: "#10b981",
+      cancelButtonColor: "#2a2a2a",
+      customClass: {
+        popup: "rounded-[8px] border border-white/5 shadow-2xl p-4",
+        confirmButton: "rounded-lg font-black uppercase text-[10px] px-6 py-3 tracking-widest cursor-pointer",
+        denyButton: "rounded-lg font-black uppercase text-[10px] px-6 py-3 tracking-widest cursor-pointer",
+        cancelButton: "rounded-lg font-black uppercase text-[10px] px-6 py-3 tracking-widest cursor-pointer mt-2 w-full sm:w-auto sm:mt-0",
+        title: "text-base font-black leading-tight mb-2 uppercase tracking-tight",
+        htmlContainer: "text-[11px] text-muted-foreground mb-4",
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleExportPDF(groupsToExport);
+      } else if (result.isDenied) {
+        handleExportCSV(groupsToExport);
+      }
+    });
+  };
+
+  const handleExportPDF = (groupsToExport: AddonGroup[]) => {
+    const doc = new jsPDF();
     
+    doc.setFontSize(18);
+    doc.text("Relatório de Grupos de Adicionais", 14, 22);
+    
+    doc.setFontSize(11);
+    doc.setTextColor(100);
+    const subtitle = searchQuery ? `Filtro: ${searchQuery}` : "Filtro: Todos os Grupos";
+    doc.text(subtitle, 14, 30);
+
+    const tableColumn = ["Nome do Grupo", "Quantidade de Itens", "Status"];
+    const tableRows = groupsToExport.map(g => [
+      g.nome_grupo,
+      g.items ? g.items.length.toString() : "0",
+      g.active ? 'Ativo' : 'Inativo'
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 35,
+      styles: { fontSize: 10, cellPadding: 4 },
+      headStyles: { fillColor: [255, 107, 0], textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+    });
+
+    doc.save(`grupos_movieats_${new Date().getTime()}.pdf`);
+    Toast.fire({ icon: "success", title: "PDF exportado com sucesso!" });
+  };
+
+  const handleExportCSV = (groupsToExport: AddonGroup[]) => {
     const csvContent = [
       ["ID", "Nome", "Tipo", "Mínimo", "Máximo", "Status", "Itens"],
       ...groupsToExport.map(g => [
@@ -387,7 +449,7 @@ export default function GruposAdicionaisPage() {
     link.download = `grupos_adicionais_${new Date().getTime()}.csv`;
     link.click();
     
-    Toast.fire({ icon: "success", title: "Exportação concluída" });
+    Toast.fire({ icon: "success", title: "Excel exportado com sucesso!" });
   };
 
 
@@ -399,22 +461,20 @@ export default function GruposAdicionaisPage() {
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <div className="flex items-center gap-3 mb-1">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <List className="text-primary w-5 h-5" />
-              </div>
-              <h2 className="text-2xl font-headline font-black text-white tracking-tight uppercase leading-none">
+            <div className="flex items-center gap-6 mb-2">
+              <List className="text-white w-6 h-6" />
+              <h2 className="text-3xl font-headline font-black text-white tracking-tight leading-none ml-2">
                 Grupos de Adicionais
               </h2>
             </div>
-            <p className="text-muted-foreground text-sm font-medium">
-              Configure complementos e opções para seus produtos.
+            <p className="text-muted-foreground text-sm font-medium ml-1">
+              Gerencie os grupos de complementos e adicionais dos seus produtos.
             </p>
           </div>
 
           <button 
             onClick={openAddModal}
-            className="flex items-center gap-2.5 px-5 py-2.5 bg-white hover:bg-[#ff6b00] text-slate-900 hover:text-white rounded-lg font-bold text-sm transition-all shadow-sm border border-white/5 active:scale-95 group cursor-pointer"
+            className="flex items-center gap-2.5 px-5 py-2.5 bg-white hover:bg-orange-600 text-slate-900 hover:text-white rounded-lg font-bold text-[13px] transition-all shadow-lg shadow-black/20 active:scale-95 group cursor-pointer"
           >
             <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
             Novo Grupo
@@ -424,13 +484,13 @@ export default function GruposAdicionaisPage() {
         {/* Search & Filter Bar */}
         <div className="glass border border-white/5 rounded-[8px] p-4 flex flex-col md:flex-row gap-4 items-center">
           <div className="relative w-full max-w-xs group cursor-text">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white opacity-40 group-focus-within:opacity-100 transition-opacity" />
             <input 
               type="text" 
               placeholder="Buscar grupo..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/[0.03] border border-white/5 rounded-lg py-3 pl-11 pr-4 text-xs text-white placeholder:text-muted-foreground/30 focus:outline-none focus:border-primary/50 transition-all font-medium"
+              className="w-full bg-white/[0.03] border border-white/5 rounded-lg py-3 pl-11 pr-4 text-xs text-white placeholder:text-white/20 focus:outline-none focus:border-white/20 focus:ring-4 focus:ring-white/5 transition-all font-medium"
             />
           </div>
 
@@ -438,8 +498,8 @@ export default function GruposAdicionaisPage() {
 
           <div className="flex items-center gap-3">
             <button 
-              onClick={handleExport}
-              className="flex items-center gap-2 px-5 py-3 glass border-white/10 hover:border-primary/30 hover:bg-primary/5 rounded-lg text-[10px] font-black text-white hover:text-primary uppercase tracking-[0.15em] transition-all cursor-pointer group active:scale-95"
+              onClick={handleExportChoice}
+              className="flex items-center gap-2 px-5 py-3 glass border-white/10 hover:border-white/30 hover:bg-white/5 rounded-lg text-[10px] font-bold text-white uppercase tracking-wider transition-all cursor-pointer active:scale-95 group"
             >
               <Download className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
               {selectedIds.size > 0 ? `Exportar (${selectedIds.size})` : "Exportar"}
@@ -468,12 +528,12 @@ export default function GruposAdicionaisPage() {
                         className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
                       />
                     </th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Grupo</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Tipo</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Adicionais</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Preço</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-center">Status</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-right">Ações</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] uppercase">Grupo</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] uppercase">Tipo</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] uppercase">Adicionais</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] uppercase">Preço</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] text-center uppercase">Status</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] text-right uppercase">Ações</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
@@ -492,18 +552,20 @@ export default function GruposAdicionaisPage() {
                       </td>
                       <td className="px-6 py-4 align-middle">
                         <div className="flex flex-col">
-                          <span className="text-sm font-medium text-white group-hover:text-primary transition-colors uppercase tracking-tight">
+                          <span className="text-[15px] font-bold text-white group-hover:text-primary transition-colors uppercase tracking-tight">
                             {group.nome_grupo}
                           </span>
-                          <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest opacity-40 mt-0.5">
+                          <span className="text-[10px] text-zinc-500 font-medium uppercase tracking-widest mt-1">
                             #{group.id.toString().substring(0, 8).toUpperCase()}
                           </span>
                         </div>
                       </td>
                       <td className="px-6 py-4 align-middle">
-                        <div className="flex items-center gap-2">
-                          <div className={`w-1.5 h-1.5 rounded-full ${group.tipo_escolha === 'unica' ? 'bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]' : 'bg-purple-500 shadow-[0_0_8_rgba(168,85,247,0.5)]'}`} />
-                          <span className="text-[10px] font-black text-white/50 uppercase tracking-widest">{group.tipo_escolha === 'unica' ? 'Seleção Única' : 'Múltipla Escolha'}</span>
+                        <div className="flex flex-col gap-1.5">
+                          <span className="text-[10px] font-medium text-white/50 uppercase tracking-widest">{group.tipo_escolha === 'unica' ? 'Seleção Única' : 'Múltipla Escolha'}</span>
+                          <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md self-start uppercase tracking-wider ${group.qtd_minima > 0 ? 'bg-orange-500 text-white' : 'bg-blue-500 text-white'}`}>
+                            {group.qtd_minima > 0 ? 'Obrigatório' : 'Opcional'}
+                          </span>
                         </div>
                       </td>
                       <td className="px-6 py-4 align-middle">
@@ -526,7 +588,7 @@ export default function GruposAdicionaisPage() {
                           <div className="flex flex-col gap-1.5 py-1">
                             {group.items.map((item, idx) => (
                               <div key={item.id || idx} className="h-4 flex items-center whitespace-nowrap">
-                                <span className="text-[11px] text-gray-400/40 font-black">
+                                <span className="text-[11px] text-white font-medium">
                                   R$ {item.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                                 </span>
                               </div>
@@ -537,7 +599,7 @@ export default function GruposAdicionaisPage() {
                         )}
                       </td>
                       <td className="px-6 py-4 align-middle text-center">
-                        <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-md border ${group.active ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-red-500 bg-red-500/10 border-red-500/20'}`}>
+                        <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md border ${group.active ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-red-500 bg-red-500/10 border-red-500/20'}`}>
                           {group.active ? 'DISPONÍVEL' : 'INDISPONÍVEL'}
                         </span>
                       </td>
@@ -571,7 +633,7 @@ export default function GruposAdicionaisPage() {
               <button 
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
                 disabled={currentPage === 1} 
-                className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer text-white disabled:text-white/20 disabled:cursor-not-allowed hover:text-primary"
+                className="text-[11px] font-black uppercase tracking-[0.2em] transition-colors cursor-pointer !text-white disabled:opacity-20 disabled:cursor-not-allowed hover:text-primary"
               >
                 Anterior
               </button>
@@ -581,7 +643,7 @@ export default function GruposAdicionaisPage() {
                   <button 
                     key={i} 
                     onClick={() => setCurrentPage(i + 1)} 
-                    className={`w-8 h-8 flex items-center justify-center text-[11px] font-black transition-all cursor-pointer ${currentPage === i + 1 ? "text-primary font-black" : "text-white/40 hover:text-white"}`}
+                    className={`w-8 h-8 flex items-center justify-center text-[12px] font-black transition-all cursor-pointer ${currentPage === i + 1 ? "text-primary" : "!text-white opacity-40 hover:opacity-100"}`}
                   >
                     {i + 1}
                   </button>
@@ -591,7 +653,7 @@ export default function GruposAdicionaisPage() {
               <button 
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
                 disabled={currentPage === totalPages || totalPages === 0} 
-                className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer text-white disabled:text-white/20 disabled:cursor-not-allowed hover:text-primary"
+                className="text-[11px] font-black uppercase tracking-[0.2em] transition-colors cursor-pointer !text-white disabled:opacity-20 disabled:cursor-not-allowed hover:text-primary"
               >
                 Próximo
               </button>
