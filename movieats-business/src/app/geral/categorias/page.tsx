@@ -133,7 +133,7 @@ export default function CategoriasPage() {
           name: cat.name,
           descricao: cat.descricao || "",
           order: cat.order || 0,
-          status: cat.status === 'active' ? 'ativo' : 'inativo',
+          status: (cat.status === 'active' ? 'ativo' : 'inativo') as "ativo" | "inativo",
           image_url: cat.image_url || ""
         }));
         setCategories(formatted);

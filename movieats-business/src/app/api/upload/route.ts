@@ -1,12 +1,3 @@
-// CONFIGURAÇÃO DE LIMITE DE UPLOAD (SOLICITADO)
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-  },
-};
-
 import { NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { supabase } from '@/lib/supabase';
