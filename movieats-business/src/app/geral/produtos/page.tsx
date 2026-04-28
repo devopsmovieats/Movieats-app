@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { getPublicUrl } from "@/lib/utils";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 // Configuração do Toast elegante conforme o padrão Movieats
 const Toast = Swal.mixin({
@@ -78,15 +80,19 @@ const initialProducts: Product[] = [
   }
 ];
 
-const getCategoryBadgeStyle = (name: string) => {
-  const n = name.toLowerCase();
-  if (n.includes("salada") || n.includes("vegan")) return "bg-green-500 text-white border-green-400";
-  if (n.includes("porç") || n.includes("entrada")) return "bg-blue-500 text-white border-blue-400";
-  if (n.includes("carne") || n.includes("hamb") || n.includes("burg")) return "bg-red-500 text-white border-red-400";
-  if (n.includes("pizza")) return "bg-orange-500 text-white border-orange-400";
-  if (n.includes("bebid") || n.includes("drink") || n.includes("suco")) return "bg-cyan-500 text-white border-cyan-400";
-  if (n.includes("sobremesa") || n.includes("doce")) return "bg-pink-500 text-white border-pink-400";
-  return "bg-indigo-500 text-white border-indigo-400";
+const categoryColors = [
+  "bg-green-600 text-white border-green-500",
+  "bg-blue-600 text-white border-blue-500",
+  "bg-orange-600 text-white border-orange-500",
+  "bg-purple-600 text-white border-purple-500",
+  "bg-red-600 text-white border-red-500",
+  "bg-pink-600 text-white border-pink-500",
+];
+
+const getCategoryBadgeStyle = (categoryId: string, categories: Category[]) => {
+  const index = categories.findIndex(c => c.id === categoryId);
+  if (index === -1) return "bg-zinc-600 text-white border-zinc-500";
+  return categoryColors[index % categoryColors.length];
 };
 
 export default function ProdutosPage() {
@@ -393,19 +399,77 @@ export default function ProdutosPage() {
     }
   };
 
-  const handleExport = () => {
+  const handleExportChoice = () => {
     // @ts-ignore
     const productsToExport = products.filter(p => selectedIds.has(p.id));
-    
     if (productsToExport.length === 0) {
-      Toast.fire({
-        icon: "warning",
-        title: "Selecione produto para exportar"
-      });
+      Toast.fire({ icon: "warning", title: "Selecione produto para exportar" });
       return;
     }
+
+    Swal.fire({
+      title: 'Exportar Produtos',
+      text: 'Escolha o formato de exportação:',
+      icon: 'info',
+      showCancelButton: true,
+      showDenyButton: true,
+      confirmButtonText: 'Exportar para PDF',
+      denyButtonText: 'Exportar para Excel',
+      cancelButtonText: 'Cancelar',
+      background: "#1a1a1a",
+      color: "#fff",
+      confirmButtonColor: "#ff6b00",
+      denyButtonColor: "#10b981",
+      cancelButtonColor: "#2a2a2a",
+      customClass: {
+        popup: "rounded-[8px] border border-white/5 shadow-2xl p-4",
+        confirmButton: "rounded-lg font-black uppercase text-[10px] px-6 py-3 tracking-widest cursor-pointer",
+        denyButton: "rounded-lg font-black uppercase text-[10px] px-6 py-3 tracking-widest cursor-pointer",
+        cancelButton: "rounded-lg font-black uppercase text-[10px] px-6 py-3 tracking-widest cursor-pointer mt-2 w-full sm:w-auto sm:mt-0",
+        title: "text-base font-black leading-tight mb-2 uppercase tracking-tight",
+        htmlContainer: "text-[11px] text-muted-foreground mb-4",
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleExportPDF(productsToExport);
+      } else if (result.isDenied) {
+        handleExportCSV(productsToExport);
+      }
+    });
+  };
+
+  const handleExportPDF = (productsToExport: Product[]) => {
+    const doc = new jsPDF();
     
-    // Header do CSV
+    doc.setFontSize(18);
+    doc.text("Relatório de Produtos", 14, 22);
+    
+    doc.setFontSize(11);
+    doc.setTextColor(100);
+    const subtitle = categoryFilter !== "todas" ? `Categoria: ${categoryFilter}` : "Filtro: Todos os Produtos";
+    doc.text(subtitle, 14, 30);
+
+    const tableColumn = ["Nome do Produto", "Categoria", "Preço"];
+    const tableRows = productsToExport.map(product => {
+      const catName = categories.find(c => c.id === product.categoria_id)?.name || "Sem Categoria";
+      const priceStr = `R$ ${product.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+      return [product.name, catName, priceStr];
+    });
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 35,
+      styles: { fontSize: 10, cellPadding: 4 },
+      headStyles: { fillColor: [255, 107, 0], textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+    });
+
+    doc.save(`produtos_movieats_${new Date().getTime()}.pdf`);
+    Toast.fire({ icon: "success", title: "PDF exportado com sucesso!" });
+  };
+
+  const handleExportCSV = (productsToExport: Product[]) => {
     const csvContent = [
       ["ID", "Nome", "Categoria", "Preço", "Ordem", "Status", "Descrição"],
       ...productsToExport.map(p => {
@@ -424,10 +488,7 @@ export default function ProdutosPage() {
     link.click();
     document.body.removeChild(link);
     
-    Toast.fire({
-      icon: "success",
-      title: `${productsToExport.length} produtos exportados com sucesso!`
-    });
+    Toast.fire({ icon: "success", title: "Excel exportado com sucesso!" });
   };
 
 
@@ -553,7 +614,7 @@ export default function ProdutosPage() {
           {userRole !== "ATENDENTE" && (
             <div className="flex items-center gap-3">
               <button 
-                onClick={handleExport}
+                onClick={handleExportChoice}
                 className="flex items-center gap-2 px-5 py-3 glass border-white/10 hover:border-white/30 hover:bg-white/5 rounded-lg text-[10px] font-bold text-white uppercase tracking-wider transition-all cursor-pointer active:scale-95 group"
               >
                 <Download className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
@@ -584,13 +645,13 @@ export default function ProdutosPage() {
                         className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
                       />
                     </th>
-                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] text-center uppercase">Ordem</th>
-                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] uppercase">Imagem</th>
-                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] uppercase">Produto</th>
-                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] uppercase">Categoria</th>
-                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] uppercase">Preço</th>
-                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] text-center uppercase">Status</th>
-                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] text-right uppercase">Ações</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] text-center uppercase">Ordem</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] uppercase">Imagem</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] uppercase">Produto</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] uppercase">Categoria</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] uppercase">Preço</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] text-center uppercase">Status</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] text-right uppercase">Ações</th>
                   </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -605,7 +666,7 @@ export default function ProdutosPage() {
                       />
                     </td>
                     <td className="px-6 py-4 align-middle text-center">
-                      <span className="text-sm font-black text-white/40">
+                      <span className="text-sm font-medium text-white/40">
                         {product.order_index}
                       </span>
                     </td>
@@ -620,7 +681,7 @@ export default function ProdutosPage() {
                     </td>
                     <td className="px-6 py-4 align-middle">
                       <div className="flex flex-col">
-                        <span className="text-[15px] font-black text-white group-hover:text-primary transition-colors uppercase tracking-tight">
+                        <span className="text-[15px] font-bold text-white group-hover:text-primary transition-colors uppercase tracking-tight">
                           {product.name}
                         </span>
                         <span className="text-[10px] text-zinc-500 font-medium uppercase tracking-widest mt-1">
@@ -629,17 +690,17 @@ export default function ProdutosPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 align-middle">
-                      <span className={`text-[10px] font-black px-3 py-1.5 rounded-md border uppercase tracking-wide ${getCategoryBadgeStyle(categories.find(c => c.id === product.categoria_id)?.name || "")}`}>
+                      <span className={`text-[10px] font-medium px-3 py-1.5 rounded-md border uppercase tracking-wide ${getCategoryBadgeStyle(product.categoria_id, categories)}`}>
                         {categories.find(c => c.id === product.categoria_id)?.name || "Sem Categoria"}
                       </span>
                     </td>
                     <td className="px-6 py-4 align-middle">
-                      <span className="text-base font-black text-white tracking-tighter">
+                      <span className="text-base font-bold text-white tracking-tighter">
                         R$ {product.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </span>
                     </td>
                     <td className="px-6 py-4 align-middle text-center">
-                      <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-md border ${product.active ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-red-500 bg-red-500/10 border-red-500/20'}`}>
+                      <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md border ${product.active ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-red-500 bg-red-500/10 border-red-500/20'}`}>
                         {product.active ? 'DISPONÍVEL' : 'INDISPONÍVEL'}
                       </span>
                     </td>
