@@ -25,6 +25,7 @@ interface Supplier {
   document: string;
   phone: string;
   email: string;
+  category: string;
   status: 'ativo' | 'inativo';
 }
 
@@ -44,6 +45,33 @@ const Toast = Swal.mixin({
     toast.addEventListener("mouseleave", Swal.resumeTimer);
   }
 });
+
+const formatDocument = (val: string) => {
+  let v = val.replace(/\D/g, "");
+  if (v.length <= 11) {
+    v = v.replace(/(\d{3})(\d)/, "$1.$2");
+    v = v.replace(/(\d{3})(\d)/, "$1.$2");
+    v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  } else {
+    v = v.replace(/^(\d{2})(\d)/, "$1.$2");
+    v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+    v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");
+    v = v.replace(/(\d{4})(\d{1,2})$/, "$1-$2");
+  }
+  return v.slice(0, 18);
+};
+
+const formatPhone = (val: string) => {
+  let v = val.replace(/\D/g, "");
+  if (v.length <= 10) {
+    v = v.replace(/(\d{2})(\d)/, "($1) $2");
+    v = v.replace(/(\d{4})(\d)/, "$1-$2");
+  } else {
+    v = v.replace(/(\d{2})(\d)/, "($1) $2");
+    v = v.replace(/(\d{5})(\d)/, "$1-$2");
+  }
+  return v.slice(0, 15);
+};
 
 export default function FornecedoresPage() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
@@ -71,6 +99,7 @@ export default function FornecedoresPage() {
           document: p.document || "",
           phone: p.phone || p.whatsapp || "",
           email: p.email || "",
+          category: p.category || "Outros",
           status: p.status || 'ativo'
         }));
         setSuppliers(mapped);
@@ -107,6 +136,7 @@ export default function FornecedoresPage() {
       document: "",
       phone: "",
       email: "",
+      category: "Outros",
       status: 'ativo'
     });
     setIsModalOpen(true);
@@ -229,9 +259,10 @@ export default function FornecedoresPage() {
     const subtitle = statusFilter !== "todos" ? `Filtro Status: ${statusFilter}` : "Filtro: Todos os Fornecedores";
     doc.text(subtitle, 14, 30);
 
-    const tableColumn = ["Nome", "CNPJ/CPF", "Telefone", "E-mail", "Status"];
+    const tableColumn = ["Nome", "Tipo", "CNPJ/CPF", "Telefone", "E-mail", "Status"];
     const tableRows = suppliersToExport.map(s => [
       s.name, 
+      s.category || "-",
       s.document || "-", 
       s.phone || "-", 
       s.email || "-", 
@@ -276,10 +307,11 @@ export default function FornecedoresPage() {
 
   const handleExportCSV = (suppliersToExport: Supplier[]) => {
     const csvContent = [
-      ["ID", "Nome", "CNPJ/CPF", "Telefone", "E-mail", "Status"],
+      ["ID", "Nome", "Tipo", "CNPJ/CPF", "Telefone", "E-mail", "Status"],
       ...suppliersToExport.map(s => [
         s.id, 
         s.name, 
+        s.category || "-",
         s.document, 
         s.phone, 
         s.email, 
@@ -538,7 +570,7 @@ export default function FornecedoresPage() {
                     <input 
                       type="text" 
                       value={editingSupplier.document}
-                      onChange={(e) => setEditingSupplier({ ...editingSupplier, document: e.target.value })}
+                      onChange={(e) => setEditingSupplier({ ...editingSupplier, document: formatDocument(e.target.value) })}
                       placeholder="00.000.000/0000-00"
                       className="w-full bg-white/[0.05] border border-white/10 rounded-xl h-12 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium"
                     />
@@ -549,7 +581,7 @@ export default function FornecedoresPage() {
                     <input 
                       type="text" 
                       value={editingSupplier.phone}
-                      onChange={(e) => setEditingSupplier({ ...editingSupplier, phone: e.target.value })}
+                      onChange={(e) => setEditingSupplier({ ...editingSupplier, phone: formatPhone(e.target.value) })}
                       placeholder="(00) 00000-0000"
                       className="w-full bg-white/[0.05] border border-white/10 rounded-xl h-12 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium"
                     />
@@ -564,6 +596,24 @@ export default function FornecedoresPage() {
                       placeholder="contato@empresa.com"
                       className="w-full bg-white/[0.05] border border-white/10 rounded-xl h-12 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium"
                     />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[13px] font-bold text-white/50 ml-1 block">Tipo de Fornecedor</label>
+                    <div className="relative">
+                      <select 
+                        value={editingSupplier.category}
+                        onChange={(e) => setEditingSupplier({ ...editingSupplier, category: e.target.value })}
+                        className="w-full bg-white/[0.05] border border-white/10 rounded-xl h-12 px-4 text-sm text-white focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium appearance-none cursor-pointer"
+                      >
+                        <option value="Alimentos" className="bg-[#1a1a1a]">Alimentos</option>
+                        <option value="Bebidas" className="bg-[#1a1a1a]">Bebidas</option>
+                        <option value="Embalagens" className="bg-[#1a1a1a]">Embalagens</option>
+                        <option value="Manutenção" className="bg-[#1a1a1a]">Manutenção</option>
+                        <option value="Outros" className="bg-[#1a1a1a]">Outros</option>
+                      </select>
+                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white opacity-40 pointer-events-none" />
+                    </div>
                   </div>
                 </div>
 
