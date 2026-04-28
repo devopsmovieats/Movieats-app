@@ -122,7 +122,7 @@ export default function FornecedoresPage() {
             email: p.email || "",
             category: p.bd_fornecedores_categorias?.nome || "Outros",
             category_id: p.categoria_id || "",
-            status: p.status || 'ativo'
+            status: p.status === true ? 'ativo' : 'inativo'
           })));
         }
       } catch (e) {}
@@ -293,7 +293,7 @@ export default function FornecedoresPage() {
         telefone: editingSupplier.phone,
         email: editingSupplier.email,
         categoria_id: editingSupplier.category_id || null,
-        status: editingSupplier.status
+        status: editingSupplier.status === 'ativo' ? true : false
       };
 
       if (!editingSupplier.id) {
