@@ -288,7 +288,6 @@ export default function FornecedoresPage() {
         documento: editingSupplier.document,
         telefone: editingSupplier.phone,
         email: editingSupplier.email,
-        categoria: editingSupplier.category,
         categoria_id: editingSupplier.category_id || null,
         status: editingSupplier.status
       };
