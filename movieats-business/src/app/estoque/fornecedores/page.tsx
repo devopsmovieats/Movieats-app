@@ -93,6 +93,7 @@ export default function FornecedoresPage() {
   useEffect(() => {
     const fetchFornecedores = async () => {
       try {
+        if (!supabase) throw new Error("Supabase não configurado. Verifique as chaves no .env.");
         const { data, error } = await supabase
           .from("bd_fornecedores")
           .select("*")
@@ -117,6 +118,7 @@ export default function FornecedoresPage() {
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
+        if (!supabase) throw new Error("Supabase não configurado");
         const { data, error } = await supabase
           .from("bd_fornecedores_categorias")
           .select("nome")
@@ -148,6 +150,8 @@ export default function FornecedoresPage() {
         if (!trimmed) return Swal.showValidationMessage("Nome inválido");
         if (categories.includes(trimmed)) return trimmed;
         
+        if (!supabase) return Swal.showValidationMessage("Erro: Supabase não conectado.");
+
         const { error } = await supabase
           .from("bd_fornecedores_categorias")
           .insert([{ nome: trimmed }]);
@@ -222,6 +226,12 @@ export default function FornecedoresPage() {
         status: editingSupplier.status
       };
 
+      if (!supabase) {
+        Toast.fire({ icon: "error", title: "Erro de Conexão: Variáveis do Supabase ausentes." });
+        setIsSaving(false);
+        return;
+      }
+
       if (!editingSupplier.id) {
         const { data, error } = await supabase
           .from("bd_fornecedores")
@@ -272,6 +282,9 @@ export default function FornecedoresPage() {
       customClass: { popup: "rounded-xl border border-white/5" }
     }).then(async (result) => {
       if (result.isConfirmed) {
+        if (!supabase) {
+          return Toast.fire({ icon: "error", title: "Supabase não conectado." });
+        }
         const { error } = await supabase.from("bd_fornecedores").delete().eq("id", id);
         if (error) {
           Toast.fire({ icon: "error", title: "Erro ao excluir" });
