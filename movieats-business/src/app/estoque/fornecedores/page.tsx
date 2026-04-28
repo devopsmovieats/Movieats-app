@@ -25,6 +25,7 @@ import { supabase } from "@/lib/supabase";
 interface Supplier {
   id: string;
   name: string;
+  razao_social: string;
   document: string;
   phone: string;
   email: string;
@@ -114,11 +115,12 @@ export default function FornecedoresPage() {
         if (data && !error) {
           setSuppliers(data.map((p: any) => ({
             id: p.id,
-            name: p.nome,
-            document: p.documento || "",
+            name: p.nome_fantasia || "",
+            razao_social: p.razao_social || "",
+            document: p.cnpj_cpf || "",
             phone: p.telefone || "",
             email: p.email || "",
-            category: p.bd_fornecedores_categorias?.nome || p.categoria || "Outros",
+            category: p.bd_fornecedores_categorias?.nome || "Outros",
             category_id: p.categoria_id || "",
             status: p.status || 'ativo'
           })));
@@ -251,6 +253,7 @@ export default function FornecedoresPage() {
     setEditingSupplier({
       id: "",
       name: "",
+      razao_social: "",
       document: "",
       phone: "",
       email: "",
@@ -284,8 +287,9 @@ export default function FornecedoresPage() {
     
     try {
       const payload = {
-        nome: editingSupplier.name,
-        documento: editingSupplier.document,
+        nome_fantasia: editingSupplier.name,
+        razao_social: editingSupplier.razao_social,
+        cnpj_cpf: editingSupplier.document,
         telefone: editingSupplier.phone,
         email: editingSupplier.email,
         categoria_id: editingSupplier.category_id || null,
@@ -717,14 +721,25 @@ export default function FornecedoresPage() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[13px] font-bold text-white/50 ml-1 block">Nome do Fornecedor</label>
+                    <label className="text-[13px] font-bold text-white/50 ml-1 block">Nome Fantasia</label>
                     <input 
                       type="text" 
                       value={editingSupplier.name}
                       onChange={(e) => setEditingSupplier({ ...editingSupplier, name: e.target.value })}
-                      placeholder="Nome Fantasia ou Razão Social"
+                      placeholder="Nome da Empresa"
                       className="w-full bg-white/[0.05] border border-white/10 rounded-xl h-12 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium"
                       required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[13px] font-bold text-white/50 ml-1 block">Razão Social</label>
+                    <input 
+                      type="text" 
+                      value={editingSupplier.razao_social}
+                      onChange={(e) => setEditingSupplier({ ...editingSupplier, razao_social: e.target.value })}
+                      placeholder="Razão Social Completa"
+                      className="w-full bg-white/[0.05] border border-white/10 rounded-xl h-12 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium"
                     />
                   </div>
 
