@@ -93,7 +93,7 @@ export default function FornecedoresPage() {
   useEffect(() => {
     const fetchFornecedores = async () => {
       try {
-        if (!supabase) throw new Error("Supabase não configurado. Verifique as chaves no .env.");
+        if (!supabase) return;
         const { data, error } = await supabase
           .from("bd_fornecedores")
           .select("*")
@@ -118,7 +118,7 @@ export default function FornecedoresPage() {
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
-        if (!supabase) throw new Error("Supabase não configurado");
+        if (!supabase) return;
         const { data, error } = await supabase
           .from("bd_fornecedores_categorias")
           .select("nome")
