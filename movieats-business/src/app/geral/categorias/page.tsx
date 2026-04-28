@@ -26,6 +26,8 @@ import {
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { getPublicUrl } from "@/lib/utils";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 // ID Fixo para teste - Villa Gourmet
 // const FIXED_ESTABLISHMENT_ID = '17db3a9f-f6c1-434d-8f4a-e40cd67035f2';
@@ -299,41 +301,83 @@ export default function CategoriasPage() {
     });
   };
 
-  const handleExport = (e?: React.MouseEvent) => {
+  const handleExportChoice = (e?: React.MouseEvent) => {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
-
-    // @ts-ignore
-    const selectedRows = Array.from(selectedIds);
-    if (selectedRows.length === 0) {
-      Toast.fire({
-        icon: "warning",
-        title: "Selecione categoria para exportar"
-      });
-      return;
-    }
-
-    const categoriesToExport = categories.filter(cat => selectedIds.has(cat.id));
     
+    // @ts-ignore
+    const categoriesToExport = categories.filter(cat => selectedIds.has(cat.id));
     if (categoriesToExport.length === 0) {
-      Toast.fire({
-        icon: "info",
-        title: "Aviso",
-        text: "Nenhuma categoria correspondente encontrada para exportação."
-      });
+      Toast.fire({ icon: "warning", title: "Selecione categoria para exportar" });
       return;
     }
 
-    try {
-      Toast.fire({
-        icon: "info",
-        title: "Exportando...",
-        text: "Preparando dados.",
-        timer: 1500
-      });
+    Swal.fire({
+      title: 'Exportar Categorias',
+      text: 'Escolha o formato de exportação:',
+      icon: 'info',
+      showCancelButton: true,
+      showDenyButton: true,
+      confirmButtonText: 'Exportar para PDF',
+      denyButtonText: 'Exportar para Excel',
+      cancelButtonText: 'Cancelar',
+      background: "#1a1a1a",
+      color: "#fff",
+      confirmButtonColor: "#ff6b00",
+      denyButtonColor: "#10b981",
+      cancelButtonColor: "#2a2a2a",
+      customClass: {
+        popup: "rounded-[8px] border border-white/5 shadow-2xl p-4",
+        confirmButton: "rounded-lg font-black uppercase text-[10px] px-6 py-3 tracking-widest cursor-pointer",
+        denyButton: "rounded-lg font-black uppercase text-[10px] px-6 py-3 tracking-widest cursor-pointer",
+        cancelButton: "rounded-lg font-black uppercase text-[10px] px-6 py-3 tracking-widest cursor-pointer mt-2 w-full sm:w-auto sm:mt-0",
+        title: "text-base font-black leading-tight mb-2 uppercase tracking-tight",
+        htmlContainer: "text-[11px] text-muted-foreground mb-4",
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleExportPDF(categoriesToExport);
+      } else if (result.isDenied) {
+        handleExportCSV(categoriesToExport);
+      }
+    });
+  };
 
+  const handleExportPDF = (categoriesToExport: Category[]) => {
+    const doc = new jsPDF();
+    
+    doc.setFontSize(18);
+    doc.text("Relatório de Categorias - Movieats", 14, 22);
+    
+    doc.setFontSize(11);
+    doc.setTextColor(100);
+    const subtitle = statusFilter !== "todos" ? `Filtro Status: ${statusFilter}` : "Filtro: Todas as Categorias";
+    doc.text(subtitle, 14, 30);
+
+    const tableColumn = ["Ordem", "Nome da Categoria", "Status"];
+    const tableRows = categoriesToExport.map(cat => [
+      cat.order.toString(), 
+      cat.name, 
+      cat.status === 'ativo' ? 'Ativo' : 'Inativo'
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 35,
+      styles: { fontSize: 10, cellPadding: 4 },
+      headStyles: { fillColor: [255, 107, 0], textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+    });
+
+    doc.save(`categorias_movieats_${new Date().getTime()}.pdf`);
+    Toast.fire({ icon: "success", title: "PDF exportado com sucesso!" });
+  };
+
+  const handleExportCSV = (categoriesToExport: Category[]) => {
+    try {
       const dataToExport = categoriesToExport.map(cat => ({
         "ID": cat.id,
         "NOME": cat.name,
@@ -350,18 +394,10 @@ export default function CategoriasPage() {
       const timestamp = new Date().getTime();
       XLSX.writeFile(workbook, `relatorio_categorias_${timestamp}.xlsx`);
       
-      Toast.fire({
-        icon: "success",
-        title: "Sucesso",
-        text: "Categoria exportada com sucesso."
-      });
+      Toast.fire({ icon: "success", title: "Excel exportado com sucesso!" });
     } catch (error) {
       console.error("Falha na exportação:", error);
-      Toast.fire({
-        icon: "error",
-        title: "Erro",
-        text: "Não foi possível concluir a exportação."
-      });
+      Toast.fire({ icon: "error", title: "Erro na exportação" });
     }
   };
 
@@ -690,7 +726,7 @@ export default function CategoriasPage() {
           {/* Import/Export Actions */}
           {userRole !== "ATENDENTE" && (
               <button 
-                onClick={handleExport}
+                onClick={handleExportChoice}
                 className="flex items-center gap-2 px-5 py-3 glass border-white/10 hover:border-primary/30 hover:bg-primary/5 rounded-lg text-[10px] font-black text-white hover:text-primary uppercase tracking-[0.15em] transition-all cursor-pointer active:scale-95 group"
               >
                 <Download className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
@@ -722,11 +758,11 @@ export default function CategoriasPage() {
                         />
                       </div>
                     </th>
-                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] text-center uppercase">Ordem</th>
-                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] uppercase">Nome da Categoria</th>
-                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] uppercase">Descrição Detalhada</th>
-                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] text-center uppercase">Status</th>
-                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] text-right uppercase">Ações</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] text-center uppercase">Ordem</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] uppercase">Nome da Categoria</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] uppercase">Descrição Detalhada</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] text-center uppercase">Status</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] text-right uppercase">Ações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -747,13 +783,13 @@ export default function CategoriasPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center">
-                          <span className="text-[11px] font-bold text-white/60">
+                          <span className="text-[11px] font-medium text-white/60">
                             {category.order}
                           </span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-[13px] font-black text-white group-hover:text-primary transition-colors tracking-tight uppercase">
+                        <span className="text-[13px] font-bold text-white group-hover:text-primary transition-colors tracking-tight uppercase">
                           {category.name}
                         </span>
                       </td>
@@ -764,7 +800,7 @@ export default function CategoriasPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center">
-                          <span className={`text-[10px] font-black uppercase tracking-widest ${category.status === 'ativo' ? 'text-[#22c55e]' : 'text-zinc-600'}`}>
+                          <span className={`text-[10px] font-bold uppercase tracking-widest ${category.status === 'ativo' ? 'text-[#22c55e]' : 'text-zinc-600'}`}>
                             {category.status === 'ativo' ? 'Ativo' : 'Inativo'}
                           </span>
                         </div>
