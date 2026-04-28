@@ -71,6 +71,7 @@ export default function GruposAdicionaisPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [editingGroup, setEditingGroup] = useState<AddonGroup | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterType, setFilterType] = useState("all");
   const [selectedIds, setSelectedIds] = useState<Set<any>>(new Set());
   const [currentEstId, setCurrentEstId] = useState<string | null>(null);
   
@@ -144,9 +145,11 @@ export default function GruposAdicionaisPage() {
     }
   }, [currentEstId]);
 
-  const filteredGroups = groups.filter(g => 
-    g.nome_grupo.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredGroups = groups.filter(g => {
+    const matchesSearch = g.nome_grupo.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesType = filterType === "all" || g.tipo_escolha === filterType;
+    return matchesSearch && matchesType;
+  });
 
   // Cálculo de Paginação
   const totalItems = filteredGroups.length;
@@ -157,7 +160,7 @@ export default function GruposAdicionaisPage() {
   // Resetar página ao filtrar
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery]);
+  }, [searchQuery, filterType]);
 
   const openAddModal = () => {
     setEditingGroup({
@@ -402,25 +405,43 @@ export default function GruposAdicionaisPage() {
     const doc = new jsPDF();
     
     doc.setFontSize(18);
-    doc.text("Relatório de Grupos de Adicionais", 14, 22);
+    doc.text("Relatório Detalhado de Complementos e Adicionais", 14, 22);
     
     doc.setFontSize(11);
     doc.setTextColor(100);
-    const subtitle = searchQuery ? `Filtro: ${searchQuery}` : "Filtro: Todos os Grupos";
+    let typeFilterStr = "Todos os Tipos";
+    if (filterType === "unica") typeFilterStr = "Seleção Única";
+    else if (filterType === "multipla") typeFilterStr = "Múltipla Escolha";
+
+    const subtitle = searchQuery ? `Filtro: ${searchQuery} | Tipo: ${typeFilterStr}` : `Filtro: Todos os Grupos | Tipo: ${typeFilterStr}`;
     doc.text(subtitle, 14, 30);
 
-    const tableColumn = ["Nome do Grupo", "Quantidade de Itens", "Status"];
-    const tableRows = groupsToExport.map(g => [
-      g.nome_grupo,
-      g.items ? g.items.length.toString() : "0",
-      g.active ? 'Ativo' : 'Inativo'
-    ]);
+    const tableColumn = ["Nome do Grupo", "Tipo", "Itens Adicionais e Preços", "Status"];
+    const tableRows = groupsToExport.map(g => {
+      const typeStr = g.tipo_escolha === 'unica' ? 'Seleção Única' : 'Múltipla Escolha';
+      const mandatoryStr = g.qtd_minima > 0 ? 'Obrigatório' : 'Opcional';
+      const typeDisplay = `${typeStr}\n(${mandatoryStr})`;
+
+      const itemsStr = g.items && g.items.length > 0 
+        ? g.items.map(i => `• ${i.nome} - R$ ${i.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`).join('\n')
+        : 'Nenhum item';
+
+      return [
+        g.nome_grupo,
+        typeDisplay,
+        itemsStr,
+        g.active ? 'Ativo' : 'Inativo'
+      ];
+    });
 
     autoTable(doc, {
       head: [tableColumn],
       body: tableRows,
       startY: 35,
       styles: { fontSize: 10, cellPadding: 4 },
+      columnStyles: {
+        2: { cellWidth: 80 }
+      },
       headStyles: { fillColor: [255, 107, 0], textColor: 255, fontStyle: 'bold' },
       alternateRowStyles: { fillColor: [245, 245, 245] },
     });
@@ -492,6 +513,19 @@ export default function GruposAdicionaisPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white/[0.03] border border-white/5 rounded-lg py-3 pl-11 pr-4 text-xs text-white placeholder:text-white/20 focus:outline-none focus:border-white/20 focus:ring-4 focus:ring-white/5 transition-all font-medium"
             />
+          </div>
+
+          <div className="relative w-full md:w-[180px]">
+            <select 
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="w-full bg-white/[0.03] border border-white/5 rounded-lg py-3 px-4 text-xs text-white focus:outline-none focus:border-white/20 focus:ring-4 focus:ring-white/5 transition-all font-medium appearance-none cursor-pointer"
+            >
+              <option value="all" className="bg-[#1a1a1a]">Todos os Tipos</option>
+              <option value="unica" className="bg-[#1a1a1a]">Seleção Única</option>
+              <option value="multipla" className="bg-[#1a1a1a]">Múltipla Escolha</option>
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white opacity-40 pointer-events-none" />
           </div>
 
           <div className="flex-1" />
@@ -573,14 +607,14 @@ export default function GruposAdicionaisPage() {
                           <div className="flex flex-col gap-1.5 py-1">
                             {group.items.map((item, idx) => (
                               <div key={item.id || idx} className="h-4 flex items-center whitespace-nowrap">
-                                <span className="text-[11px] text-gray-400/70 font-medium uppercase tracking-tight">
+                                <span className="text-[11px] text-white/70 font-medium uppercase tracking-tight">
                                   • {item.nome}
                                 </span>
                               </div>
                             ))}
                           </div>
                         ) : (
-                          <span className="text-[11px] text-gray-400/30 italic font-medium">Nenhum item</span>
+                          <span className="text-[11px] text-white/30 italic font-medium">Nenhum item</span>
                         )}
                       </td>
                       <td className="px-6 py-4 align-middle">
