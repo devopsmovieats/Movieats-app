@@ -78,6 +78,17 @@ const initialProducts: Product[] = [
   }
 ];
 
+const getCategoryBadgeStyle = (name: string) => {
+  const n = name.toLowerCase();
+  if (n.includes("salada") || n.includes("vegan")) return "bg-green-500 text-white border-green-400";
+  if (n.includes("porç") || n.includes("entrada")) return "bg-blue-500 text-white border-blue-400";
+  if (n.includes("carne") || n.includes("hamb") || n.includes("burg")) return "bg-red-500 text-white border-red-400";
+  if (n.includes("pizza")) return "bg-orange-500 text-white border-orange-400";
+  if (n.includes("bebid") || n.includes("drink") || n.includes("suco")) return "bg-cyan-500 text-white border-cyan-400";
+  if (n.includes("sobremesa") || n.includes("doce")) return "bg-pink-500 text-white border-pink-400";
+  return "bg-indigo-500 text-white border-indigo-400";
+};
+
 export default function ProdutosPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -455,16 +466,14 @@ export default function ProdutosPage() {
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <div className="flex items-center gap-3 mb-1">
-              <div className="p-2 bg-white/10 rounded-lg">
-                <Box className="text-white w-5 h-5" />
-              </div>
-              <h2 className="text-2xl font-headline font-black text-white tracking-tight leading-none">
+            <div className="flex items-center gap-6 mb-2">
+              <Box className="text-white w-6 h-6" />
+              <h2 className="text-3xl font-headline font-black text-white tracking-tight leading-none ml-2">
                 Produtos
               </h2>
             </div>
-            <p className="text-muted-foreground text-sm font-medium">
-              Gerencie os itens do seu cardápio digital.
+            <p className="text-muted-foreground text-sm font-medium ml-1">
+              Gerencie os itens e preços do seu cardápio digital.
             </p>
           </div>
 
@@ -575,13 +584,13 @@ export default function ProdutosPage() {
                         className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 cursor-pointer accent-primary" 
                       />
                     </th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-center">Ordem</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Imagem</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Produto</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Categoria</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider">Preço</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-center">Status</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-white opacity-40 tracking-wider text-right">Ações</th>
+                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] text-center uppercase">Ordem</th>
+                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] uppercase">Imagem</th>
+                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] uppercase">Produto</th>
+                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] uppercase">Categoria</th>
+                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] uppercase">Preço</th>
+                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] text-center uppercase">Status</th>
+                    <th className="px-6 py-5 text-[11px] font-black text-[#FFFFFF] tracking-[0.1em] text-right uppercase">Ações</th>
                   </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -611,21 +620,21 @@ export default function ProdutosPage() {
                     </td>
                     <td className="px-6 py-4 align-middle">
                       <div className="flex flex-col">
-                        <span className="text-sm font-medium text-white group-hover:text-primary transition-colors uppercase tracking-tight">
+                        <span className="text-[15px] font-black text-white group-hover:text-primary transition-colors uppercase tracking-tight">
                           {product.name}
                         </span>
-                        <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest opacity-40 mt-0.5">
+                        <span className="text-[10px] text-zinc-500 font-medium uppercase tracking-widest mt-1">
                           #{product.id.toString().substring(0, 8).toUpperCase()}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 align-middle">
-                      <span className="text-[10px] font-black text-white/50 bg-white/5 border border-white/5 px-2.5 py-1 rounded-md uppercase tracking-wide">
+                      <span className={`text-[10px] font-black px-3 py-1.5 rounded-md border uppercase tracking-wide ${getCategoryBadgeStyle(categories.find(c => c.id === product.categoria_id)?.name || "")}`}>
                         {categories.find(c => c.id === product.categoria_id)?.name || "Sem Categoria"}
                       </span>
                     </td>
                     <td className="px-6 py-4 align-middle">
-                      <span className="text-sm font-bold text-white tracking-tighter">
+                      <span className="text-base font-black text-white tracking-tighter">
                         R$ {product.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </span>
                     </td>
@@ -677,7 +686,7 @@ export default function ProdutosPage() {
               <button 
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
                 disabled={currentPage === 1} 
-                className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer text-white disabled:text-white/20 disabled:cursor-not-allowed hover:text-primary"
+                className="text-[11px] font-black uppercase tracking-[0.2em] transition-colors cursor-pointer !text-white disabled:opacity-20 disabled:cursor-not-allowed hover:text-primary"
               >
                 Anterior
               </button>
@@ -687,7 +696,7 @@ export default function ProdutosPage() {
                   <button 
                     key={i} 
                     onClick={() => setCurrentPage(i + 1)} 
-                    className={`w-8 h-8 flex items-center justify-center text-[11px] font-black transition-all cursor-pointer ${currentPage === i + 1 ? "text-primary font-black" : "text-white/40 hover:text-white"}`}
+                    className={`w-8 h-8 flex items-center justify-center text-[12px] font-black transition-all cursor-pointer ${currentPage === i + 1 ? "text-primary" : "!text-white opacity-40 hover:opacity-100"}`}
                   >
                     {i + 1}
                   </button>
@@ -697,7 +706,7 @@ export default function ProdutosPage() {
               <button 
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
                 disabled={currentPage === totalPages || totalPages === 0} 
-                className="text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer text-white disabled:text-white/20 disabled:cursor-not-allowed hover:text-primary"
+                className="text-[11px] font-black uppercase tracking-[0.2em] transition-colors cursor-pointer !text-white disabled:opacity-20 disabled:cursor-not-allowed hover:text-primary"
               >
                 Próximo
               </button>
