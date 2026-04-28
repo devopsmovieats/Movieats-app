@@ -18,6 +18,7 @@ import {
 import Swal from "sweetalert2";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { supabase } from "@/lib/supabase";
 
 interface Supplier {
   id: string;
@@ -90,37 +91,44 @@ export default function FornecedoresPage() {
   const itemsPerPage = 8;
 
   useEffect(() => {
-    const savedSuppliers = localStorage.getItem("movieats_suppliers");
-    if (savedSuppliers) {
+    const fetchFornecedores = async () => {
       try {
-        const parsed = JSON.parse(savedSuppliers);
-        const mapped = parsed.map((p: any) => ({
-          id: p.id,
-          name: p.name || p.company || "",
-          document: p.document || "",
-          phone: p.phone || p.whatsapp || "",
-          email: p.email || "",
-          category: p.category || "Outros",
-          status: p.status || 'ativo'
-        }));
-        setSuppliers(mapped);
+        const { data, error } = await supabase
+          .from("bd_fornecedores")
+          .select("*")
+          .order("created_at", { ascending: false });
+          
+        if (data && !error) {
+          setSuppliers(data.map(p => ({
+            id: p.id,
+            name: p.nome,
+            document: p.documento || "",
+            phone: p.telefone || "",
+            email: p.email || "",
+            category: p.categoria || "Outros",
+            status: p.status || 'ativo'
+          })));
+        }
       } catch (e) {}
-    }
+    };
+    fetchFornecedores();
   }, []);
 
   useEffect(() => {
-    const savedCats = localStorage.getItem("movieats_supplier_categories");
-    if (savedCats) {
+    const fetchCategorias = async () => {
       try {
-        setCategories(JSON.parse(savedCats));
+        const { data, error } = await supabase
+          .from("bd_fornecedores_categorias")
+          .select("nome")
+          .order("nome");
+          
+        if (data && !error && data.length > 0) {
+          setCategories(data.map(c => c.nome));
+        }
       } catch (e) {}
-    }
+    };
+    fetchCategorias();
   }, []);
-
-  const saveToStorage = (newList: Supplier[]) => {
-    setSuppliers(newList);
-    localStorage.setItem("movieats_suppliers", JSON.stringify(newList));
-  };
 
   const handleAddCategory = () => {
     Swal.fire({
@@ -133,19 +141,32 @@ export default function FornecedoresPage() {
       background: "#141414",
       color: "#fff",
       confirmButtonColor: "#ea580c",
-      customClass: { popup: "rounded-xl border border-white/5 shadow-2xl" }
+      customClass: { popup: "rounded-xl border border-white/5 shadow-2xl" },
+      showLoaderOnConfirm: true,
+      preConfirm: async (newCat) => {
+        const trimmed = newCat.trim();
+        if (!trimmed) return Swal.showValidationMessage("Nome inválido");
+        if (categories.includes(trimmed)) return trimmed;
+        
+        const { error } = await supabase
+          .from("bd_fornecedores_categorias")
+          .insert([{ nome: trimmed }]);
+          
+        if (error && error.code !== '23505') {
+          return Swal.showValidationMessage(`Erro: ${error.message}`);
+        }
+        return trimmed;
+      }
     }).then((result) => {
       if (result.isConfirmed && result.value) {
-        const newCat = result.value.trim();
-        if (newCat && !categories.includes(newCat)) {
-          const newCats = [...categories, newCat];
-          setCategories(newCats);
-          localStorage.setItem("movieats_supplier_categories", JSON.stringify(newCats));
-          if (editingSupplier) {
-            setEditingSupplier({ ...editingSupplier, category: newCat });
-          }
-          Toast.fire({ icon: "success", title: "Categoria adicionada!" });
+        const newCat = result.value;
+        if (!categories.includes(newCat)) {
+          setCategories(prev => [...prev, newCat].sort());
         }
+        if (editingSupplier) {
+          setEditingSupplier({ ...editingSupplier, category: newCat });
+        }
+        Toast.fire({ icon: "success", title: "Categoria adicionada!" });
       }
     });
   };
@@ -185,31 +206,56 @@ export default function FornecedoresPage() {
     setIsModalOpen(true);
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingSupplier?.name) return;
 
     setIsSaving(true);
     
-    setTimeout(() => {
-      let newList = [...suppliers];
-      
+    try {
+      const payload = {
+        nome: editingSupplier.name,
+        documento: editingSupplier.document,
+        telefone: editingSupplier.phone,
+        email: editingSupplier.email,
+        categoria: editingSupplier.category,
+        status: editingSupplier.status
+      };
+
       if (!editingSupplier.id) {
+        const { data, error } = await supabase
+          .from("bd_fornecedores")
+          .insert([payload])
+          .select()
+          .single();
+          
+        if (error) throw error;
+        
         const newSup: Supplier = {
           ...editingSupplier,
-          id: Math.random().toString(36).substr(2, 9),
+          id: data.id
         };
-        newList.push(newSup);
+        setSuppliers([newSup, ...suppliers]);
         Toast.fire({ icon: "success", title: "Fornecedor cadastrado!" });
       } else {
-        newList = newList.map(s => s.id === editingSupplier.id ? editingSupplier : s);
+        const { error } = await supabase
+          .from("bd_fornecedores")
+          .update(payload)
+          .eq("id", editingSupplier.id);
+          
+        if (error) throw error;
+        
+        setSuppliers(suppliers.map(s => s.id === editingSupplier.id ? editingSupplier : s));
         Toast.fire({ icon: "success", title: "Fornecedor atualizado!" });
       }
 
-      saveToStorage(newList);
       setIsModalOpen(false);
+    } catch (error) {
+      console.error("Erro:", error);
+      Toast.fire({ icon: "error", title: "Erro ao salvar" });
+    } finally {
       setIsSaving(false);
-    }, 500);
+    }
   };
 
   const handleDelete = (id: string) => {
@@ -224,11 +270,15 @@ export default function FornecedoresPage() {
       color: "#fff",
       confirmButtonColor: "#ff4b4b",
       customClass: { popup: "rounded-xl border border-white/5" }
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        const newList = suppliers.filter(s => s.id !== id);
-        saveToStorage(newList);
-        Toast.fire({ icon: "success", title: "Fornecedor removido!" });
+        const { error } = await supabase.from("bd_fornecedores").delete().eq("id", id);
+        if (error) {
+          Toast.fire({ icon: "error", title: "Erro ao excluir" });
+        } else {
+          setSuppliers(suppliers.filter(s => s.id !== id));
+          Toast.fire({ icon: "success", title: "Fornecedor removido!" });
+        }
       }
     });
   };
