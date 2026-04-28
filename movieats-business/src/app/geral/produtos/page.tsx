@@ -465,6 +465,29 @@ export default function ProdutosPage() {
       alternateRowStyles: { fillColor: [245, 245, 245] },
     });
 
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString('pt-BR');
+    const formattedTime = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+    let userName = "Administrador";
+    const userStr = localStorage.getItem('movieats_user');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user.nome) userName = user.nome;
+      } catch (e) {}
+    }
+
+    const pageCount = (doc as any).internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(150);
+      const footerText = `Emitido por: ${userName} — ${formattedDate} às ${formattedTime}`;
+      const pageWidth = doc.internal.pageSize.getWidth();
+      doc.text(footerText, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: "center" });
+    }
+
     doc.save(`produtos_movieats_${new Date().getTime()}.pdf`);
     Toast.fire({ icon: "success", title: "PDF exportado com sucesso!" });
   };
