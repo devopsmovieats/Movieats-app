@@ -1,4 +1,6 @@
 "use client";
+// VERSION: 7.0 - SYNC SUPABASE FORNECEDORES CONCLUIDO
+
 
 import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
