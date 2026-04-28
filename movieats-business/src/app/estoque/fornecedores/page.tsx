@@ -99,20 +99,24 @@ export default function FornecedoresPage() {
   useEffect(() => {
     const fetchFornecedores = async () => {
       try {
-        if (!supabase) return;
         const { data, error } = await supabase
           .from("bd_fornecedores")
-          .select("*")
+          .select(`
+            *,
+            bd_fornecedores_categorias (
+              nome
+            )
+          `)
           .order("created_at", { ascending: false });
           
         if (data && !error) {
-          setSuppliers(data.map(p => ({
+          setSuppliers(data.map((p: any) => ({
             id: p.id,
             name: p.nome,
             document: p.documento || "",
             phone: p.telefone || "",
             email: p.email || "",
-            category: p.categoria || "Outros",
+            category: p.bd_fornecedores_categorias?.nome || p.categoria || "Outros",
             category_id: p.categoria_id || "",
             status: p.status || 'ativo'
           })));
@@ -125,7 +129,6 @@ export default function FornecedoresPage() {
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
-        if (!supabase) return;
         const { data, error } = await supabase
           .from("bd_fornecedores_categorias")
           .select("id, nome")
@@ -156,8 +159,6 @@ export default function FornecedoresPage() {
         const trimmed = newCat.trim();
         if (!trimmed) return Swal.showValidationMessage("Nome inválido");
         if (categories.some(c => c.nome === trimmed)) return trimmed;
-        
-        if (!supabase) return Swal.showValidationMessage("Erro: Supabase não conectado.");
 
         const { data, error } = await supabase
           .from("bd_fornecedores_categorias")
@@ -204,7 +205,11 @@ export default function FornecedoresPage() {
         const trimmed = newName.trim();
         if (!trimmed) return Swal.showValidationMessage("Nome inválido");
         
-        if (!supabase) return;
+        // Verificar se já existe outra categoria com esse nome
+        if (categories.some(c => c.nome.toLowerCase() === trimmed.toLowerCase() && c.id !== editingSupplier.category_id)) {
+          return Swal.showValidationMessage("Já existe uma categoria com este nome.");
+        }
+        
         const { error } = await supabase
           .from("bd_fornecedores_categorias")
           .update({ nome: trimmed })
@@ -276,12 +281,6 @@ export default function FornecedoresPage() {
         status: editingSupplier.status
       };
 
-      if (!supabase) {
-        Toast.fire({ icon: "error", title: "Erro de Conexão: Variáveis do Supabase ausentes." });
-        setIsSaving(false);
-        return;
-      }
-
       if (!editingSupplier.id) {
         const { data, error } = await supabase
           .from("bd_fornecedores")
@@ -332,9 +331,6 @@ export default function FornecedoresPage() {
       customClass: { popup: "rounded-xl border border-white/5" }
     }).then(async (result) => {
       if (result.isConfirmed) {
-        if (!supabase) {
-          return Toast.fire({ icon: "error", title: "Supabase não conectado." });
-        }
         const { error } = await supabase.from("bd_fornecedores").delete().eq("id", id);
         if (error) {
           Toast.fire({ icon: "error", title: "Erro ao excluir" });
