@@ -83,6 +83,7 @@ export default function FornecedoresPage() {
   const [isSaving, setIsSaving] = useState(false);
   
   const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
+  const [categories, setCategories] = useState<string[]>(["Alimentos", "Bebidas", "Embalagens", "Manutenção", "Outros"]);
 
   // Paginação
   const [currentPage, setCurrentPage] = useState(1);
@@ -107,9 +108,46 @@ export default function FornecedoresPage() {
     }
   }, []);
 
+  useEffect(() => {
+    const savedCats = localStorage.getItem("movieats_supplier_categories");
+    if (savedCats) {
+      try {
+        setCategories(JSON.parse(savedCats));
+      } catch (e) {}
+    }
+  }, []);
+
   const saveToStorage = (newList: Supplier[]) => {
     setSuppliers(newList);
     localStorage.setItem("movieats_suppliers", JSON.stringify(newList));
+  };
+
+  const handleAddCategory = () => {
+    Swal.fire({
+      title: 'Nova Categoria',
+      input: 'text',
+      inputPlaceholder: 'Nome da categoria',
+      showCancelButton: true,
+      confirmButtonText: 'Adicionar',
+      cancelButtonText: 'Cancelar',
+      background: "#141414",
+      color: "#fff",
+      confirmButtonColor: "#ea580c",
+      customClass: { popup: "rounded-xl border border-white/5 shadow-2xl" }
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        const newCat = result.value.trim();
+        if (newCat && !categories.includes(newCat)) {
+          const newCats = [...categories, newCat];
+          setCategories(newCats);
+          localStorage.setItem("movieats_supplier_categories", JSON.stringify(newCats));
+          if (editingSupplier) {
+            setEditingSupplier({ ...editingSupplier, category: newCat });
+          }
+          Toast.fire({ icon: "success", title: "Categoria adicionada!" });
+        }
+      }
+    });
   };
 
   const filteredSuppliers = suppliers.filter(s => {
@@ -600,19 +638,27 @@ export default function FornecedoresPage() {
 
                   <div className="space-y-2">
                     <label className="text-[13px] font-bold text-white/50 ml-1 block">Tipo de Fornecedor</label>
-                    <div className="relative">
-                      <select 
-                        value={editingSupplier.category}
-                        onChange={(e) => setEditingSupplier({ ...editingSupplier, category: e.target.value })}
-                        className="w-full bg-white/[0.05] border border-white/10 rounded-xl h-12 px-4 text-sm text-white focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium appearance-none cursor-pointer"
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <select 
+                          value={editingSupplier.category}
+                          onChange={(e) => setEditingSupplier({ ...editingSupplier, category: e.target.value })}
+                          className="w-full bg-white/[0.05] border border-white/10 rounded-xl h-12 px-4 text-sm text-white focus:outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium appearance-none cursor-pointer"
+                        >
+                          {categories.map(cat => (
+                            <option key={cat} value={cat} className="bg-[#1a1a1a]">{cat}</option>
+                          ))}
+                        </select>
+                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white opacity-40 pointer-events-none" />
+                      </div>
+                      <button 
+                        type="button"
+                        onClick={handleAddCategory}
+                        className="h-12 w-12 flex items-center justify-center bg-white/[0.05] border border-white/10 rounded-xl text-white hover:bg-orange-500/20 hover:text-orange-500 hover:border-orange-500/30 transition-all cursor-pointer"
+                        title="Adicionar Novo Tipo"
                       >
-                        <option value="Alimentos" className="bg-[#1a1a1a]">Alimentos</option>
-                        <option value="Bebidas" className="bg-[#1a1a1a]">Bebidas</option>
-                        <option value="Embalagens" className="bg-[#1a1a1a]">Embalagens</option>
-                        <option value="Manutenção" className="bg-[#1a1a1a]">Manutenção</option>
-                        <option value="Outros" className="bg-[#1a1a1a]">Outros</option>
-                      </select>
-                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white opacity-40 pointer-events-none" />
+                        <Plus className="w-5 h-5" />
+                      </button>
                     </div>
                   </div>
                 </div>
