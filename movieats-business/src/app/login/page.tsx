@@ -156,7 +156,7 @@ export default function LoginPage() {
       {/* Conteúdo Centralizado (Card Glass) */}
       <div className="relative z-10 w-full max-w-md px-6 animate-in fade-in zoom-in-95 duration-1000 text-white">
         
-        <div className="bg-black/40 backdrop-blur-xl rounded-2xl p-8 border border-white/30 shadow-2xl relative overflow-hidden transition-all">
+        <div className="bg-black/40 backdrop-blur-xl rounded-2xl p-8 border border-white/20 shadow-2xl relative overflow-hidden transition-all">
           
           {/* Branding */}
           <div className="flex flex-col items-center mb-6">
@@ -188,7 +188,7 @@ export default function LoginPage() {
                 placeholder="seu@estabelecimento.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-transparent border-2 border-orange-400 text-white placeholder:text-gray-300 focus:border-orange-500 focus:outline-none transition"
+                className="w-full px-4 py-3 rounded-xl bg-transparent border border-orange-400/70 text-white placeholder:text-gray-300 focus:border-orange-500 focus:outline-none transition"
               />
             </div>
 
@@ -204,12 +204,12 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-transparent border-2 border-orange-400 text-white placeholder:text-gray-300 focus:border-orange-500 focus:outline-none transition pr-12"
+                  className="w-full px-4 py-3 rounded-xl bg-transparent border border-orange-400/70 text-white placeholder:text-gray-300 focus:border-orange-500 focus:outline-none transition pr-12"
                 />
                 <button 
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white transition-all"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white transition-all cursor-pointer"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -218,7 +218,7 @@ export default function LoginPage() {
                 <button 
                   type="button"
                   onClick={handleRecoverPassword}
-                  className="text-xs font-medium text-gray-300 hover:text-white transition-colors mt-2"
+                  className="text-xs font-medium text-white hover:text-orange-400 transition-colors mt-2 cursor-pointer"
                 >
                   Esqueci minha senha
                 </button>
@@ -228,7 +228,7 @@ export default function LoginPage() {
             <button 
               type="submit"
               disabled={isLoading}
-              className="w-full h-12 bg-orange-500 hover:bg-orange-600 active:scale-[0.98] disabled:opacity-70 text-white font-bold rounded-lg shadow-lg shadow-orange-500/20 transition-all duration-200 flex items-center justify-center mt-4"
+              className="w-full h-12 bg-orange-500 hover:bg-orange-600 active:scale-[0.98] hover:scale-[1.02] disabled:opacity-70 text-white font-bold rounded-lg shadow-lg shadow-orange-500/20 transition-all duration-200 flex items-center justify-center mt-4 cursor-pointer"
             >
               {isLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -240,8 +240,8 @@ export default function LoginPage() {
 
           {/* Footer */}
           <div className="mt-8 text-center text-white">
-            <p className="text-[10px] font-medium opacity-70">
-              ©2026 Movieats feito com ❤️ no Brasil
+            <p className="text-base font-medium opacity-90">
+              ©2026 Movieats feito com <span className="text-orange-500 animate-pulse inline-block">❤️</span> no Brasil
             </p>
           </div>
         </div>
