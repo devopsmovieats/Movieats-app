@@ -53,41 +53,6 @@ const Toast = Swal.mixin({
 // Gerador de ID curto Elite (6 caracteres aleatórios)
 const generateShortId = () => Math.random().toString(36).substring(2, 8).toUpperCase();
 
-interface Category {
-  id: string | number;
-  name: string;
-  descricao: string;
-  order: number;
-  status: "ativo" | "inativo";
-  image_url: string;
-}
-
-const initialCategories: Category[] = [
-  { 
-    id: 1, 
-    name: "Hambúrgueres Artesanais", 
-    descricao: "Nossos melhores burguers feitos na brasa.",
-    order: 1, 
-    status: "ativo", 
-    image_url: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150&h=150&auto=format&fit=crop" 
-  },
-  { 
-    id: 2, 
-    name: "Pizzas Gourmet", 
-    descricao: "Pizzas artesanais com massa de fermentação lenta.",
-    order: 2, 
-    status: "ativo", 
-    image_url: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=150&h=150&auto=format&fit=crop" 
-  },
-  { 
-    id: 3, 
-    name: "Bebidas e Coquetéis", 
-    descricao: "Sucos naturais, refrigerantes e drinks exclusivos.",
-    order: 3, 
-    status: "ativo", 
-    image_url: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=150&h=150&auto=format&fit=crop" 
-  },
-];
 
 export default function CategoriasPage() {
   console.log("URL BASE CATEGORIAS (Build/Runtime):", process.env.NEXT_PUBLIC_R2_PUBLIC_URL);
@@ -95,7 +60,7 @@ export default function CategoriasPage() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [establishmentId, setEstablishmentId] = useState<string | null>(null);
+  const [establishmentId, setEstablishmentId] = useState<string | null>("92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888");
   const [userRole, setUserRole] = useState<string>("ADMIN");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
@@ -115,29 +80,17 @@ export default function CategoriasPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const importFileRef = useRef<HTMLInputElement>(null);
 
-  const fetchCategories = async () => {
-    if (!establishmentId) return;
+  const loadCategorias = async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('bd_categorias')
-        .select('*')
-        .eq('establishment_id', establishmentId)
-        .order('order', { ascending: true });
+        .from("bd_categorias")
+        .select("*")
+        .eq("establishment_id", "92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888")
+        .order("order", { ascending: true });
 
       if (error) throw error;
-
-      if (data) {
-        const formatted = data.map((cat: any) => ({
-          id: cat.id,
-          name: cat.name,
-          descricao: cat.descricao || "",
-          order: cat.order || 0,
-          status: (cat.status === 'active' ? 'ativo' : 'inativo') as "ativo" | "inativo",
-          image_url: cat.image_url || ""
-        }));
-        setCategories(formatted);
-      }
+      setCategories(data || []);
     } catch (error) {
       console.error("Erro ao buscar categorias:", error);
     } finally {
@@ -146,35 +99,12 @@ export default function CategoriasPage() {
   };
 
   useEffect(() => {
-    const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user?.id) {
-        setEstablishmentId(session.user.id);
-      } else {
-        // Fallback para login de teste se não houver sessão ativa
-        // Em produção, isso redirecionaria para o login
-        console.warn("Nenhuma sessão ativa encontrada.");
-      }
-    };
-    getSession();
-
-    // Captura role se existir no local
-    const userSaved = localStorage.getItem("movieats_user");
-    if (userSaved) {
-      const user = JSON.parse(userSaved);
-      if (user.role) setUserRole(user.role);
-    }
+    loadCategorias();
   }, []);
-
-  useEffect(() => {
-    if (establishmentId) {
-      fetchCategories();
-    }
-  }, [establishmentId]);
 
   const filteredCategories = categories.filter(cat => {
     const matchesSearch = cat.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "todos" || cat.status === statusFilter;
+    const matchesStatus = statusFilter === "todos" || (statusFilter === "ativo" ? cat.status === true : cat.status === false);
     return matchesSearch && matchesStatus;
   });
 
@@ -222,7 +152,7 @@ export default function CategoriasPage() {
   };
 
   const handleToggleStatus = async (category: Category) => {
-    const newStatus = category.status === "ativo" ? "inactive" : "active";
+    const newStatus = !category.status;
     
     try {
       const { error } = await supabase
@@ -234,9 +164,9 @@ export default function CategoriasPage() {
 
       Toast.fire({
         icon: "success",
-        title: `Status atualizado para ${newStatus === 'active' ? 'Ativo' : 'Inativo'}`
+        title: `Status atualizado para ${newStatus ? 'Ativo' : 'Inativo'}`
       });
-      fetchCategories();
+      loadCategorias();
     } catch (error) {
       console.error("Erro ao mudar status:", error);
       Toast.fire({
@@ -286,7 +216,7 @@ export default function CategoriasPage() {
 
           if (error) throw error;
 
-          fetchCategories();
+          loadCategorias();
           Toast.fire({
             icon: "success",
             title: "Categoria excluída com sucesso"
@@ -360,7 +290,7 @@ export default function CategoriasPage() {
     const tableRows = categoriesToExport.map(cat => [
       cat.order.toString(), 
       cat.name, 
-      cat.status === 'ativo' ? 'Ativo' : 'Inativo'
+      cat.status ? 'Ativo' : 'Inativo'
     ]);
 
     autoTable(doc, {
@@ -406,7 +336,7 @@ export default function CategoriasPage() {
         "NOME": cat.name,
         "DESCRIÇÃO": cat.descricao,
         "ORDEM": cat.order,
-        "STATUS": cat.status === 'ativo' ? 'Ativo' : 'Inativo',
+        "STATUS": cat.status ? 'Ativo' : 'Inativo',
         "IMAGEM": cat.image_url
       }));
 
@@ -464,10 +394,10 @@ export default function CategoriasPage() {
         // Mapeamento Excel -> Supabase
         const categoriesToUpsert = data.map((row: any) => {
           // Mapeia visibilidade para o status do banco
-          let statusValue = 'active';
+          let statusValue = true;
           const vis = String(row["VISIBILIDADE"] || "").toLowerCase();
-          if (vis === 'inativo' || vis === 'inactive') {
-            statusValue = 'inactive';
+          if (vis === 'inativo' || vis === 'inactive' || vis === 'false') {
+            statusValue = false;
           }
 
           return {
@@ -498,7 +428,7 @@ export default function CategoriasPage() {
         });
 
         // Recarrega lista
-        fetchCategories();
+        loadCategorias();
       } catch (err: any) {
         console.error("Erro na importação:", err);
         Toast.fire({
@@ -577,7 +507,7 @@ export default function CategoriasPage() {
         name: editingCategory.name,
         descricao: editingCategory.descricao,
         order: editingCategory.order,
-        status: editingCategory.status === 'ativo' ? 'active' : 'inactive',
+        status: editingCategory.status,
         image_url: finalImageUrl,
         establishment_id: establishmentId
       };
@@ -611,7 +541,7 @@ export default function CategoriasPage() {
       setIsModalOpen(false);
       
       // Atualiza lista local
-      await fetchCategories();
+      await loadCategorias();
     } catch (error: any) {
       console.error("Erro crítico no fluxo de salvamento:", error);
       Toast.fire({ 
@@ -823,8 +753,8 @@ export default function CategoriasPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center">
-                          <span className={`text-[10px] font-bold uppercase tracking-widest ${category.status === 'ativo' ? 'text-[#22c55e]' : 'text-zinc-600'}`}>
-                            {category.status === 'ativo' ? 'Ativo' : 'Inativo'}
+                          <span className={`text-[10px] font-bold uppercase tracking-widest ${category.status ? 'text-[#22c55e]' : 'text-zinc-600'}`}>
+                            {category.status ? 'Ativo' : 'Inativo'}
                           </span>
                         </div>
                       </td>
@@ -945,7 +875,7 @@ export default function CategoriasPage() {
                   <input 
                     type="text" 
                     value={editingCategory?.name || ""}
-                    onChange={(e) => setEditingCategory(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, descricao: "", order: categories.length + 1, status: "ativo", image_url: "" })}
+                    onChange={(e) => setEditingCategory(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, descricao: "", order: categories.length + 1, status: true, image_url: "" })}
                     placeholder="Ex: Hambúrgueres"
                     className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 transition-all font-medium"
                     required
@@ -957,7 +887,7 @@ export default function CategoriasPage() {
                   <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Descrição Detalhada</label>
                   <textarea 
                     value={editingCategory?.descricao || ""}
-                    onChange={(e) => setEditingCategory(prev => prev ? { ...prev, descricao: e.target.value } : { id: 0, name: "", descricao: e.target.value, order: categories.length + 1, status: "ativo", image_url: "" })}
+                    onChange={(e) => setEditingCategory(prev => prev ? { ...prev, descricao: e.target.value } : { id: 0, name: "", descricao: e.target.value, order: categories.length + 1, status: true, image_url: "" })}
                     placeholder="Descreva o que há nesta categoria..."
                     className="w-full h-28 bg-white/[0.05] border border-white/5 rounded-xl py-4 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 transition-all font-medium resize-none leading-relaxed"
                   />
@@ -973,7 +903,7 @@ export default function CategoriasPage() {
                       value={editingCategory?.order || ""}
                       onChange={(e) => {
                         const val = parseInt(e.target.value);
-                        setEditingCategory(prev => prev ? { ...prev, order: isNaN(val) ? 0 : val } : { id: 0, name: "", descricao: "", order: isNaN(val) ? 0 : val, status: "ativo", image_url: "" });
+                        setEditingCategory(prev => prev ? { ...prev, order: isNaN(val) ? 0 : val } : { id: 0, name: "", descricao: "", order: isNaN(val) ? 0 : val, status: true, image_url: "" });
                       }}
                       className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-primary/50 transition-all font-medium"
                       required
@@ -989,15 +919,15 @@ export default function CategoriasPage() {
                         onClick={() => {
                           setEditingCategory(prev => {
                             if (!prev) return null;
-                            return { ...prev, status: prev.status === 'ativo' ? 'inativo' : 'ativo' };
+                            return { ...prev, status: !prev.status };
                           });
                         }}
                       >
-                        <div className={`w-11 h-6 rounded-full transition-all duration-300 border border-white/5 ${editingCategory?.status === 'ativo' ? 'bg-[#22c55e]' : 'bg-white/10'}`} />
-                        <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-all duration-300 shadow-lg ${editingCategory?.status === 'ativo' ? 'translate-x-5' : 'translate-x-0'}`} />
+                        <div className={`w-11 h-6 rounded-full transition-all duration-300 border border-white/5 ${editingCategory?.status ? 'bg-[#22c55e]' : 'bg-white/10'}`} />
+                        <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-all duration-300 shadow-lg ${editingCategory?.status ? 'translate-x-5' : 'translate-x-0'}`} />
                       </div>
-                      <span className={`text-[11px] font-black uppercase tracking-widest transition-all duration-300 ${editingCategory?.status === 'ativo' ? 'text-[#22c55e]' : 'text-white/20'}`}>
-                        {editingCategory?.status === 'ativo' ? 'Categoria Ativa' : 'Categoria Oculta'}
+                      <span className={`text-[11px] font-black uppercase tracking-widest transition-all duration-300 ${editingCategory?.status ? 'text-[#22c55e]' : 'text-white/20'}`}>
+                        {editingCategory?.status ? 'Categoria Ativa' : 'Categoria Oculta'}
                       </span>
                     </div>
                   </div>
