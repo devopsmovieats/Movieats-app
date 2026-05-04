@@ -51,7 +51,7 @@ const Toast = Swal.mixin({
 });
 
 // Gerador de ID curto Elite (6 caracteres aleatórios)
-const generateShortId = () => Math.random().toString(36).substring(2, 8).toUpperCase();
+
 
 type Category = {
   id: string;
@@ -543,11 +543,10 @@ export default function CategoriasPage() {
         if (error) throw error;
         Toast.fire({ icon: "success", title: "Alterações salvas com sucesso" });
       } else {
-        // Adicionar: Aguarda resposta do Supabase com ID Curto (6 chars)
-        const shortId = generateShortId();
+        // Adicionar: Deixa o Supabase gerar o UUID automaticamente
         const { error } = await supabase
           .from('bd_categorias')
-          .insert([{ ...categoryData, id: shortId }]);
+          .insert([categoryData]);
 
         if (error) throw error;
         Toast.fire({ icon: "success", title: "Categoria criada com sucesso" });
