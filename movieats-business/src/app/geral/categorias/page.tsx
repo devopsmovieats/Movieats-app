@@ -298,7 +298,7 @@ export default function CategoriasPage() {
 
     const tableColumn = ["Ordem", "Nome da Categoria", "Status"];
     const tableRows = categoriesToExport.map(cat => [
-      cat.order.toString(), 
+      (cat.order ?? 0).toString(), 
       cat.name, 
       cat.status ? 'Ativo' : 'Inativo'
     ]);
