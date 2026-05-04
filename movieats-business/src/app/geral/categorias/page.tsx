@@ -522,7 +522,7 @@ export default function CategoriasPage() {
         establishment_id: establishmentId
       };
 
-      if (editingCategory.id && editingCategory.id !== 0) {
+      if (editingCategory.id && editingCategory.id !== "") {
         // Editar: Aguarda resposta do Supabase
         const { error } = await supabase
           .from('bd_categorias')
