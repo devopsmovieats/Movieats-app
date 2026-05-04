@@ -53,6 +53,16 @@ const Toast = Swal.mixin({
 // Gerador de ID curto Elite (6 caracteres aleatórios)
 const generateShortId = () => Math.random().toString(36).substring(2, 8).toUpperCase();
 
+type Category = {
+  id: string;
+  name: string;
+  descricao: string | null;
+  status: boolean;
+  order: number | null;
+  image_url: string | null;
+  establishment_id: string;
+  created_at: string;
+};
 
 export default function CategoriasPage() {
   console.log("URL BASE CATEGORIAS (Build/Runtime):", process.env.NEXT_PUBLIC_R2_PUBLIC_URL);
