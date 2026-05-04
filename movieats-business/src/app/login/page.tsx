@@ -154,9 +154,9 @@ export default function LoginPage() {
       </div>
 
       {/* Conteúdo Centralizado (Card Glass) */}
-      <div className="relative z-10 w-full max-w-md px-6 animate-in fade-in zoom-in-95 duration-1000">
+      <div className="relative z-10 w-full max-w-md px-6 animate-in fade-in zoom-in-95 duration-1000 text-white">
         
-        <div className="bg-white/20 backdrop-blur-xl rounded-2xl p-8 border border-white/30 shadow-2xl relative overflow-hidden transition-all">
+        <div className="bg-black/40 backdrop-blur-xl rounded-2xl p-8 border border-white/30 shadow-2xl relative overflow-hidden transition-all">
           
           {/* Branding */}
           <div className="flex flex-col items-center mb-6">
@@ -188,7 +188,7 @@ export default function LoginPage() {
                 placeholder="seu@estabelecimento.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-12 bg-transparent border-2 border-orange-400 rounded-lg px-5 text-sm text-white placeholder:text-gray-300 outline-none focus:border-orange-500 ring-0 transition-all"
+                className="w-full px-4 py-3 rounded-xl bg-transparent border-2 border-orange-400 text-white placeholder:text-gray-300 focus:border-orange-500 focus:outline-none transition"
               />
             </div>
 
@@ -204,12 +204,12 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-12 bg-transparent border-2 border-orange-400 rounded-lg px-5 text-sm text-white placeholder:text-gray-300 outline-none focus:border-orange-500 ring-0 transition-all pr-12"
+                  className="w-full px-4 py-3 rounded-xl bg-transparent border-2 border-orange-400 text-white placeholder:text-gray-300 focus:border-orange-500 focus:outline-none transition pr-12"
                 />
                 <button 
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white transition-all"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white transition-all"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
