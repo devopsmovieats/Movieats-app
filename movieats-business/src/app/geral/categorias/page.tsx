@@ -426,7 +426,7 @@ export default function CategoriasPage() {
             order: parseInt(row["ORDEM"]) || 0,
             status: statusValue,
             image_url: row["URL DA IMAGEM"] || "",
-            establishment_id: establishmentId
+            establishment_id: "92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888"
           };
         });
 
@@ -528,7 +528,7 @@ export default function CategoriasPage() {
         order: editingCategory.order,
         status: editingCategory.status,
         image_url: finalImageUrl,
-        establishment_id: establishmentId
+        establishment_id: "92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888"
       };
 
       if (editingCategory.id && editingCategory.id !== "") {
