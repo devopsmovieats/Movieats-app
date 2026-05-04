@@ -149,14 +149,14 @@ export default function LoginPage() {
           alt="Gastronomia Background" 
           className="w-full h-full object-cover"
         />
-        {/* Overlay Escuro Leve (40%) */}
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
+        {/* Overlay Escuro (60%) */}
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
       </div>
 
       {/* Conteúdo Centralizado (Card Glass) */}
       <div className="relative z-10 w-full max-w-md px-6 animate-in fade-in zoom-in-95 duration-1000">
         
-        <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-8 border border-white/20 shadow-2xl relative overflow-hidden transition-all">
+        <div className="bg-white/20 backdrop-blur-xl rounded-2xl p-8 border border-white/30 shadow-2xl relative overflow-hidden transition-all">
           
           {/* Branding */}
           <div className="flex flex-col items-center mb-6">
@@ -166,7 +166,7 @@ export default function LoginPage() {
               </div>
               <h1 className="text-3xl font-black tracking-tighter text-white uppercase">MOVIEATS</h1>
             </div>
-            <span className="text-[10px] mt-4 uppercase tracking-[0.3em] font-semibold text-white/70">Portal do estabelecimento</span>
+            <span className="text-[10px] mt-4 uppercase tracking-[0.3em] font-semibold text-white">Portal do estabelecimento</span>
           </div>
 
           {/* Welcome Text */}
@@ -176,8 +176,8 @@ export default function LoginPage() {
 
           {/* Form */}
           <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-white/70 ml-1" htmlFor="email">
+            <div className="space-y-1">
+              <label className="text-sm font-semibold text-gray-200 ml-1 block" htmlFor="email">
                 E-mail de Acesso
               </label>
               <input 
@@ -188,12 +188,12 @@ export default function LoginPage() {
                 placeholder="seu@estabelecimento.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-12 bg-white/20 border border-orange-400/50 rounded-lg px-5 text-sm text-white placeholder:text-gray-300 outline-none focus:border-orange-500 transition-all"
+                className="w-full h-12 bg-transparent border-2 border-orange-400 rounded-lg px-5 text-sm text-white placeholder:text-gray-300 outline-none focus:border-orange-500 ring-0 transition-all"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-white/70 ml-1" htmlFor="password">
+            <div className="space-y-1">
+              <label className="text-sm font-semibold text-gray-200 ml-1 block" htmlFor="password">
                 Senha
               </label>
               <div className="relative">
@@ -204,12 +204,12 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-12 bg-white/20 border border-orange-400/50 rounded-lg px-5 text-sm text-white placeholder:text-gray-300 outline-none focus:border-orange-500 transition-all pr-12"
+                  className="w-full h-12 bg-transparent border-2 border-orange-400 rounded-lg px-5 text-sm text-white placeholder:text-gray-300 outline-none focus:border-orange-500 ring-0 transition-all pr-12"
                 />
                 <button 
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-all"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white transition-all"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -218,7 +218,7 @@ export default function LoginPage() {
                 <button 
                   type="button"
                   onClick={handleRecoverPassword}
-                  className="text-xs font-medium text-gray-300 hover:text-orange-400 transition-colors mt-2"
+                  className="text-xs font-medium text-gray-300 hover:text-white transition-colors mt-2"
                 >
                   Esqueci minha senha
                 </button>
@@ -228,7 +228,7 @@ export default function LoginPage() {
             <button 
               type="submit"
               disabled={isLoading}
-              className="w-full h-12 bg-orange-500 hover:bg-orange-600 active:scale-[0.98] disabled:opacity-70 text-white font-semibold rounded-lg shadow-lg shadow-orange-500/20 transition-all flex items-center justify-center mt-4"
+              className="w-full h-12 bg-orange-500 hover:bg-orange-600 active:scale-[0.98] disabled:opacity-70 text-white font-bold rounded-lg shadow-lg shadow-orange-500/20 transition-all duration-200 flex items-center justify-center mt-4"
             >
               {isLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -239,8 +239,8 @@ export default function LoginPage() {
           </form>
 
           {/* Footer */}
-          <div className="mt-8 text-center text-white/50">
-            <p className="text-[10px] font-medium">
+          <div className="mt-8 text-center text-white">
+            <p className="text-[10px] font-medium opacity-70">
               ©2026 Movieats feito com ❤️ no Brasil
             </p>
           </div>
