@@ -152,100 +152,100 @@ export default function LoginPage() {
         {/* Overlay Escuro Leve (40%) */}
         <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
       </div>
-158: 
-159:       {/* Conteúdo Centralizado (Card Glass) */}
-160:       <div className="relative z-10 w-full max-w-md px-6 animate-in fade-in zoom-in-95 duration-1000">
-161:         
-162:         <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-10 border border-white/20 shadow-2xl relative overflow-hidden transition-all">
-163:           
-164:           {/* Branding */}
-165:           <div className="flex flex-col items-center mb-8">
-166:             <div className="flex items-center gap-3">
-167:               <div className="p-2 bg-orange-500/20 rounded-xl">
-168:                 <Flame className="text-orange-500 w-8 h-8 fill-orange-500" />
-169:               </div>
-170:               <h1 className="text-3xl font-black tracking-tighter text-white">MOVIEATS</h1>
-171:             </div>
-172:             <span className="text-[10px] mt-4 uppercase tracking-[0.3em] font-semibold text-white/70">Portal do estabelecimento</span>
-173:           </div>
-174: 
-175:           {/* Welcome Text */}
-176:           <div className="mb-8 text-center">
-177:             <h2 className="text-2xl font-bold text-white tracking-tight">Acesse sua Operação</h2>
-178:           </div>
-179: 
-180:           {/* Form */}
-181:           <form onSubmit={handleLogin} className="space-y-5">
-182:             <div className="space-y-1.5">
-183:               <label className="text-xs font-semibold text-white/70 ml-1" htmlFor="email">
-184:                 E-mail de Acesso
-185:               </label>
-186:               <input 
-187:                 id="email"
-188:                 type="email"
-189:                 required
-190:                 autoFocus
-191:                 placeholder="seu@estabelecimento.com"
-192:                 value={email}
-193:                 onChange={(e) => setEmail(e.target.value)}
-194:                 className="w-full h-12 bg-white/20 border border-orange-400/50 rounded-lg px-5 text-sm text-white placeholder:text-white/40 outline-none focus:border-orange-500 transition-all"
-195:               />
-196:             </div>
-197: 
-198:             <div className="space-y-1.5">
-199:               <label className="text-xs font-semibold text-white/70 ml-1" htmlFor="password">
-200:                 Senha
-201:               </label>
-202:               <div className="relative">
-203:                 <input 
-204:                   id="password"
-205:                   type={showPassword ? "text" : "password"}
-206:                   required
-207:                   placeholder="••••••••"
-208:                   value={password}
-209:                   onChange={(e) => setPassword(e.target.value)}
-210:                   className="w-full h-12 bg-white/20 border border-orange-400/50 rounded-lg px-5 text-sm text-white placeholder:text-white/40 outline-none focus:border-orange-500 transition-all pr-12"
-211:                 />
-212:                 <button 
-213:                   type="button"
-214:                   onClick={() => setShowPassword(!showPassword)}
-215:                   className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-all"
-216:                 >
-217:                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-218:                 </button>
-219:               </div>
-220:               <div className="flex justify-end">
-221:                 <button 
-222:                   type="button"
-223:                   onClick={handleRecoverPassword}
-224:                   className="text-xs font-medium text-gray-300 hover:text-orange-400 transition-colors mt-2"
-225:                 >
-226:                   Esqueci minha senha
-227:                 </button>
-228:               </div>
-229:             </div>
-230: 
-231:             <button 
-232:               type="submit"
-233:               disabled={isLoading}
-234:               className="w-full h-14 bg-orange-500 hover:bg-orange-600 active:scale-[0.98] disabled:opacity-70 text-white font-semibold rounded-lg shadow-lg shadow-orange-500/20 transition-all flex items-center justify-center mt-4"
-235:             >
-236:               {isLoading ? (
-237:                 <Loader2 className="w-6 h-6 animate-spin" />
-238:               ) : (
-239:                 "Acessar Sistema"
-240:               )}
-241:             </button>
-242:           </form>
-243: 
-244:           {/* Footer */}
-245:           <div className="mt-10 text-center text-white/50">
-246:             <p className="text-[10px] font-medium">
-247:               ©2026 Movieats feito com ❤️ no Brasil
-248:             </p>
-249:           </div>
-250:         </div>
-251:       </div>
-252:     </div>
-253:   );
-254: }
+
+      {/* Conteúdo Centralizado (Card Glass) */}
+      <div className="relative z-10 w-full max-w-md px-6 animate-in fade-in zoom-in-95 duration-1000">
+        
+        <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-10 border border-white/20 shadow-2xl relative overflow-hidden transition-all">
+          
+          {/* Branding */}
+          <div className="flex flex-col items-center mb-8">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-orange-500/20 rounded-xl">
+                <Flame className="text-orange-500 w-8 h-8 fill-orange-500" />
+              </div>
+              <h1 className="text-3xl font-black tracking-tighter text-white">MOVIEATS</h1>
+            </div>
+            <span className="text-[10px] mt-4 uppercase tracking-[0.3em] font-semibold text-white/70">Portal do estabelecimento</span>
+          </div>
+
+          {/* Welcome Text */}
+          <div className="mb-8 text-center">
+            <h2 className="text-2xl font-bold text-white tracking-tight">Acesse sua Operação</h2>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-white/70 ml-1" htmlFor="email">
+                E-mail de Acesso
+              </label>
+              <input 
+                id="email"
+                type="email"
+                required
+                autoFocus
+                placeholder="seu@estabelecimento.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full h-12 bg-white/20 border border-orange-400/50 rounded-lg px-5 text-sm text-white placeholder:text-white/40 outline-none focus:border-orange-500 transition-all"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-white/70 ml-1" htmlFor="password">
+                Senha
+              </label>
+              <div className="relative">
+                <input 
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full h-12 bg-white/20 border border-orange-400/50 rounded-lg px-5 text-sm text-white placeholder:text-white/40 outline-none focus:border-orange-500 transition-all pr-12"
+                />
+                <button 
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-all"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+              <div className="flex justify-end">
+                <button 
+                  type="button"
+                  onClick={handleRecoverPassword}
+                  className="text-xs font-medium text-gray-300 hover:text-orange-400 transition-colors mt-2"
+                >
+                  Esqueci minha senha
+                </button>
+              </div>
+            </div>
+
+            <button 
+              type="submit"
+              disabled={isLoading}
+              className="w-full h-14 bg-orange-500 hover:bg-orange-600 active:scale-[0.98] disabled:opacity-70 text-white font-semibold rounded-lg shadow-lg shadow-orange-500/20 transition-all flex items-center justify-center mt-4"
+            >
+              {isLoading ? (
+                <Loader2 className="w-6 h-6 animate-spin" />
+              ) : (
+                "Acessar Sistema"
+              )}
+            </button>
+          </form>
+
+          {/* Footer */}
+          <div className="mt-10 text-center text-white/50">
+            <p className="text-[10px] font-medium">
+              ©2026 Movieats feito com ❤️ no Brasil
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
