@@ -130,7 +130,16 @@ export default function CategoriasPage() {
   }, [searchQuery, statusFilter]);
 
   const openAddModal = () => {
-    setEditingCategory(null);
+    setEditingCategory({
+      id: "",
+      name: "",
+      descricao: "",
+      status: true,
+      order: categories.length + 1,
+      image_url: "",
+      establishment_id: establishmentId || "92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888",
+      created_at: new Date().toISOString()
+    });
     setSelectedFile(null);
     setPreviewUrl("");
     setIsModalOpen(true);
@@ -885,7 +894,10 @@ export default function CategoriasPage() {
                   <input 
                     type="text" 
                     value={editingCategory?.name || ""}
-                    onChange={(e) => setEditingCategory(prev => prev ? { ...prev, name: e.target.value } : { id: 0, name: e.target.value, descricao: "", order: categories.length + 1, status: true, image_url: "" })}
+                    onChange={(e) => setEditingCategory(prev => {
+                      if (!prev) return prev;
+                      return { ...prev, name: e.target.value };
+                    })}
                     placeholder="Ex: Hambúrgueres"
                     className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 transition-all font-medium"
                     required
@@ -897,7 +909,10 @@ export default function CategoriasPage() {
                   <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Descrição Detalhada</label>
                   <textarea 
                     value={editingCategory?.descricao || ""}
-                    onChange={(e) => setEditingCategory(prev => prev ? { ...prev, descricao: e.target.value } : { id: 0, name: "", descricao: e.target.value, order: categories.length + 1, status: true, image_url: "" })}
+                    onChange={(e) => setEditingCategory(prev => {
+                      if (!prev) return prev;
+                      return { ...prev, descricao: e.target.value };
+                    })}
                     placeholder="Descreva o que há nesta categoria..."
                     className="w-full h-28 bg-white/[0.05] border border-white/5 rounded-xl py-4 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 transition-all font-medium resize-none leading-relaxed"
                   />
@@ -913,7 +928,10 @@ export default function CategoriasPage() {
                       value={editingCategory?.order || ""}
                       onChange={(e) => {
                         const val = parseInt(e.target.value);
-                        setEditingCategory(prev => prev ? { ...prev, order: isNaN(val) ? 0 : val } : { id: 0, name: "", descricao: "", order: isNaN(val) ? 0 : val, status: true, image_url: "" });
+                        setEditingCategory(prev => {
+                          if (!prev) return prev;
+                          return { ...prev, order: isNaN(val) ? 0 : val };
+                        });
                       }}
                       className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-primary/50 transition-all font-medium"
                       required
@@ -928,7 +946,7 @@ export default function CategoriasPage() {
                         className="relative w-11 h-6 cursor-pointer"
                         onClick={() => {
                           setEditingCategory(prev => {
-                            if (!prev) return null;
+                            if (!prev) return prev;
                             return { ...prev, status: !prev.status };
                           });
                         }}
