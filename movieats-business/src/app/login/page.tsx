@@ -156,7 +156,7 @@ export default function LoginPage() {
       {/* Conteúdo Centralizado (Card Glass) */}
       <div className="relative z-10 max-w-md w-full px-6 animate-in fade-in zoom-in-95 duration-1000">
         
-        <div className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl p-8 shadow-2xl text-white relative overflow-hidden">
+        <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl text-white relative overflow-hidden">
           
           {/* Branding */}
           <div className="flex flex-col items-center mb-6">
@@ -188,7 +188,7 @@ export default function LoginPage() {
                 placeholder="seu@estabelecimento.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-transparent border border-orange-400 text-white placeholder:text-gray-400 focus:border-orange-500 focus:outline-none transition-all"
+                className="w-full px-4 py-3 rounded-xl bg-transparent border border-orange-400/60 text-white placeholder:text-gray-400 focus:border-orange-500 focus:outline-none transition"
               />
             </div>
 
@@ -204,7 +204,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-transparent border border-orange-400 text-white placeholder:text-gray-400 focus:border-orange-500 focus:outline-none transition-all pr-12"
+                  className="w-full px-4 py-3 rounded-xl bg-transparent border border-orange-400/60 text-white placeholder:text-gray-400 focus:border-orange-500 focus:outline-none transition pr-12"
                 />
                 <button 
                   type="button"
