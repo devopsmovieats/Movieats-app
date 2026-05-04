@@ -531,6 +531,8 @@ export default function CategoriasPage() {
         establishment_id: "92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888"
       };
 
+      console.log("PAYLOAD CATEGORIA:", categoryData);
+
       if (editingCategory.id && editingCategory.id !== "") {
         // Editar: Aguarda resposta do Supabase
         const { error } = await supabase
