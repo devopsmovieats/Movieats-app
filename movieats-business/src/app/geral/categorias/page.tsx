@@ -137,7 +137,7 @@ export default function CategoriasPage() {
       status: true,
       order: categories.length + 1,
       image_url: "",
-      establishment_id: establishmentId || "92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888",
+      establishment_id: "92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888",
       created_at: new Date().toISOString()
     });
     setSelectedFile(null);
