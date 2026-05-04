@@ -140,20 +140,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full relative flex items-center justify-center font-body overflow-hidden" suppressHydrationWarning>
+    <div className="min-h-screen w-full relative flex items-center justify-center font-sans overflow-hidden" suppressHydrationWarning>
       
-      {/* Estilos para animação do coração */}
-      <style jsx global>{`
-        @keyframes pulse-heart {
-          0%, 100% { transform: scale(1.1); }
-          50% { transform: scale(1.4); }
-        }
-        .animate-pulse-heart {
-          animation: pulse-heart 1.5s ease-in-out infinite;
-          display: inline-block;
-        }
-      `}</style>
-
       {/* Imagem de Fundo Fullscreen */}
       <div className="absolute inset-0 z-0">
         <img 
@@ -161,110 +149,103 @@ export default function LoginPage() {
           alt="Gastronomia Background" 
           className="w-full h-full object-cover"
         />
-        {/* Overlay Escuro Suave (70%) */}
-        <div className="absolute inset-0 bg-black/70 backdrop-blur-[2px]" />
+        {/* Overlay Escuro Leve (40%) */}
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
       </div>
-
-      {/* Conteúdo Centralizado (Modal) */}
-      <div className="relative z-10 w-full max-w-[500px] px-6 animate-in fade-in zoom-in-95 duration-1000">
-        
-        {/* Modal Premium Horizontal (Largo e Compacto) */}
-        <div className="bg-[#0a0a0a]/85 backdrop-blur-[15px] rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] relative overflow-hidden transition-all">
-          
-          {/* Branding */}
-          <div className="flex flex-col items-center mb-5">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#ff6b00]/10 rounded-xl">
-                <Flame className="text-[#ff6b00] w-8 h-8 fill-[#ff6b00]" />
-              </div>
-              <h1 className="font-headline text-3xl font-black tracking-tighter text-white">MOVIEATS</h1>
-            </div>
-            <span className="text-[9px] mt-4 uppercase tracking-[0.5em] font-medium text-white/50 whitespace-nowrap">Portal do Administrador</span>
-          </div>
-
-          {/* Welcome Text */}
-          <div className="mb-5 text-center">
-            <h2 className="font-headline text-2xl font-black text-white/80 tracking-tight">Acesse sua operação</h2>
-          </div>
-
-          {/* Form */}
-          <form id="login-form-premium" onSubmit={handleLogin} className="space-y-4 flex flex-col">
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 ml-1 mb-2 block" htmlFor="email">
-                E-mail de Acesso
-              </label>
-              <input 
-                id="email"
-                type="email"
-                required
-                autoFocus
-                autoComplete="off"
-                placeholder="seu@estabelecimento.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-12 bg-white/[0.05] rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:bg-white/[0.08]"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 ml-1 mb-2 block" htmlFor="password">
-                Senha
-              </label>
-              <div className="relative group">
-                <input 
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  autoComplete="off"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-12 bg-white/[0.05] rounded-xl px-5 text-sm text-white font-medium placeholder:text-white/10 outline-none transition-all focus:bg-white/[0.08] pr-14"
-                />
-                <button 
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 hover:bg-white/5 rounded-lg text-white/40 hover:text-white transition-all cursor-pointer"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-              <div className="flex justify-end">
-                <button 
-                  type="button"
-                  onClick={handleRecoverPassword}
-                  className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#ff6b00] hover:text-orange-400 transition-colors cursor-pointer mt-2"
-                >
-                  Esqueci minha senha
-                </button>
-              </div>
-            </div>
-
-            <div className="h-2" />
-
-            <button 
-              type="submit"
-              disabled={isLoading}
-              className="w-full h-12 bg-[#ff6b00] hover:bg-orange-600 active:scale-[0.98] disabled:opacity-70 disabled:active:scale-100 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-xl shadow-xl shadow-[#ff6b00]/10 transition-all flex items-center justify-center cursor-pointer mt-2"
-            >
-              {isLoading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : (
-                "Acessar Sistema"
-              )}
-            </button>
-
-
-          </form>
-
-          {/* Footer */}
-          <div className="mt-8 text-center text-white/50">
-            <p className="text-[9px] font-bold uppercase tracking-[0.1em]">
-              © 2026 MoviEats Feito com <span className="text-[#ff6b00] animate-pulse-heart mx-1">❤</span> no Brasil
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+158: 
+159:       {/* Conteúdo Centralizado (Card Glass) */}
+160:       <div className="relative z-10 w-full max-w-md px-6 animate-in fade-in zoom-in-95 duration-1000">
+161:         
+162:         <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-10 border border-white/20 shadow-2xl relative overflow-hidden transition-all">
+163:           
+164:           {/* Branding */}
+165:           <div className="flex flex-col items-center mb-8">
+166:             <div className="flex items-center gap-3">
+167:               <div className="p-2 bg-orange-500/20 rounded-xl">
+168:                 <Flame className="text-orange-500 w-8 h-8 fill-orange-500" />
+169:               </div>
+170:               <h1 className="text-3xl font-black tracking-tighter text-white">MOVIEATS</h1>
+171:             </div>
+172:             <span className="text-[10px] mt-4 uppercase tracking-[0.3em] font-semibold text-white/70">Portal do estabelecimento</span>
+173:           </div>
+174: 
+175:           {/* Welcome Text */}
+176:           <div className="mb-8 text-center">
+177:             <h2 className="text-2xl font-bold text-white tracking-tight">Acesse sua Operação</h2>
+178:           </div>
+179: 
+180:           {/* Form */}
+181:           <form onSubmit={handleLogin} className="space-y-5">
+182:             <div className="space-y-1.5">
+183:               <label className="text-xs font-semibold text-white/70 ml-1" htmlFor="email">
+184:                 E-mail de Acesso
+185:               </label>
+186:               <input 
+187:                 id="email"
+188:                 type="email"
+189:                 required
+190:                 autoFocus
+191:                 placeholder="seu@estabelecimento.com"
+192:                 value={email}
+193:                 onChange={(e) => setEmail(e.target.value)}
+194:                 className="w-full h-12 bg-white/20 border border-orange-400/50 rounded-lg px-5 text-sm text-white placeholder:text-white/40 outline-none focus:border-orange-500 transition-all"
+195:               />
+196:             </div>
+197: 
+198:             <div className="space-y-1.5">
+199:               <label className="text-xs font-semibold text-white/70 ml-1" htmlFor="password">
+200:                 Senha
+201:               </label>
+202:               <div className="relative">
+203:                 <input 
+204:                   id="password"
+205:                   type={showPassword ? "text" : "password"}
+206:                   required
+207:                   placeholder="••••••••"
+208:                   value={password}
+209:                   onChange={(e) => setPassword(e.target.value)}
+210:                   className="w-full h-12 bg-white/20 border border-orange-400/50 rounded-lg px-5 text-sm text-white placeholder:text-white/40 outline-none focus:border-orange-500 transition-all pr-12"
+211:                 />
+212:                 <button 
+213:                   type="button"
+214:                   onClick={() => setShowPassword(!showPassword)}
+215:                   className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-all"
+216:                 >
+217:                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+218:                 </button>
+219:               </div>
+220:               <div className="flex justify-end">
+221:                 <button 
+222:                   type="button"
+223:                   onClick={handleRecoverPassword}
+224:                   className="text-xs font-medium text-gray-300 hover:text-orange-400 transition-colors mt-2"
+225:                 >
+226:                   Esqueci minha senha
+227:                 </button>
+228:               </div>
+229:             </div>
+230: 
+231:             <button 
+232:               type="submit"
+233:               disabled={isLoading}
+234:               className="w-full h-14 bg-orange-500 hover:bg-orange-600 active:scale-[0.98] disabled:opacity-70 text-white font-semibold rounded-lg shadow-lg shadow-orange-500/20 transition-all flex items-center justify-center mt-4"
+235:             >
+236:               {isLoading ? (
+237:                 <Loader2 className="w-6 h-6 animate-spin" />
+238:               ) : (
+239:                 "Acessar Sistema"
+240:               )}
+241:             </button>
+242:           </form>
+243: 
+244:           {/* Footer */}
+245:           <div className="mt-10 text-center text-white/50">
+246:             <p className="text-[10px] font-medium">
+247:               ©2026 Movieats feito com ❤️ no Brasil
+248:             </p>
+249:           </div>
+250:         </div>
+251:       </div>
+252:     </div>
+253:   );
+254: }
