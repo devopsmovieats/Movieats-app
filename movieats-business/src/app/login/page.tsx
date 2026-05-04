@@ -156,26 +156,26 @@ export default function LoginPage() {
       {/* Conteúdo Centralizado (Card Glass) */}
       <div className="relative z-10 w-full max-w-md px-6 animate-in fade-in zoom-in-95 duration-1000">
         
-        <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-10 border border-white/20 shadow-2xl relative overflow-hidden transition-all">
+        <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-8 border border-white/20 shadow-2xl relative overflow-hidden transition-all">
           
           {/* Branding */}
-          <div className="flex flex-col items-center mb-8">
+          <div className="flex flex-col items-center mb-6">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-orange-500/20 rounded-xl">
                 <Flame className="text-orange-500 w-8 h-8 fill-orange-500" />
               </div>
-              <h1 className="text-3xl font-black tracking-tighter text-white">MOVIEATS</h1>
+              <h1 className="text-3xl font-black tracking-tighter text-white uppercase">MOVIEATS</h1>
             </div>
             <span className="text-[10px] mt-4 uppercase tracking-[0.3em] font-semibold text-white/70">Portal do estabelecimento</span>
           </div>
 
           {/* Welcome Text */}
-          <div className="mb-8 text-center">
+          <div className="mb-6 text-center">
             <h2 className="text-2xl font-bold text-white tracking-tight">Acesse sua Operação</h2>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleLogin} className="space-y-5">
+          <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-white/70 ml-1" htmlFor="email">
                 E-mail de Acesso
@@ -188,7 +188,7 @@ export default function LoginPage() {
                 placeholder="seu@estabelecimento.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-12 bg-white/20 border border-orange-400/50 rounded-lg px-5 text-sm text-white placeholder:text-white/40 outline-none focus:border-orange-500 transition-all"
+                className="w-full h-12 bg-white/20 border border-orange-400/50 rounded-lg px-5 text-sm text-white placeholder:text-gray-300 outline-none focus:border-orange-500 transition-all"
               />
             </div>
 
@@ -204,7 +204,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-12 bg-white/20 border border-orange-400/50 rounded-lg px-5 text-sm text-white placeholder:text-white/40 outline-none focus:border-orange-500 transition-all pr-12"
+                  className="w-full h-12 bg-white/20 border border-orange-400/50 rounded-lg px-5 text-sm text-white placeholder:text-gray-300 outline-none focus:border-orange-500 transition-all pr-12"
                 />
                 <button 
                   type="button"
@@ -228,10 +228,10 @@ export default function LoginPage() {
             <button 
               type="submit"
               disabled={isLoading}
-              className="w-full h-14 bg-orange-500 hover:bg-orange-600 active:scale-[0.98] disabled:opacity-70 text-white font-semibold rounded-lg shadow-lg shadow-orange-500/20 transition-all flex items-center justify-center mt-4"
+              className="w-full h-12 bg-orange-500 hover:bg-orange-600 active:scale-[0.98] disabled:opacity-70 text-white font-semibold rounded-lg shadow-lg shadow-orange-500/20 transition-all flex items-center justify-center mt-4"
             >
               {isLoading ? (
-                <Loader2 className="w-6 h-6 animate-spin" />
+                <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
                 "Acessar Sistema"
               )}
@@ -239,7 +239,7 @@ export default function LoginPage() {
           </form>
 
           {/* Footer */}
-          <div className="mt-10 text-center text-white/50">
+          <div className="mt-8 text-center text-white/50">
             <p className="text-[10px] font-medium">
               ©2026 Movieats feito com ❤️ no Brasil
             </p>
