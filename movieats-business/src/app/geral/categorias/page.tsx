@@ -29,9 +29,6 @@ import { getPublicUrl } from "@/lib/utils";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-// ID Fixo para teste - Villa Gourmet
-// const FIXED_ESTABLISHMENT_ID = '17db3a9f-f6c1-434d-8f4a-e40cd67035f2';
-
 // Configuração do Toast elegante conforme o padrão Movieats
 const Toast = Swal.mixin({
   toast: true,
@@ -99,10 +96,16 @@ export default function CategoriasPage() {
         .eq("establishment_id", "92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888")
         .order("order", { ascending: true });
 
-      if (error) throw error;
+      console.log("CATEGORIAS:", data);
+
+      if (error) {
+        console.error("Erro ao buscar categorias:", error);
+        return;
+      }
+      
       setCategories(data || []);
     } catch (error) {
-      console.error("Erro ao buscar categorias:", error);
+      console.error("Erro crítico ao carregar categorias:", error);
     } finally {
       setLoading(false);
     }
@@ -113,7 +116,8 @@ export default function CategoriasPage() {
   }, []);
 
   const filteredCategories = categories.filter(cat => {
-    const matchesSearch = cat.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const name = cat.name || "";
+    const matchesSearch = name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "todos" || (statusFilter === "ativo" ? cat.status === true : cat.status === false);
     return matchesSearch && matchesStatus;
   });
@@ -732,6 +736,7 @@ export default function CategoriasPage() {
                       </div>
                     </th>
                     <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] text-center uppercase">Ordem</th>
+                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] uppercase">Imagem</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] uppercase">Nome da Categoria</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] uppercase">Descrição Detalhada</th>
                     <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] text-center uppercase">Status</th>
@@ -759,6 +764,23 @@ export default function CategoriasPage() {
                           <span className="text-[11px] font-medium text-white/60">
                             {category.order}
                           </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="w-10 h-10 rounded-lg border border-white/5 overflow-hidden bg-white/[0.03] flex items-center justify-center">
+                          {category.image_url ? (
+                            <img 
+                              src={category.image_url} 
+                              alt={category.name}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = 'none';
+                                (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="w-full h-full flex items-center justify-center text-white/20"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>';
+                              }}
+                            />
+                          ) : (
+                            <ImageIcon className="w-5 h-5 text-white/10" />
+                          )}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -889,34 +911,58 @@ export default function CategoriasPage() {
             <form onSubmit={handleSaveCategory} className="p-8 pt-6 space-y-6">
               
               <div className="space-y-6">
-                {/* Nome da Categoria */}
-                <div className="space-y-2">
-                  <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Nome da Categoria</label>
-                  <input 
-                    type="text" 
-                    value={editingCategory?.name || ""}
-                    onChange={(e) => setEditingCategory(prev => {
-                      if (!prev) return prev;
-                      return { ...prev, name: e.target.value };
-                    })}
-                    placeholder="Ex: Hambúrgueres"
-                    className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 transition-all font-medium"
-                    required
-                  />
-                </div>
+                <div className="flex flex-col md:flex-row gap-8">
+                  {/* Coluna da Imagem */}
+                  <div className="shrink-0 space-y-3">
+                    <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Imagem</label>
+                    <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
+                    <div 
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-[160px] h-[160px] bg-white/[0.05] border border-white/5 rounded-2xl flex flex-col items-center justify-center cursor-pointer group transition-all overflow-hidden"
+                    >
+                      {(previewUrl || editingCategory?.image_url) ? (
+                        <img 
+                          src={previewUrl || editingCategory?.image_url || ""} 
+                          className="w-full h-full object-cover" 
+                          alt="Preview" 
+                        />
+                      ) : (
+                        <ImageIcon className="w-8 h-8 text-white/10 group-hover:text-primary transition-colors" />
+                      )}
+                    </div>
+                  </div>
 
-                {/* Descrição */}
-                <div className="space-y-2">
-                  <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Descrição Detalhada</label>
-                  <textarea 
-                    value={editingCategory?.descricao || ""}
-                    onChange={(e) => setEditingCategory(prev => {
-                      if (!prev) return prev;
-                      return { ...prev, descricao: e.target.value };
-                    })}
-                    placeholder="Descreva o que há nesta categoria..."
-                    className="w-full h-28 bg-white/[0.05] border border-white/5 rounded-xl py-4 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 transition-all font-medium resize-none leading-relaxed"
-                  />
+                  <div className="flex-1 space-y-6">
+                    {/* Nome da Categoria */}
+                    <div className="space-y-2">
+                      <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Nome da Categoria</label>
+                      <input 
+                        type="text" 
+                        value={editingCategory?.name || ""}
+                        onChange={(e) => setEditingCategory(prev => {
+                          if (!prev) return prev;
+                          return { ...prev, name: e.target.value };
+                        })}
+                        placeholder="Ex: Hambúrgueres"
+                        className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 transition-all font-medium"
+                        required
+                      />
+                    </div>
+
+                    {/* Descrição */}
+                    <div className="space-y-2">
+                      <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Descrição Detalhada</label>
+                      <textarea 
+                        value={editingCategory?.descricao || ""}
+                        onChange={(e) => setEditingCategory(prev => {
+                          if (!prev) return prev;
+                          return { ...prev, descricao: e.target.value };
+                        })}
+                        placeholder="Descreva o que há nesta categoria..."
+                        className="w-full h-24 bg-white/[0.05] border border-white/5 rounded-xl py-4 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 transition-all font-medium resize-none leading-relaxed"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
