@@ -120,7 +120,7 @@ export default function Sidebar() {
   const [userRole, setUserRole] = useState<string>("ADMIN");
 
   useEffect(() => {
-    fetchBranding();
+    // fetchBranding(); // Desativado temporariamente para evitar erro 406
     
     const collapsedSaved = localStorage.getItem("movieats_sidebar_collapsed_mode");
     const userSaved = localStorage.getItem("movieats_user");
@@ -144,6 +144,7 @@ export default function Sidebar() {
   }, []);
 
   const fetchBranding = async () => {
+    /* 
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -163,6 +164,7 @@ export default function Sidebar() {
     } catch (err) {
       console.error("Erro Sidebar Branding:", err);
     }
+    */
   };
 
   const toggleSidebar = () => {
