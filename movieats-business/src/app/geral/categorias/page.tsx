@@ -20,12 +20,9 @@ import {
   Download,
   Upload,
   ChevronDown,
-  Loader2,
-  FolderOpen,
-  Camera
+  Loader2
 } from "lucide-react";
 import Swal from "sweetalert2";
-import { getPublicUrl } from "@/lib/utils";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -67,7 +64,6 @@ export default function CategoriasPage() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [establishmentId, setEstablishmentId] = useState<string | null>("92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888");
   const [userRole, setUserRole] = useState<string>("ADMIN");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
@@ -76,7 +72,7 @@ export default function CategoriasPage() {
   const [importProgress, setImportProgress] = useState(0);
   const [importStatus, setImportStatus] = useState("");
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [selectedIds, setSelectedIds] = useState<Set<string | number>>(new Set());
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
   
@@ -161,7 +157,7 @@ export default function CategoriasPage() {
     setIsModalOpen(true);
   };
 
-  const handleSelectOne = (id: string | number) => {
+  const handleSelectOne = (id: string) => {
     const newSelected = new Set(selectedIds);
     if (newSelected.has(id)) {
       newSelected.delete(id);
@@ -265,7 +261,6 @@ export default function CategoriasPage() {
       e.stopPropagation();
     }
     
-    // @ts-ignore
     const categoriesToExport = categories.filter(cat => selectedIds.has(cat.id));
     if (categoriesToExport.length === 0) {
       Toast.fire({ icon: "warning", title: "Selecione categoria para exportar" });
@@ -1060,16 +1055,7 @@ export default function CategoriasPage() {
 
 
 
-      <style jsx global>{`
-        .category-row {
-          cursor: pointer !important;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-          transition: background 0.2s !important;
-        }
-        .category-row:hover {
-          background: rgba(255, 255, 255, 0.03) !important;
-        }
-      `}</style>
+
 
     </DashboardLayout>
   );
