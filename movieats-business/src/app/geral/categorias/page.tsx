@@ -113,10 +113,25 @@ export default function CategoriasPage() {
 
   useEffect(() => {
     const fetchUser = async () => {
+      // Tentar primeiro pelo Auth do Supabase
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
+        console.log("ESTABLISHMENT IDENTIFICADO (AUTH):", user.id);
         setEstablishmentId(user.id);
       } else {
+        // Fallback para LocalStorage se a sessão estiver demorando
+        const userSaved = localStorage.getItem("movieats_user");
+        if (userSaved) {
+          try {
+            const parsedUser = JSON.parse(userSaved);
+            if (parsedUser.id) {
+              console.log("ESTABLISHMENT IDENTIFICADO (LOCALSTORAGE):", parsedUser.id);
+              setEstablishmentId(parsedUser.id);
+              return;
+            }
+          } catch (e) {}
+        }
+        console.warn("ESTABLISHMENT NÃO IDENTIFICADO!");
         setLoading(false);
       }
     };
@@ -498,6 +513,17 @@ export default function CategoriasPage() {
   const handleSaveCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingCategory) return;
+    
+    if (!establishmentId) {
+      console.error("BLOCK: establishmentId está null ou undefined!");
+      Toast.fire({
+        icon: "error",
+        title: "Erro de Identificação",
+        text: "Não foi possível identificar seu estabelecimento. Tente recarregar a página."
+      });
+      return;
+    }
+
     setIsSaving(true);
 
     try {
@@ -547,10 +573,10 @@ export default function CategoriasPage() {
         order: editingCategory.order,
         status: editingCategory.status,
         image_url: finalImageUrl,
-        establishment_id: establishmentId || ""
+        establishment_id: establishmentId
       };
 
-      console.log("ESTABLISHMENT INSERT:", establishmentId);
+      console.log("DADOS PARA INSERT:", categoryData);
       console.log("PAYLOAD CATEGORIA:", categoryData);
 
       if (editingCategory.id && editingCategory.id !== "") {
