@@ -129,9 +129,9 @@ export default function CategoriasPage() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedCategories = filteredCategories.slice(startIndex, startIndex + itemsPerPage);
 
-  console.log("CATEGORIES STATE:", categories);
-  console.log("FILTERED:", filteredCategories);
-  console.log("PAGINATED:", paginatedCategories);
+  console.log("DEBUG - CATEGORIES STATE:", categories);
+  console.log("DEBUG - FILTERED:", filteredCategories);
+  console.log("DEBUG - PAGINATED (BYPASSED):", paginatedCategories);
 
   // Resetar página ao filtrar
   useEffect(() => {
