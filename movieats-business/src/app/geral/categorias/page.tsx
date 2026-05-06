@@ -88,6 +88,7 @@ export default function CategoriasPage() {
   const importFileRef = useRef<HTMLInputElement>(null);
 
   const loadCategorias = async () => {
+    console.log("LOAD CATEGORIAS INICIO");
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -96,7 +97,7 @@ export default function CategoriasPage() {
         .eq("establishment_id", "92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888")
         .order("order", { ascending: true });
 
-      console.log("CATEGORIAS:", data);
+      console.log("CATEGORIAS:", data, error);
 
       if (error) {
         console.error("Erro ao buscar categorias:", error);
