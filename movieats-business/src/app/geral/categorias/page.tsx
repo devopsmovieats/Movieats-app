@@ -75,6 +75,7 @@ export default function CategoriasPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [establishmentId, setEstablishmentId] = useState<string | null>(null);
   
   // Paginação
   const [currentPage, setCurrentPage] = useState(1);
@@ -84,13 +85,14 @@ export default function CategoriasPage() {
   const importFileRef = useRef<HTMLInputElement>(null);
 
   const loadCategorias = async () => {
-    console.log("LOAD CATEGORIAS INICIO");
+    if (!establishmentId) return;
+    console.log("LOAD CATEGORIAS INICIO - ID:", establishmentId);
     setLoading(true);
     try {
       const { data, error } = await supabase
         .from("bd_categorias")
         .select("*")
-        .eq("establishment_id", "92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888")
+        .eq("establishment_id", establishmentId)
         .order("order", { ascending: true });
 
       console.log("CATEGORIAS:", data, error);
@@ -109,8 +111,22 @@ export default function CategoriasPage() {
   };
 
   useEffect(() => {
-    loadCategorias();
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setEstablishmentId(user.id);
+      } else {
+        setLoading(false);
+      }
+    };
+    fetchUser();
   }, []);
+
+  useEffect(() => {
+    if (establishmentId) {
+      loadCategorias();
+    }
+  }, [establishmentId]);
 
   const filteredCategories = categories.filter(cat => {
     const name = cat.name || "";
@@ -142,7 +158,7 @@ export default function CategoriasPage() {
       status: true,
       order: categories.length + 1,
       image_url: "",
-      establishment_id: "92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888",
+      establishment_id: establishmentId || "",
       created_at: new Date().toISOString()
     });
     setSelectedFile(null);
@@ -500,7 +516,7 @@ export default function CategoriasPage() {
         
         const formData = new FormData();
         formData.append('file', selectedFile);
-        formData.append('establishment_id', "92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888");
+        formData.append('establishment_id', establishmentId || "");
 
         const uploadResponse = await fetch('/api/upload', {
           method: 'POST',
@@ -530,10 +546,10 @@ export default function CategoriasPage() {
         order: editingCategory.order,
         status: editingCategory.status,
         image_url: finalImageUrl,
-        establishment_id: "92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888"
+        establishment_id: establishmentId || ""
       };
 
-      console.log("ESTABLISHMENT INSERT:", "92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888");
+      console.log("ESTABLISHMENT INSERT:", establishmentId);
       console.log("PAYLOAD CATEGORIA:", categoryData);
 
       if (editingCategory.id && editingCategory.id !== "") {
