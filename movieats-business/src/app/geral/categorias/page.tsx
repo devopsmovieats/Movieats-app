@@ -89,7 +89,6 @@ export default function CategoriasPage() {
 
   const loadCategorias = async () => {
     console.log("LOAD CATEGORIAS INICIO");
-    console.log("ESTABLISHMENT SELECT:", establishmentId);
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -506,9 +505,7 @@ export default function CategoriasPage() {
         
         const formData = new FormData();
         formData.append('file', selectedFile);
-        if (establishmentId) {
-          formData.append('establishment_id', establishmentId);
-        }
+        formData.append('establishment_id', "92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888");
 
         const uploadResponse = await fetch('/api/upload', {
           method: 'POST',
