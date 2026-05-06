@@ -768,19 +768,8 @@ export default function CategoriasPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="w-10 h-10 rounded-lg border border-white/5 overflow-hidden bg-white/[0.03] flex items-center justify-center">
-                          {category.image_url ? (
-                            <img 
-                              src={category.image_url} 
-                              alt={category.name}
-                              className="w-full h-full object-cover"
-                              // Se falhar o carregamento (ex: 406), não quebra o React
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).style.opacity = '0';
-                              }}
-                            />
-                          ) : (
-                            <Tag className="w-5 h-5 text-white/10" />
-                          )}
+                          {/* Renderização de imagem desativada temporariamente para evitar erro 406 que quebra o frontend */}
+                          <Tag className="w-5 h-5 text-white/10" />
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -920,15 +909,7 @@ export default function CategoriasPage() {
                       onClick={() => fileInputRef.current?.click()}
                       className="w-[160px] h-[160px] bg-white/[0.05] border border-white/5 rounded-2xl flex flex-col items-center justify-center cursor-pointer group transition-all overflow-hidden"
                     >
-                      {(previewUrl || editingCategory?.image_url) ? (
-                        <img 
-                          src={previewUrl || editingCategory?.image_url || ""} 
-                          className="w-full h-full object-cover" 
-                          alt="Preview" 
-                        />
-                      ) : (
-                        <ImageIcon className="w-8 h-8 text-white/10 group-hover:text-primary transition-colors" />
-                      )}
+                      <ImageIcon className="w-8 h-8 text-white/10 group-hover:text-primary transition-colors" />
                     </div>
                   </div>
 
