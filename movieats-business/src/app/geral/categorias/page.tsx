@@ -89,6 +89,7 @@ export default function CategoriasPage() {
 
   const loadCategorias = async () => {
     console.log("LOAD CATEGORIAS INICIO");
+    console.log("ESTABLISHMENT SELECT:", establishmentId);
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -540,6 +541,7 @@ export default function CategoriasPage() {
         establishment_id: "92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888"
       };
 
+      console.log("ESTABLISHMENT INSERT:", "92a8a9e3-001f-4b9f-ba3a-9ed62dd7d888");
       console.log("PAYLOAD CATEGORIA:", categoryData);
 
       if (editingCategory.id && editingCategory.id !== "") {
