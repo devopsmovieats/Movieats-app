@@ -786,7 +786,7 @@ export default function CategoriasPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {categories.map((category) => (
+                  {paginatedCategories.map((category) => (
                     <tr 
                       key={category.id} 
                       className="category-row bg-transparent hover:bg-white/[0.02] border-b border-white/5 transition-colors"
