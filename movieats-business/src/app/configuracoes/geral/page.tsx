@@ -208,6 +208,12 @@ export default function ConfigGeralPage() {
           email: settings.email
         }, { onConflict: "id" });
 
+      console.log("AUDITORIA SALVAMENTO - PAYLOAD:", {
+        id: user.id,
+        whatsapp: settings.whatsapp,
+        telefone: settings.telefone
+      });
+
       if (error) {
         console.log("ERRO_SUPABASE_DETALHADO:", error);
         throw error;
