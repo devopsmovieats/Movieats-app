@@ -146,10 +146,17 @@ export default function UsuariosPage() {
         if (error) throw error;
         Toast.fire({ icon: "success", title: "Usuário atualizado" });
       } else {
-        // Criar Usuário no Auth do Supabase
+        // Criar Usuário no Auth do Supabase com Metadados
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: editingProfile.email!,
           password: password,
+          options: {
+            data: {
+              full_name: editingProfile.nome,
+              establishment_id: establishmentId,
+              role: editingProfile.role
+            }
+          }
         });
 
         if (authError) throw authError;
@@ -171,13 +178,16 @@ export default function UsuariosPage() {
         
         Toast.fire({ icon: "success", title: "Usuário criado com sucesso" });
       }
+      
+      // Fechar modal e recarregar tabela imediatamente
       setIsModalOpen(false);
-      loadProfiles();
+      await loadProfiles();
+      
     } catch (error: any) {
-      console.error("Erro no salvamento:", error);
+      console.error("Erro no fluxo de salvamento:", error);
       Toast.fire({ 
         icon: "error", 
-        title: "Erro ao salvar", 
+        title: "Erro na operação", 
         text: error.message || "Verifique os dados e tente novamente." 
       });
     } finally {
