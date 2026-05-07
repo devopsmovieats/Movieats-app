@@ -23,14 +23,9 @@ interface SystemSettings {
   url_logo: string;
   url_banner: string;
   cep: string;
-  rua: string;
-  numero: string;
-  bairro: string;
-  cidade: string;
-  uf: string;
+  endereco: string;
   telefone: string;
   whatsapp: string;
-  email: string;
   entrega_ativa: boolean;
 }
 
@@ -57,14 +52,9 @@ export default function ConfigGeralPage() {
     url_logo: "", 
     url_banner: "", 
     cep: "",
-    rua: "",
-    numero: "",
-    bairro: "",
-    cidade: "",
-    uf: "",
+    endereco: "",
     telefone: "",
     whatsapp: "",
-    email: "",
     entrega_ativa: true
   });
 
@@ -93,41 +83,15 @@ export default function ConfigGeralPage() {
       if (error && error.code !== "PGRST116") throw error;
 
       if (data) {
-        // Tentar decompor o endereço para os campos individuais
-        let rua = "", numero = "", bairro = "", cidade = "", uf = "";
-        if (data.endereco) {
-          try {
-            // Padrão: "Rua, Numero - Bairro, Cidade/UF"
-            const [main, rest] = data.endereco.split(" - ");
-            const [street, num] = main.split(", ");
-            const [neighborhood, cityState] = rest.split(", ");
-            const [city, state] = cityState.split("/");
-            
-            rua = street || "";
-            numero = num || "";
-            bairro = neighborhood || "";
-            cidade = city || "";
-            uf = state || "";
-          } catch (e) {
-            // Fallback se o formato for diferente
-            rua = data.endereco;
-          }
-        }
-
         setSettings({
           nome_loja: data.nome_loja || "",
           descricao: data.descricao || "",
           url_logo: data.url_logo || "",
           url_banner: data.url_banner || "",
           cep: data.cep || "",
-          rua: rua || data.rua || "",
-          numero: numero || data.numero || "",
-          bairro: bairro || data.bairro || "",
-          cidade: cidade || data.cidade || "",
-          uf: uf || data.uf || "",
+          endereco: data.endereco || "",
           telefone: data.telefone || "",
           whatsapp: data.whatsapp || "",
-          email: data.email || "",
           entrega_ativa: data.entrega_ativa ?? true
         });
       }
@@ -148,17 +112,7 @@ export default function ConfigGeralPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validação básica de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (settings.email && !emailRegex.test(settings.email)) {
-      Toast.fire({ icon: "error", title: "Formato de e-mail inválido" });
-      return;
-    }
-
     setIsSaving(true);
-    
-    const fullAddress = `${settings.rua}, ${settings.numero} - ${settings.bairro}, ${settings.cidade}/${settings.uf}`;
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -197,11 +151,10 @@ export default function ConfigGeralPage() {
           descricao: settings.descricao,
           url_logo: finalLogoUrl,
           url_banner: finalBannerUrl,
-          endereco: fullAddress,
+          endereco: settings.endereco,
           telefone: settings.telefone,
           whatsapp: settings.whatsapp,
-          cep: settings.cep,
-          email: settings.email
+          cep: settings.cep
         }, { onConflict: "id" });
 
       console.log("AUDITORIA SALVAMENTO - PAYLOAD:", {
@@ -256,12 +209,10 @@ export default function ConfigGeralPage() {
         const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
         const data = await response.json();
         if (!data.erro) {
+          const autoAddress = `${data.logradouro}, nº - ${data.bairro}, ${data.localidade}/${data.uf}`;
           setSettings(prev => ({
             ...prev,
-            rua: data.logradouro,
-            bairro: data.bairro,
-            cidade: data.localidade,
-            uf: data.uf
+            endereco: autoAddress
           }));
         }
       } catch (error) {
@@ -375,6 +326,7 @@ export default function ConfigGeralPage() {
                   <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">CEP</label>
                   <input 
                     type="text" 
+                    placeholder="00000-000"
                     value={settings.cep}
                     onBlur={handleCepBlur}
                     onChange={(e) => setSettings({...settings, cep: e.target.value})}
@@ -382,52 +334,13 @@ export default function ConfigGeralPage() {
                   />
                 </div>
 
-                <div className="col-span-2 space-y-2">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Rua</label>
+                <div className="col-span-3 space-y-2">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Endereço Completo</label>
                   <input 
                     type="text" 
-                    value={settings.rua}
-                    onChange={(e) => setSettings({...settings, rua: e.target.value})}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
-                  />
-                </div>
-
-                <div className="col-span-1 space-y-2">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Bairro</label>
-                  <input 
-                    type="text" 
-                    value={settings.bairro}
-                    onChange={(e) => setSettings({...settings, bairro: e.target.value})}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-4 gap-6">
-                <div className="col-span-2 space-y-2">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Cidade</label>
-                  <input 
-                    type="text" 
-                    value={settings.cidade}
-                    onChange={(e) => setSettings({...settings, cidade: e.target.value})}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
-                  />
-                </div>
-                <div className="col-span-1 space-y-2">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">UF</label>
-                  <input 
-                    type="text" 
-                    value={settings.uf}
-                    onChange={(e) => setSettings({...settings, uf: e.target.value})}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none text-center"
-                  />
-                </div>
-                <div className="col-span-1 space-y-2">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nº</label>
-                  <input 
-                    type="text" 
-                    value={settings.numero}
-                    onChange={(e) => setSettings({...settings, numero: e.target.value})}
+                    placeholder="Rua, Número - Bairro, Cidade/UF"
+                    value={settings.endereco}
+                    onChange={(e) => setSettings({...settings, endereco: e.target.value})}
                     className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
                   />
                 </div>
@@ -437,7 +350,7 @@ export default function ConfigGeralPage() {
 
           <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8 space-y-6">
             <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Contato</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">WhatsApp</label>
                 <input 
@@ -455,16 +368,6 @@ export default function ConfigGeralPage() {
                   placeholder="(99) 4444-4444"
                   value={settings.telefone}
                   onChange={(e) => setSettings({...settings, telefone: maskPhone(e.target.value)})}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">E-mail</label>
-                <input 
-                  type="email" 
-                  placeholder="contato@empresa.com"
-                  value={settings.email}
-                  onChange={(e) => setSettings({...settings, email: e.target.value})}
                   className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
                 />
               </div>
