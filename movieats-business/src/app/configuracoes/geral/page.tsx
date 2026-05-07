@@ -29,6 +29,7 @@ interface SystemSettings {
   cidade: string;
   uf: string;
   telefone: string;
+  whatsapp: string;
   instagram: string;
   email: string;
   entrega_ativa: boolean;
@@ -63,6 +64,7 @@ export default function ConfigGeralPage() {
     cidade: "",
     uf: "",
     telefone: "",
+    whatsapp: "",
     instagram: "",
     email: "",
     entrega_ativa: true
@@ -126,6 +128,7 @@ export default function ConfigGeralPage() {
           cidade: cidade || data.cidade || "",
           uf: uf || data.uf || "",
           telefone: data.telefone || "",
+          whatsapp: data.whatsapp || "",
           instagram: data.instagram || "",
           email: data.email || "",
           entrega_ativa: data.entrega_ativa ?? true
@@ -199,6 +202,7 @@ export default function ConfigGeralPage() {
           url_banner: finalBannerUrl,
           endereco: fullAddress,
           telefone: settings.telefone,
+          whatsapp: settings.whatsapp,
           cep: settings.cep,
           instagram: settings.instagram,
           email: settings.email
@@ -437,6 +441,16 @@ export default function ConfigGeralPage() {
                 <input 
                   type="text" 
                   placeholder="(99) 99999-9999"
+                  value={settings.whatsapp}
+                  onChange={(e) => setSettings({...settings, whatsapp: maskPhone(e.target.value)})}
+                  className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Telefone Fixo / Contato</label>
+                <input 
+                  type="text" 
+                  placeholder="(99) 4444-4444"
                   value={settings.telefone}
                   onChange={(e) => setSettings({...settings, telefone: maskPhone(e.target.value)})}
                   className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
