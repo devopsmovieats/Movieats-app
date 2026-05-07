@@ -30,7 +30,6 @@ interface SystemSettings {
   uf: string;
   telefone: string;
   whatsapp: string;
-  instagram: string;
   email: string;
   entrega_ativa: boolean;
 }
@@ -65,7 +64,6 @@ export default function ConfigGeralPage() {
     uf: "",
     telefone: "",
     whatsapp: "",
-    instagram: "",
     email: "",
     entrega_ativa: true
   });
@@ -129,7 +127,6 @@ export default function ConfigGeralPage() {
           uf: uf || data.uf || "",
           telefone: data.telefone || "",
           whatsapp: data.whatsapp || "",
-          instagram: data.instagram || "",
           email: data.email || "",
           entrega_ativa: data.entrega_ativa ?? true
         });
@@ -204,7 +201,6 @@ export default function ConfigGeralPage() {
           telefone: settings.telefone,
           whatsapp: settings.whatsapp,
           cep: settings.cep,
-          instagram: settings.instagram,
           email: settings.email
         }, { onConflict: "id" });
 
@@ -459,20 +455,6 @@ export default function ConfigGeralPage() {
                   placeholder="(99) 4444-4444"
                   value={settings.telefone}
                   onChange={(e) => setSettings({...settings, telefone: maskPhone(e.target.value)})}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Instagram (@)</label>
-                <input 
-                  type="text" 
-                  placeholder="@seu.perfil"
-                  value={settings.instagram}
-                  onChange={(e) => {
-                    let val = e.target.value;
-                    if (val && !val.startsWith("@") && val.length > 0) val = "@" + val;
-                    setSettings({...settings, instagram: val});
-                  }}
                   className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
                 />
               </div>
