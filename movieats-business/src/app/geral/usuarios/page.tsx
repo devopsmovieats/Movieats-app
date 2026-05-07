@@ -146,20 +146,40 @@ export default function UsuariosPage() {
         if (error) throw error;
         Toast.fire({ icon: "success", title: "Usuário atualizado" });
       } else {
-        // Create (In a real app, you'd use a service to create auth user + profile)
-        const { error } = await supabase
+        // Criar Usuário no Auth do Supabase
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: editingProfile.email!,
+          password: password,
+        });
+
+        if (authError) throw authError;
+        if (!authData.user) throw new Error("Falha ao registrar usuário no sistema de autenticação.");
+
+        // Inserir Perfil na bd_perfis vinculado ao ID do Auth
+        const { error: profileError } = await supabase
           .from("bd_perfis")
           .insert([{
-            ...editingProfile,
+            id: authData.user.id,
+            nome: editingProfile.nome,
+            email: editingProfile.email,
+            role: editingProfile.role,
+            status: editingProfile.status,
             establishment_id: establishmentId
           }]);
-        if (error) throw error;
-        Toast.fire({ icon: "success", title: "Usuário criado" });
+
+        if (profileError) throw profileError;
+        
+        Toast.fire({ icon: "success", title: "Usuário criado com sucesso" });
       }
       setIsModalOpen(false);
       loadProfiles();
     } catch (error: any) {
-      Toast.fire({ icon: "error", title: "Erro ao salvar", text: error.message });
+      console.error("Erro no salvamento:", error);
+      Toast.fire({ 
+        icon: "error", 
+        title: "Erro ao salvar", 
+        text: error.message || "Verifique os dados e tente novamente." 
+      });
     } finally {
       setIsSaving(false);
     }
