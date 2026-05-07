@@ -26,7 +26,7 @@ interface SystemSettings {
   endereco: string;
   telefone: string;
   whatsapp: string;
-  entrega_ativa: boolean;
+  email: string;
 }
 
 const Toast = Swal.mixin({
@@ -55,7 +55,7 @@ export default function ConfigGeralPage() {
     endereco: "",
     telefone: "",
     whatsapp: "",
-    entrega_ativa: true
+    email: ""
   });
 
   const [isLoading, setIsLoading] = useState(true);
@@ -92,7 +92,7 @@ export default function ConfigGeralPage() {
           endereco: data.endereco || "",
           telefone: data.telefone || "",
           whatsapp: data.whatsapp || "",
-          entrega_ativa: data.entrega_ativa ?? true
+          email: data.email || ""
         });
       }
     } catch (err) {
@@ -154,7 +154,8 @@ export default function ConfigGeralPage() {
           endereco: settings.endereco,
           telefone: settings.telefone,
           whatsapp: settings.whatsapp,
-          cep: settings.cep
+          cep: settings.cep,
+          email: settings.email
         }, { onConflict: "id" });
 
       console.log("AUDITORIA SALVAMENTO - PAYLOAD:", {
@@ -350,7 +351,7 @@ export default function ConfigGeralPage() {
 
           <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8 space-y-6">
             <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Contato</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">WhatsApp</label>
                 <input 
@@ -362,12 +363,22 @@ export default function ConfigGeralPage() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Telefone Fixo / Contato</label>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Telefone</label>
                 <input 
                   type="text" 
                   placeholder="(99) 4444-4444"
                   value={settings.telefone}
                   onChange={(e) => setSettings({...settings, telefone: maskPhone(e.target.value)})}
+                  className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">E-mail</label>
+                <input 
+                  type="email" 
+                  placeholder="contato@loja.com"
+                  value={settings.email}
+                  onChange={(e) => setSettings({...settings, email: e.target.value})}
                   className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-sm text-gray-400 focus:border-orange-600 outline-none"
                 />
               </div>
