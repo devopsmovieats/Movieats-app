@@ -687,7 +687,7 @@ export default function CategoriasPage() {
               placeholder="Buscar categoria..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/[0.03] border border-white/5 rounded-lg py-3 pl-11 pr-4 text-xs text-white placeholder:text-white/20 focus:outline-none focus:border-white/20 focus:ring-4 focus:ring-white/5 transition-all font-medium"
+              className="w-full bg-white/[0.03] border border-white/5 rounded-lg py-3 pl-11 pr-4 text-xs text-white placeholder:text-white/20 focus:outline-none focus:border-white/20 focus:ring-2 focus:ring-orange-500/20 transition-all font-medium"
             />
           </div>
 
@@ -777,19 +777,19 @@ export default function CategoriasPage() {
                         />
                       </div>
                     </th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] text-center uppercase">Ordem</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] uppercase">Imagem</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] uppercase">Nome da Categoria</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] uppercase">Descrição Detalhada</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] text-center uppercase">Status</th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-[#FFFFFF] tracking-[0.1em] text-right uppercase">Ações</th>
+                    <th className="px-6 py-5 text-[11px] font-medium text-zinc-500 tracking-tight text-center">Ordem</th>
+                    <th className="px-6 py-5 text-[11px] font-medium text-zinc-500 tracking-tight">Imagem</th>
+                    <th className="px-6 py-5 text-[11px] font-medium text-zinc-500 tracking-tight">Nome da Categoria</th>
+                    <th className="px-6 py-5 text-[11px] font-medium text-zinc-500 tracking-tight">Descrição Detalhada</th>
+                    <th className="px-6 py-5 text-[11px] font-medium text-zinc-500 tracking-tight text-center">Status</th>
+                    <th className="px-6 py-5 text-[11px] font-medium text-zinc-500 tracking-tight text-right">Ações</th>
                   </tr>
                 </thead>
                 <tbody>
                   {paginatedCategories.map((category) => (
                     <tr 
                       key={category.id} 
-                      className="category-row bg-transparent hover:bg-white/[0.02] border-b border-white/5 transition-colors"
+                      className="category-row bg-transparent hover:bg-zinc-900/50 border-b border-white/5 transition-colors"
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-center">
@@ -920,7 +920,7 @@ export default function CategoriasPage() {
           />
           
           {/* Modal Container - Equilibrado e Profissional */}
-          <div className="relative w-full max-w-2xl bg-[#111827]/95 backdrop-blur-[15px] border border-white/5 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden">
+          <div className="relative w-full max-w-2xl bg-[#09090b] backdrop-blur-[15px] border border-zinc-800 rounded-2xl shadow-[0_40px_100px_rgba(0,0,0,0.9)] animate-in zoom-in-95 fade-in slide-in-from-bottom-10 duration-700 overflow-hidden">
             
             {/* Modal Header Premium */}
             <div className="px-8 py-5 border-b border-white/[0.03] flex items-center justify-between bg-white/[0.01]">
@@ -967,7 +967,7 @@ export default function CategoriasPage() {
                           return { ...prev, name: e.target.value };
                         })}
                         placeholder="Ex: Hambúrgueres"
-                        className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 transition-all font-medium"
+                        className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-orange-500/20 transition-all font-medium"
                         required
                       />
                     </div>
@@ -982,7 +982,7 @@ export default function CategoriasPage() {
                           return { ...prev, descricao: e.target.value };
                         })}
                         placeholder="Descreva o que há nesta categoria..."
-                        className="w-full h-24 bg-white/[0.05] border border-white/5 rounded-xl py-4 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 transition-all font-medium resize-none leading-relaxed"
+                        className="w-full h-24 bg-white/[0.05] border border-white/5 rounded-lg py-4 px-4 text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-orange-500/20 transition-all font-medium resize-none leading-relaxed"
                       />
                     </div>
                   </div>
@@ -1003,7 +1003,7 @@ export default function CategoriasPage() {
                           return { ...prev, order: isNaN(val) ? 0 : val };
                         });
                       }}
-                      className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-primary/50 transition-all font-medium"
+                      className="w-full h-12 bg-white/[0.05] border border-white/5 rounded-lg px-4 text-sm text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-orange-500/20 transition-all font-medium"
                       required
                     />
                   </div>
@@ -1011,7 +1011,7 @@ export default function CategoriasPage() {
                   {/* Visibilidade */}
                   <div className="space-y-2">
                     <label className="text-[12px] font-bold text-white/40 ml-1 block uppercase tracking-widest">Status de Visibilidade</label>
-                    <div className="flex items-center gap-4 h-12 px-5 bg-white/[0.03] border border-white/5 rounded-xl">
+                    <div className="flex items-center gap-4 h-12 px-5 bg-white/[0.03] border border-white/5 rounded-lg">
                       <div 
                         className="relative w-11 h-6 cursor-pointer"
                         onClick={() => {
@@ -1037,14 +1037,14 @@ export default function CategoriasPage() {
                 <button 
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-8 py-3 bg-white/5 hover:bg-white/10 text-white font-bold text-[11px] uppercase tracking-[0.2em] rounded-xl transition-all border border-white/5 active:scale-95 cursor-pointer"
+                  className="px-8 py-3 bg-white/5 hover:bg-white/10 text-white font-semibold text-[11px] uppercase rounded-lg transition-all border border-white/5 active:scale-95 cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button 
                   type="submit"
                   disabled={isSaving}
-                  className="flex-1 px-8 py-3 bg-orange-600 hover:bg-orange-500 text-white font-bold text-[11px] uppercase tracking-[0.2em] rounded-xl transition-all shadow-[0_10px_20px_rgba(234,88,12,0.2)] active:scale-95 flex items-center justify-center cursor-pointer disabled:opacity-50"
+                  className="flex-1 px-8 py-3 bg-orange-600 hover:bg-orange-500 text-white font-semibold text-[11px] uppercase rounded-lg transition-all shadow-[0_10px_20px_rgba(234,88,12,0.2)] active:scale-95 flex items-center justify-center cursor-pointer disabled:opacity-50"
                 >
                   {isSaving ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
