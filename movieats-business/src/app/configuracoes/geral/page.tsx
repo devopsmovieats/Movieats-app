@@ -156,6 +156,8 @@ export default function ConfigGeralPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado no Supabase");
 
+      console.log("INICIANDO SALVAMENTO - ESTABELECIMENTO ID:", user.id);
+
       let finalLogoUrl = settings.url_logo;
       let finalBannerUrl = settings.url_banner;
 
@@ -165,7 +167,11 @@ export default function ConfigGeralPage() {
         formData.append('file', logoFile);
         formData.append('establishment_id', user.id);
         const res = await fetch('/api/upload', { method: 'POST', body: formData });
-        if (!res.ok) throw new Error("Erro ao subir Logo para o Cloudflare");
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error("ERRO UPLOAD LOGO:", errorText);
+          throw new Error("Erro ao subir Logo para o Cloudflare");
+        }
         const { url } = await res.json();
         finalLogoUrl = url;
       }
@@ -176,12 +182,16 @@ export default function ConfigGeralPage() {
         formData.append('file', bannerFile);
         formData.append('establishment_id', user.id);
         const res = await fetch('/api/upload', { method: 'POST', body: formData });
-        if (!res.ok) throw new Error("Erro ao subir Banner para o Cloudflare");
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error("ERRO UPLOAD BANNER:", errorText);
+          throw new Error("Erro ao subir Banner para o Cloudflare");
+        }
         const { url } = await res.json();
         finalBannerUrl = url;
       }
 
-      const { error } = await supabase
+      const { error: configError } = await supabase
         .from("bd_config_estabelecimento")
         .upsert({
           id: user.id,
@@ -197,18 +207,22 @@ export default function ConfigGeralPage() {
           email: settings.email
         }, { onConflict: "id" });
 
-      console.log("AUDITORIA SALVAMENTO - PAYLOAD:", {
-        id: user.id,
-        whatsapp: settings.whatsapp,
-        telefone: settings.telefone
-      });
-
-      if (error) {
-        console.log("ERRO_SUPABASE_DETALHADO:", error);
-        throw error;
+      if (configError) {
+        console.error("ERRO_SUPABASE_CONFIG_UPSERT:", configError);
+        throw configError;
       }
 
-      console.log("Success: Configurações salvas no Supabase");
+      // Requisito: Vincular o estabelecimento_id ao perfil do usuário logado na bd_perfis
+      const { error: profileError } = await supabase
+        .from("bd_perfis")
+        .update({ establishment_id: user.id })
+        .eq("id", user.id);
+
+      if (profileError) {
+        console.warn("AVISO: Configurações salvas, mas houve erro ao atualizar bd_perfis:", profileError);
+      }
+
+      console.log("Sucesso: Configurações e Perfil sincronizados");
       
       window.dispatchEvent(new CustomEvent("movieats:branding_update", {
         detail: { 
@@ -217,13 +231,16 @@ export default function ConfigGeralPage() {
         }
       }));
 
-      // Atualiza o estado local com as URLs finais para evitar dessincronia
       setSettings(prev => ({ ...prev, url_logo: finalLogoUrl, url_banner: finalBannerUrl }));
-
-      Toast.fire({ icon: "success", title: "Configurações salvas!" });
+      Toast.fire({ icon: "success", title: "Configurações salvas com sucesso!" });
+      
     } catch (err: any) {
-      console.error("Erro ao salvar:", err);
-      Toast.fire({ icon: "error", title: "Erro ao salvar no banco." });
+      console.error("FALHA CRÍTICA NO SALVAMENTO:", err);
+      Toast.fire({ 
+        icon: "error", 
+        title: "Erro ao salvar", 
+        text: err.message || "Consulte o console para mais detalhes." 
+      });
     } finally {
       setIsSaving(false);
     }
