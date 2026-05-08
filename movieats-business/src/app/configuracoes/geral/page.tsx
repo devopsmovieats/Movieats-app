@@ -84,30 +84,37 @@ export default function ConfigGeralPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      console.log("BUSCANDO CONFIGURAÇÕES PARA:", user.id);
+
       const { data, error } = await supabase
         .from("bd_config_estabelecimento")
         .select("*")
         .eq("id", user.id)
-        .single();
+        .maybeSingle(); // Usar maybeSingle para evitar erro 406 caso não exista
 
-      if (error && error.code !== "PGRST116") throw error;
+      if (error) {
+        console.error("ERRO FETCH CONFIG:", error);
+        throw error;
+      }
 
       if (data) {
         // Decompor o endereço para os campos individuais para UX
         let rua = "", numero = "", bairro = "", cidade = "", uf = "";
         if (data.endereco) {
           try {
-            // Padrão: "Rua, Numero - Bairro, Cidade/UF"
-            const [main, rest] = data.endereco.split(" - ");
-            const [street, num] = main.split(", ");
-            const [neighborhood, cityState] = rest.split(", ");
-            const [city, state] = cityState.split("/");
+            const parts = data.endereco.split(", ");
+            rua = parts[0] || "";
+            const rest = parts[1]?.split(" - ") || [];
+            numero = rest[0] || "";
+            const neighborhood = rest[1] || "";
+            bairro = neighborhood;
             
-            rua = street || "";
-            numero = num || "";
-            bairro = neighborhood || "";
-            cidade = city || "";
-            uf = state || "";
+            const cityParts = data.endereco.split(" - ")[1]?.split(", ") || [];
+            if (cityParts[1]) {
+              const [city, state] = cityParts[1].split("/");
+              cidade = city || "";
+              uf = state || "";
+            }
           } catch (e) {
             rua = data.endereco;
           }
@@ -131,7 +138,7 @@ export default function ConfigGeralPage() {
         });
       }
     } catch (err) {
-      console.error("Erro ao carregar:", err);
+      console.error("Erro ao carregar configurações:", err);
     } finally {
       setIsLoading(false);
     }
@@ -149,55 +156,33 @@ export default function ConfigGeralPage() {
     e.preventDefault();
     setIsSaving(true);
     
-    // Concatenar campos para o banco (Single Column Pattern)
     const fullAddress = `${settings.rua}, ${settings.numero} - ${settings.bairro}, ${settings.cidade}/${settings.uf}`;
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Usuário não autenticado no Supabase");
+      if (!user) throw new Error("Usuário não identificado");
 
-      console.log("INICIANDO SALVAMENTO - ESTABELECIMENTO ID:", user.id);
-
+      /* 
+      // COMENTADO PARA ISOLAR ERRO 406 (UPLOAD)
       let finalLogoUrl = settings.url_logo;
       let finalBannerUrl = settings.url_banner;
 
-      // Upload Logo para R2 se houver arquivo novo
       if (logoFile) {
         const formData = new FormData();
         formData.append('file', logoFile);
         formData.append('establishment_id', user.id);
         const res = await fetch('/api/upload', { method: 'POST', body: formData });
-        if (!res.ok) {
-          const errorText = await res.text();
-          console.error("ERRO UPLOAD LOGO:", errorText);
-          throw new Error("Erro ao subir Logo para o Cloudflare");
+        if (res.ok) {
+          const { url } = await res.json();
+          finalLogoUrl = url;
         }
-        const { url } = await res.json();
-        finalLogoUrl = url;
       }
+      */
 
-      // Upload Banner para R2 se houver arquivo novo
-      if (bannerFile) {
-        const formData = new FormData();
-        formData.append('file', bannerFile);
-        formData.append('establishment_id', user.id);
-        const res = await fetch('/api/upload', { method: 'POST', body: formData });
-        if (!res.ok) {
-          const errorText = await res.text();
-          console.error("ERRO UPLOAD BANNER:", errorText);
-          throw new Error("Erro ao subir Banner para o Cloudflare");
-        }
-        const { url } = await res.json();
-        finalBannerUrl = url;
-      }
-
-      // Payload simplificado e com nomes de colunas verificados
       const payload = {
         id: user.id,
         nome_loja: settings.nome_loja || null,
         descricao: settings.descricao || null,
-        url_logo: finalLogoUrl || null,
-        url_banner: finalBannerUrl || null,
         endereco: fullAddress || null,
         telefone: settings.telefone || null,
         whatsapp: settings.whatsapp || null,
@@ -206,40 +191,29 @@ export default function ConfigGeralPage() {
         email: settings.email || null
       };
 
-      // Upsert sem .select() para evitar Prefer: return=representation (Erro 406)
+      console.log("TENTANDO UPSERT SIMPLIFICADO:", payload);
+
+      // Upsert explícito sem retorno para evitar 406 no PostgREST
       const { error: configError } = await supabase
         .from("bd_config_estabelecimento")
         .upsert(payload, { onConflict: "id" });
 
-      if (configError) {
-        console.error("ERRO_SUPABASE_CONFIG_UPSERT:", configError);
-        throw configError;
-      }
+      if (configError) throw configError;
 
-      // Vincular o estabelecimento_id ao perfil do usuário
+      // Vincular estabelecimento ao perfil
       await supabase
         .from("bd_perfis")
         .update({ establishment_id: user.id })
         .eq("id", user.id);
 
-      console.log("Sucesso: Configurações salvas");
-      
-      window.dispatchEvent(new CustomEvent("movieats:branding_update", {
-        detail: { 
-          name: settings.nome_loja, 
-          logo: finalLogoUrl 
-        }
-      }));
-
-      setSettings(prev => ({ ...prev, url_logo: finalLogoUrl, url_banner: finalBannerUrl }));
       Toast.fire({ icon: "success", title: "Configurações salvas!" });
       
     } catch (err: any) {
-      console.error("FALHA NO SALVAMENTO:", err);
+      console.error("FALHA CRÍTICA:", err);
       Toast.fire({ 
         icon: "error", 
         title: "Erro ao salvar", 
-        text: err.message || "Erro inesperado." 
+        text: err.message || "Verifique o console." 
       });
     } finally {
       setIsSaving(false);
