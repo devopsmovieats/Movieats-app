@@ -84,37 +84,29 @@ export default function ConfigGeralPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      console.log("BUSCANDO CONFIGURAÇÕES PARA:", user.id);
-
       const { data, error } = await supabase
         .from("bd_config_estabelecimento")
         .select("*")
         .eq("id", user.id)
-        .maybeSingle(); // Usar maybeSingle para evitar erro 406 caso não exista
+        .maybeSingle();
 
-      if (error) {
-        console.error("ERRO FETCH CONFIG:", error);
-        throw error;
-      }
+      if (error) throw error;
 
       if (data) {
-        // Decompor o endereço para os campos individuais para UX
+        // Decompor o endereço
         let rua = "", numero = "", bairro = "", cidade = "", uf = "";
         if (data.endereco) {
           try {
-            const parts = data.endereco.split(", ");
-            rua = parts[0] || "";
-            const rest = parts[1]?.split(" - ") || [];
-            numero = rest[0] || "";
-            const neighborhood = rest[1] || "";
-            bairro = neighborhood;
+            const [main, rest] = data.endereco.split(" - ");
+            const [street, num] = main.split(", ");
+            const [neighborhood, cityState] = (rest || "").split(", ");
+            const [city, state] = (cityState || "").split("/");
             
-            const cityParts = data.endereco.split(" - ")[1]?.split(", ") || [];
-            if (cityParts[1]) {
-              const [city, state] = cityParts[1].split("/");
-              cidade = city || "";
-              uf = state || "";
-            }
+            rua = street || "";
+            numero = num || "";
+            bairro = neighborhood || "";
+            cidade = city || "";
+            uf = state || "";
           } catch (e) {
             rua = data.endereco;
           }
@@ -136,6 +128,9 @@ export default function ConfigGeralPage() {
           instagram: data.instagram || "",
           email: data.email || ""
         });
+        
+        if (data.url_logo) setLogoPreview(data.url_logo);
+        if (data.url_banner) setBannerPreview(data.url_banner);
       }
     } catch (err) {
       console.error("Erro ao carregar configurações:", err);
@@ -162,11 +157,10 @@ export default function ConfigGeralPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não identificado");
 
-      /* 
-      // COMENTADO PARA ISOLAR ERRO 406 (UPLOAD)
       let finalLogoUrl = settings.url_logo;
       let finalBannerUrl = settings.url_banner;
 
+      // REATIVADO: Upload de Logo
       if (logoFile) {
         const formData = new FormData();
         formData.append('file', logoFile);
@@ -177,12 +171,25 @@ export default function ConfigGeralPage() {
           finalLogoUrl = url;
         }
       }
-      */
+
+      // REATIVADO: Upload de Banner
+      if (bannerFile) {
+        const formData = new FormData();
+        formData.append('file', bannerFile);
+        formData.append('establishment_id', user.id);
+        const res = await fetch('/api/upload', { method: 'POST', body: formData });
+        if (res.ok) {
+          const { url } = await res.json();
+          finalBannerUrl = url;
+        }
+      }
 
       const payload = {
         id: user.id,
         nome_loja: settings.nome_loja || null,
         descricao: settings.descricao || null,
+        url_logo: finalLogoUrl || null,
+        url_banner: finalBannerUrl || null,
         endereco: fullAddress || null,
         telefone: settings.telefone || null,
         whatsapp: settings.whatsapp || null,
@@ -191,29 +198,28 @@ export default function ConfigGeralPage() {
         email: settings.email || null
       };
 
-      console.log("TENTANDO UPSERT SIMPLIFICADO:", payload);
-
-      // Upsert explícito sem retorno para evitar 406 no PostgREST
+      // Upsert definitivo sem .select() para evitar erro 406
       const { error: configError } = await supabase
         .from("bd_config_estabelecimento")
         .upsert(payload, { onConflict: "id" });
 
       if (configError) throw configError;
 
-      // Vincular estabelecimento ao perfil
+      // Sincronizar bd_perfis
       await supabase
         .from("bd_perfis")
         .update({ establishment_id: user.id })
         .eq("id", user.id);
 
-      Toast.fire({ icon: "success", title: "Configurações salvas!" });
+      setSettings(prev => ({ ...prev, url_logo: finalLogoUrl, url_banner: finalBannerUrl }));
+      Toast.fire({ icon: "success", title: "Configurações atualizadas!" });
       
     } catch (err: any) {
-      console.error("FALHA CRÍTICA:", err);
+      console.error("ERRO NO SALVAMENTO:", err);
       Toast.fire({ 
         icon: "error", 
         title: "Erro ao salvar", 
-        text: err.message || "Verifique o console." 
+        text: err.message || "Tente novamente." 
       });
     } finally {
       setIsSaving(false);
