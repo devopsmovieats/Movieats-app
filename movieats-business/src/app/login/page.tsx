@@ -52,6 +52,15 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Forçar tema escuro na raiz para evitar inconsistência visual (bordas brancas)
+  useEffect(() => {
+    document.documentElement.classList.add("dark");
+    return () => {
+      // Opcional: remover ao sair se o resto do sistema tiver troca de tema
+      // document.documentElement.classList.remove("dark");
+    };
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -126,7 +135,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cover bg-center relative font-sans overflow-hidden" suppressHydrationWarning>
+    <div className="min-h-screen flex items-center justify-center bg-[#09090b] relative font-sans overflow-hidden dark" suppressHydrationWarning>
       
       {/* Imagem de Fundo Fullscreen */}
       <div className="absolute inset-0 z-0">
