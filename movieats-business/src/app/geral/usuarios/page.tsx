@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   UserPlus, 
   Search, 
@@ -60,12 +61,12 @@ const roleColors: Record<Profile['role'], string> = {
 };
 
 export default function UsuariosPage() {
+  const { establishmentId } = useAuth();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [establishmentId, setEstablishmentId] = useState<string | null>(null);
   const [editingProfile, setEditingProfile] = useState<Partial<Profile> | null>(null);
   const [password, setPassword] = useState("");
 
@@ -87,24 +88,6 @@ export default function UsuariosPage() {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        setEstablishmentId(user.id);
-      } else {
-        const userSaved = localStorage.getItem("movieats_user");
-        if (userSaved) {
-          try {
-            const parsedUser = JSON.parse(userSaved);
-            if (parsedUser.id) setEstablishmentId(parsedUser.id);
-          } catch (e) {}
-        }
-      }
-    };
-    fetchUser();
-  }, []);
 
   useEffect(() => {
     if (establishmentId) loadProfiles();
