@@ -67,30 +67,16 @@ export default function LoginPage() {
       }
 
       if (data?.user) {
-        const fullName = data.user.user_metadata?.full_name || "Usuário";
-        
-        // Define o papel (role) baseado no email ou em metadados se existirem
-        let role = "ADMIN";
-        let redirectPath = "/";
-
-        if (email.includes("gerente")) {
-          role = "GERENTE";
-        } else if (email.includes("atendente")) {
-          role = "ATENDENTE";
-          redirectPath = "/operacao/pedidos";
-        }
-
-        const userData = { email, role, name: fullName, id: data.user.id };
-        localStorage.setItem("movieats_user", JSON.stringify(userData));
-        Cookies.set("auth_token", "movieats-store-session", { expires: 1 });
-        
         Toast.fire({
           icon: "success",
-          title: `Bem-vindo, ${fullName}!`,
+          title: "Login realizado com sucesso!",
         });
 
-        // Redirecionamento obrigatório para o portal
-        window.location.href = "https://portal.movieats.com.br/";
+        // O AuthContext cuidará de buscar o perfil e sincronizar os dados
+        // Redirecionamento forçado para garantir carregamento do estado global
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 500);
       }
     } catch (error: any) {
       setIsLoading(false);

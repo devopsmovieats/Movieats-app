@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description: "Gestão operacional para lojistas Movieats",
 };
 
+import { AuthProvider } from "@/contexts/AuthContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,7 +30,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${manrope.variable} antialiased selection:bg-primary/30 font-body transition-colors duration-300`}
       >
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
