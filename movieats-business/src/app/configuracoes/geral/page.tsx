@@ -191,38 +191,38 @@ export default function ConfigGeralPage() {
         finalBannerUrl = url;
       }
 
+      // Payload simplificado e com nomes de colunas verificados
+      const payload = {
+        id: user.id,
+        nome_loja: settings.nome_loja || null,
+        descricao: settings.descricao || null,
+        url_logo: finalLogoUrl || null,
+        url_banner: finalBannerUrl || null,
+        endereco: fullAddress || null,
+        telefone: settings.telefone || null,
+        whatsapp: settings.whatsapp || null,
+        cep: settings.cep || null,
+        instagram: settings.instagram || null,
+        email: settings.email || null
+      };
+
+      // Upsert sem .select() para evitar Prefer: return=representation (Erro 406)
       const { error: configError } = await supabase
         .from("bd_config_estabelecimento")
-        .upsert({
-          id: user.id,
-          nome_loja: settings.nome_loja,
-          descricao: settings.descricao,
-          url_logo: finalLogoUrl,
-          url_banner: finalBannerUrl,
-          endereco: fullAddress,
-          telefone: settings.telefone,
-          whatsapp: settings.whatsapp,
-          cep: settings.cep,
-          instagram: settings.instagram,
-          email: settings.email
-        }, { onConflict: "id" });
+        .upsert(payload, { onConflict: "id" });
 
       if (configError) {
         console.error("ERRO_SUPABASE_CONFIG_UPSERT:", configError);
         throw configError;
       }
 
-      // Requisito: Vincular o estabelecimento_id ao perfil do usuário logado na bd_perfis
-      const { error: profileError } = await supabase
+      // Vincular o estabelecimento_id ao perfil do usuário
+      await supabase
         .from("bd_perfis")
         .update({ establishment_id: user.id })
         .eq("id", user.id);
 
-      if (profileError) {
-        console.warn("AVISO: Configurações salvas, mas houve erro ao atualizar bd_perfis:", profileError);
-      }
-
-      console.log("Sucesso: Configurações e Perfil sincronizados");
+      console.log("Sucesso: Configurações salvas");
       
       window.dispatchEvent(new CustomEvent("movieats:branding_update", {
         detail: { 
@@ -232,14 +232,14 @@ export default function ConfigGeralPage() {
       }));
 
       setSettings(prev => ({ ...prev, url_logo: finalLogoUrl, url_banner: finalBannerUrl }));
-      Toast.fire({ icon: "success", title: "Configurações salvas com sucesso!" });
+      Toast.fire({ icon: "success", title: "Configurações salvas!" });
       
     } catch (err: any) {
-      console.error("FALHA CRÍTICA NO SALVAMENTO:", err);
+      console.error("FALHA NO SALVAMENTO:", err);
       Toast.fire({ 
         icon: "error", 
         title: "Erro ao salvar", 
-        text: err.message || "Consulte o console para mais detalhes." 
+        text: err.message || "Erro inesperado." 
       });
     } finally {
       setIsSaving(false);
