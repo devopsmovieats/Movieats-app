@@ -120,8 +120,6 @@ export default function Sidebar() {
   const [userRole, setUserRole] = useState<string>("ADMIN");
 
   useEffect(() => {
-    // fetchBranding(); // Desativado temporariamente para evitar erro 406
-    
     const collapsedSaved = localStorage.getItem("movieats_sidebar_collapsed_mode");
     const userSaved = localStorage.getItem("movieats_user");
     
@@ -143,30 +141,6 @@ export default function Sidebar() {
     return () => window.removeEventListener("movieats:branding_update", handleBrandingUpdate);
   }, []);
 
-  const fetchBranding = async () => {
-    /* 
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data, error } = await supabase
-        .from("bd_config_estabelecimento")
-        .select("nome_loja, url_logo")
-        .eq("id", user.id)
-        .single();
-
-      if (data) {
-        setBrand({
-          name: data.nome_loja || "MoviEats",
-          logo: data.url_logo || ""
-        });
-      }
-    } catch (err) {
-      console.error("Erro Sidebar Branding:", err);
-    }
-    */
-  };
-
   const toggleSidebar = () => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
@@ -178,6 +152,7 @@ export default function Sidebar() {
     setExpandedMenus(prev => ({ ...prev, [label]: !prev[label] }));
   };
 
+  return (
     <aside 
       className={`bg-[#000000] border-r border-zinc-900 h-screen sticky top-0 flex flex-col z-50 overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out
         ${isCollapsed ? "w-20" : "w-[270px]"}
@@ -262,65 +237,64 @@ export default function Sidebar() {
                     const isExpanded = !!expandedMenus[item.label];
                     const hasSubItems = !!item.subItems;
                     const isParentActive = item.href === pathname;
-                    const anySubActive = item.subItems?.some(sub => pathname === sub.href);
 
-                return (
-                  <div key={item.label} className="w-full">
-                    <Link
-                      href={item.href || "#"}
-                      onClick={(e) => {
-                        if (hasSubItems) {
-                          e.preventDefault();
-                          toggleSubmenu(item.label);
-                        }
-                      }}
-                      className={`flex items-center gap-3 py-3 rounded-sm transition-all duration-200 outline-none group
-                        ${isParentActive 
-                          ? "bg-[#ff5c00] text-white" 
-                          : "text-white hover:bg-zinc-900"
-                        } 
-                        ${isCollapsed ? "justify-center w-12 h-12 mx-auto px-0" : "px-4 w-full"}
-                      `}
-                    >
-                      <item.icon className={`shrink-0 transition-all duration-200 text-white ${isCollapsed ? "w-6 h-6" : "w-4 h-4"}`} />
-                      
-                      {!isCollapsed && (
-                        <div className="flex items-center justify-between flex-1 min-w-0">
-                          <span className="text-[13px] font-semibold tracking-tight">
-                            {item.label}
-                          </span>
-                          {hasSubItems && (
-                            <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isExpanded ? "rotate-180 text-white" : "text-white/40"}`} />
+                    return (
+                      <div key={item.label} className="w-full">
+                        <Link
+                          href={item.href || "#"}
+                          onClick={(e) => {
+                            if (hasSubItems) {
+                              e.preventDefault();
+                              toggleSubmenu(item.label);
+                            }
+                          }}
+                          className={`flex items-center gap-3 py-3 rounded-sm transition-all duration-200 outline-none group
+                            ${isParentActive 
+                              ? "bg-[#ff5c00] text-white shadow-lg shadow-[#ff5c00]/20" 
+                              : "text-white hover:bg-zinc-900"
+                            } 
+                            ${isCollapsed ? "justify-center w-12 h-12 mx-auto px-0" : "px-4 w-full"}
+                          `}
+                        >
+                          <item.icon className={`shrink-0 transition-all duration-200 text-white ${isCollapsed ? "w-6 h-6" : "w-4 h-4"}`} />
+                          
+                          {!isCollapsed && (
+                            <div className="flex items-center justify-between flex-1 min-w-0">
+                              <span className="text-[13px] font-semibold tracking-tight">
+                                {item.label}
+                              </span>
+                              {hasSubItems && (
+                                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isExpanded ? "rotate-180 text-white" : "text-white/40"}`} />
+                              )}
+                            </div>
                           )}
-                        </div>
-                      )}
-                    </Link>
+                        </Link>
 
-                    {!isCollapsed && isExpanded && hasSubItems && (
-                      <div className="mt-1 space-y-1 animate-in slide-in-from-top-2 duration-300">
-                        {item.subItems?.map((sub) => {
-                          const isSubActive = pathname === sub.href;
-                          return (
-                            <Link
-                              key={sub.href}
-                              href={sub.href}
-                              className={`flex items-center gap-3 py-2.5 px-10 text-[12px] font-semibold transition-all rounded-sm
-                                ${isSubActive ? "bg-[#ff5c00] text-white" : "text-white hover:bg-zinc-900"}
-                              `}
-                            >
-                              {sub.label}
-                            </Link>
-                          );
-                        })}
+                        {!isCollapsed && isExpanded && hasSubItems && (
+                          <div className="mt-1 space-y-1 animate-in slide-in-from-top-2 duration-300">
+                            {item.subItems?.map((sub) => {
+                              const isSubActive = pathname === sub.href;
+                              return (
+                                <Link
+                                  key={sub.href}
+                                  href={sub.href}
+                                  className={`flex items-center gap-3 py-2.5 px-10 text-[12px] font-semibold transition-all rounded-sm
+                                    ${isSubActive ? "bg-[#ff5c00] text-white" : "text-white hover:bg-zinc-900"}
+                                  `}
+                                >
+                                  {sub.label}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })}
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
       </nav>
 
       <div className={`py-8 px-6 border-t border-zinc-900 text-center mt-auto flex flex-col items-center justify-center`}>
