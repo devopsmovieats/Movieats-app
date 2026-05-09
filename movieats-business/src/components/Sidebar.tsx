@@ -132,6 +132,15 @@ export default function Sidebar() {
       setIsCollapsed(true);
     }
 
+    // Expandir automaticamente o grupo que contém a rota atual
+    menuGroups.forEach(group => {
+      group.items.forEach(item => {
+        if (item.subItems?.some(sub => pathname === sub.href)) {
+          setExpandedMenus(prev => ({ ...prev, [item.label]: true }));
+        }
+      });
+    });
+
     const handleBrandingUpdate = (e: any) => {
       const { name, logo } = e.detail;
       setBrand({ name: name || "MoviEats", logo: logo || "" });
@@ -139,7 +148,7 @@ export default function Sidebar() {
 
     window.addEventListener("movieats:branding_update", handleBrandingUpdate);
     return () => window.removeEventListener("movieats:branding_update", handleBrandingUpdate);
-  }, []);
+  }, [pathname]); // Adicionado pathname como dependência
 
   const toggleSidebar = () => {
     const newState = !isCollapsed;
@@ -161,9 +170,9 @@ export default function Sidebar() {
       {/* Top Branding & Toggle Button */}
       <div className={`px-6 py-10 flex items-center transition-all duration-300 ${isCollapsed ? "justify-center" : "justify-between gap-4"}`}>
         <div className="flex items-center gap-3 min-w-0">
-          <div className={`p-2 bg-zinc-900 border border-zinc-800 rounded-sm flex items-center justify-center shrink-0 w-11 h-11 shadow-2xl transition-all duration-300`}>
+          <div className={`p-2 bg-zinc-900 border border-zinc-800 rounded-none flex items-center justify-center shrink-0 w-11 h-11 shadow-2xl transition-all duration-300`}>
             {brand.logo ? (
-              <img src={brand.logo} alt="Logo" className="w-full h-full object-cover rounded-sm" />
+              <img src={brand.logo} alt="Logo" className="w-full h-full object-cover rounded-none" />
             ) : (
               <Flame className="text-[#ff5c00] w-6 h-6 fill-[#ff5c00]" />
             )}
@@ -173,7 +182,7 @@ export default function Sidebar() {
               <span className="text-sm font-bold tracking-tight text-white leading-tight truncate">
                 {brand.name}
               </span>
-              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.15em] mt-1">
+              <span className="text-[10px] font-bold text-white uppercase tracking-[0.15em] mt-1">
                 {userRole === "Atendente" ? "Atendimento" : userRole === "Gerente" ? "Gestão Operacional" : "Administrador"}
               </span>
             </div>
@@ -183,7 +192,7 @@ export default function Sidebar() {
         {!isCollapsed && (
           <button 
             onClick={toggleSidebar}
-            className="p-2 hover:bg-zinc-900 rounded-sm transition-all text-zinc-600 hover:text-white"
+            className="p-2 hover:bg-zinc-900 rounded-none transition-all text-white"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -194,7 +203,7 @@ export default function Sidebar() {
         <div className="flex justify-center mb-6">
           <button 
             onClick={toggleSidebar}
-            className="p-3 bg-[#ff5c00]/10 text-[#ff5c00] hover:bg-[#ff5c00] hover:text-white rounded-sm transition-all"
+            className="p-3 bg-[#ff5c00]/10 text-white hover:bg-[#ff5c00] rounded-none transition-all"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -227,7 +236,7 @@ export default function Sidebar() {
             return (
               <div key={group.title} className="space-y-3">
                 {!isCollapsed && (
-                  <h3 className="px-3 text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em] mb-4">
+                  <h3 className="px-3 text-[11px] font-black text-white uppercase tracking-[0.2em] mb-4">
                     {group.title}
                   </h3>
                 )}
@@ -248,7 +257,7 @@ export default function Sidebar() {
                               toggleSubmenu(item.label);
                             }
                           }}
-                          className={`flex items-center gap-3 py-3 rounded-sm transition-all duration-200 outline-none group
+                          className={`flex items-center gap-3 py-3 rounded-none transition-all duration-200 outline-none group
                             ${isParentActive 
                               ? "bg-[#ff5c00] text-white shadow-lg shadow-[#ff5c00]/20" 
                               : "text-white hover:bg-zinc-900"
@@ -264,7 +273,7 @@ export default function Sidebar() {
                                 {item.label}
                               </span>
                               {hasSubItems && (
-                                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isExpanded ? "rotate-180 text-white" : "text-white/40"}`} />
+                                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 text-white ${isExpanded ? "rotate-180" : "opacity-40"}`} />
                               )}
                             </div>
                           )}
@@ -278,7 +287,7 @@ export default function Sidebar() {
                                 <Link
                                   key={sub.href}
                                   href={sub.href}
-                                  className={`flex items-center gap-3 py-2.5 px-10 text-[12px] font-semibold transition-all rounded-sm
+                                  className={`flex items-center gap-3 py-2.5 px-10 text-[12px] font-semibold transition-all rounded-none
                                     ${isSubActive ? "bg-[#ff5c00] text-white" : "text-white hover:bg-zinc-900"}
                                   `}
                                 >
@@ -300,10 +309,10 @@ export default function Sidebar() {
       <div className={`py-8 px-6 border-t border-zinc-900 text-center mt-auto flex flex-col items-center justify-center`}>
         {!isCollapsed ? (
           <div className="animate-in fade-in duration-700 w-full">
-            <p className="text-[10px] text-zinc-700 font-bold uppercase tracking-widest mb-1">
+            <p className="text-[10px] text-white font-bold uppercase tracking-widest mb-1">
               © 2026 MoviEats
             </p>
-            <span className="flex items-center justify-center gap-2 text-[9px] font-bold text-zinc-800 uppercase tracking-widest">
+            <span className="flex items-center justify-center gap-2 text-[9px] font-bold text-white uppercase tracking-widest">
               Sistema Operacional
             </span>
           </div>
