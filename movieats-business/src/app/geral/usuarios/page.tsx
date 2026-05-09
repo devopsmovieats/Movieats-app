@@ -145,19 +145,8 @@ export default function UsuariosPage() {
         if (authError) throw authError;
         if (!authData.user) throw new Error("Falha ao registrar usuário no sistema de autenticação.");
 
-        // Inserir Perfil na bd_perfis vinculado ao ID do Auth
-        const { error: profileError } = await supabase
-          .from("bd_perfis")
-          .insert([{
-            id: authData.user.id,
-            nome: editingProfile.nome,
-            email: editingProfile.email,
-            role: editingProfile.role,
-            status: editingProfile.status,
-            establishment_id: establishmentId
-          }]);
-
-        if (profileError) throw profileError;
+        // O perfil agora é criado automaticamente via Trigger SQL no Supabase 
+        // usando os metadados (full_name, role, establishment_id) enviados acima.
         
         Toast.fire({ icon: "success", title: "Usuário criado com sucesso" });
       }
