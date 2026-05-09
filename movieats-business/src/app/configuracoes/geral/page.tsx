@@ -205,11 +205,7 @@ export default function ConfigGeralPage() {
 
       if (configError) throw configError;
 
-      // Sincronizar bd_perfis
-      await supabase
-        .from("bd_perfis")
-        .update({ establishment_id: user.id })
-        .eq("id", user.id);
+      // Sincronização de perfil agora automatizada via Trigger SQL no Supabase
 
       setSettings(prev => ({ ...prev, url_logo: finalLogoUrl, url_banner: finalBannerUrl }));
       Toast.fire({ icon: "success", title: "Configurações atualizadas!" });
