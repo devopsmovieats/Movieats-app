@@ -5,10 +5,11 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get("auth_token")?.value;
   const isLoginPage = request.nextUrl.pathname === "/login";
 
-  // Se não houver token e não estiver na página de login, redireciona para login
+  /*
   if (!token && !isLoginPage) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
+  */
 
   // Se houver token e estiver na página de login, redireciona para o dashboard
   if (token && isLoginPage) {
