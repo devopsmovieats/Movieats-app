@@ -112,7 +112,19 @@ export default function UsuariosPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingProfile || !establishmentId) return;
+    
+    // Log de depuração para identificar por que o botão não responde
+    console.log("Submit acionado - Dados:", { editingProfile, establishmentId });
+
+    if (!editingProfile) {
+      window.alert("Erro: Dados do perfil não carregados.");
+      return;
+    }
+
+    if (!establishmentId) {
+      window.alert("Erro: Estabelecimento não identificado. Verifique seu login.");
+      return;
+    }
 
     setIsSaving(true);
     try {
@@ -126,10 +138,13 @@ export default function UsuariosPage() {
             status: editingProfile.status
           })
           .eq("id", editingProfile.id);
+        
         if (error) throw error;
-        Toast.fire({ icon: "success", title: "Usuário atualizado" });
+        Toast.fire({ icon: "success", title: "Dados atualizados" });
       } else {
         // Criar Usuário no Auth do Supabase com Metadados
+        console.log("Iniciando signUp no Supabase...");
+        
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: editingProfile.email!,
           password: password,
@@ -142,25 +157,27 @@ export default function UsuariosPage() {
           }
         });
 
-        if (authError) throw authError;
-        if (!authData.user) throw new Error("Falha ao registrar usuário no sistema de autenticação.");
+        if (authError) {
+          console.error("Erro no signUp:", authError);
+          window.alert(`Erro no cadastro: ${authError.message}`);
+          throw authError;
+        }
 
-        // O perfil agora é criado automaticamente via Trigger SQL no Supabase 
-        // usando os metadados (full_name, role, establishment_id) enviados acima.
-        
-        Toast.fire({ icon: "success", title: "Usuário criado com sucesso" });
+        if (!authData.user) throw new Error("Falha ao registrar usuário.");
+
+        console.log("Usuário criado com sucesso no Auth:", authData.user.id);
+        Toast.fire({ icon: "success", title: "Usuário cadastrado!" });
       }
       
-      // Fechar modal e recarregar tabela imediatamente
       setIsModalOpen(false);
-      await loadProfiles();
+      loadProfiles();
       
     } catch (error: any) {
-      console.error("Erro no fluxo de salvamento:", error);
+      console.error("Erro completo:", error);
       Toast.fire({ 
         icon: "error", 
-        title: "Erro na operação", 
-        text: error.message || "Verifique os dados e tente novamente." 
+        title: "Falha na operação", 
+        text: error.message 
       });
     } finally {
       setIsSaving(false);
@@ -425,7 +442,7 @@ export default function UsuariosPage() {
                   disabled={isSaving}
                   className="flex-1 px-6 py-2.5 bg-orange-600 hover:bg-orange-500 text-white rounded-lg font-semibold text-sm transition-all shadow-lg shadow-orange-600/20 flex items-center justify-center disabled:opacity-50"
                 >
-                  {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Salvar Usuário"}
+                  {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Cadastrar Usuário"}
                 </button>
               </div>
             </form>
