@@ -180,54 +180,54 @@ export default function Sidebar() {
 
   return (
     <aside 
-      className={`bg-white dark:bg-[#1f2937] border-none h-screen sticky top-0 flex flex-col z-50 overflow-y-auto overflow-x-hidden theme-transition transition-all duration-300 ease-in-out shadow-[10px_0_30px_-15px_rgba(0,0,0,0.5)]
+      className={`bg-[#0f1115] border-r border-white/5 h-screen sticky top-0 flex flex-col z-50 overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out shadow-2xl
         ${isCollapsed ? "w-20" : "w-[270px]"}
       `}
     >
       {/* Top Branding & Toggle Button */}
-      <div className={`px-5 py-9 flex items-center transition-all duration-300 ${isCollapsed ? "justify-center" : "justify-between gap-4"}`}>
+      <div className={`px-6 py-10 flex items-center transition-all duration-300 ${isCollapsed ? "justify-center" : "justify-between gap-4"}`}>
         <div className="flex items-center gap-3 min-w-0">
-          <div className={`p-2 bg-slate-50 dark:bg-[#111827] border-none rounded-xl flex items-center justify-center shrink-0 w-11 h-11 shadow-premium transition-all duration-300`}>
+          <div className={`p-2 bg-[#1a1c20] border border-white/5 rounded-xl flex items-center justify-center shrink-0 w-11 h-11 shadow-premium transition-all duration-300`}>
             {brand.logo ? (
               <img src={brand.logo} alt="Logo" className="w-full h-full object-cover rounded-md" />
             ) : (
-              <Flame className="text-orange-600 w-5 h-5 fill-orange-600" />
+              <Flame className="text-[#ff5c00] w-6 h-6 fill-[#ff5c00]" />
             )}
           </div>
           {!isCollapsed && (
             <div className="flex flex-col min-w-0 animate-in fade-in duration-500">
-              <span className="text-sm font-bold tracking-tight text-slate-900 dark:text-white leading-tight truncate">
+              <span className="text-sm font-bold tracking-tight text-white leading-tight truncate">
                 {brand.name}
               </span>
-              <span className="text-[10px] font-medium text-white/50 tracking-wider mt-0.5 opacity-90">
-                {userRole === "Atendente" ? "Atendimento" : userRole === "Gerente" ? "Gestão Operacional" : "Portal do Administrador"}
+              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-1">
+                {userRole === "Atendente" ? "Atendimento" : userRole === "Gerente" ? "Gestão Operacional" : "Admin Dashboard"}
               </span>
             </div>
           )}
         </div>
         
-        {/* Simple Toggle Button */}
-        <button 
-          onClick={toggleSidebar}
-          className={`p-2 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md transition-colors text-slate-400 hover:text-orange-600 ${isCollapsed ? "hidden" : "block"}`}
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
+        {!isCollapsed && (
+          <button 
+            onClick={toggleSidebar}
+            className="p-2 hover:bg-white/5 rounded-lg transition-all text-zinc-500 hover:text-white"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+        )}
       </div>
 
-      {/* Show Toggle when collapsed */}
       {isCollapsed && (
         <div className="flex justify-center mb-6">
           <button 
             onClick={toggleSidebar}
-            className="p-3 bg-orange-600/10 text-orange-600 hover:bg-orange-600 hover:text-white rounded-md transition-all shadow-sm"
+            className="p-3 bg-[#ff5c00]/10 text-[#ff5c00] hover:bg-[#ff5c00] hover:text-white rounded-xl transition-all shadow-lg"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       )}
 
-      <nav className={`flex-1 px-4 space-y-9 pt-2 pb-8 transition-all duration-300`}>
+      <nav className="flex-1 px-3 space-y-8 pt-2 pb-8 scrollbar-none">
         {menuGroups
           .filter(group => {
             if (userRole === "ATENDENTE") {
@@ -239,7 +239,6 @@ export default function Sidebar() {
             return true;
           })
           .map((group) => {
-            // Filtragem de itens dentro de cada grupo para o Atendente
             const visibleItems = group.items.filter(item => {
               if (userRole === "ATENDENTE") {
                 if (group.title === "GERAL") return ["Dashboard", "Cardápio"].includes(item.label);
@@ -252,21 +251,21 @@ export default function Sidebar() {
             if (visibleItems.length === 0) return null;
 
             return (
-              <div key={group.title} className="space-y-4">
+              <div key={group.title} className="space-y-2">
                 {!isCollapsed && (
-                  <h3 className="px-4 text-[11px] font-semibold text-white/20 tracking-wider">
-                    {group.title.charAt(0) + group.title.slice(1).toLowerCase()}
+                  <h3 className="px-4 text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-3">
+                    {group.title}
                   </h3>
                 )}
                 
-                <div className="space-y-1.5 flex flex-col items-center">
+                <div className="space-y-1">
                   {visibleItems.map((item) => {
                     const isExpanded = !!expandedMenus[item.label];
                     const hasSubItems = !!item.subItems;
-                const isActive = item.href ? pathname === item.href : item.subItems?.some(sub => pathname === sub.href);
+                    const isActive = item.href ? pathname === item.href : item.subItems?.some(sub => pathname === sub.href);
 
                 return (
-                  <div key={item.label} className="w-full relative">
+                  <div key={item.label} className="w-full">
                     <Link
                       href={item.href || "#"}
                       onClick={(e) => {
@@ -275,42 +274,42 @@ export default function Sidebar() {
                           toggleSubmenu(item.label);
                         }
                       }}
-                      className={`flex items-center gap-3 py-3 rounded-xl transition-all duration-200 outline-none
+                      className={`flex items-center gap-3 py-3 transition-all duration-200 outline-none group
                         ${isActive 
-                          ? "bg-white/10 text-white font-semibold" 
-                          : "text-white/60 hover:bg-white/5 hover:text-white"
+                          ? "bg-gradient-to-r from-[#ff5c00]/10 to-transparent text-white font-semibold border-l-2 border-[#ff5c00]" 
+                          : "text-zinc-400 hover:bg-white/5 hover:text-white"
                         } 
-                        ${isCollapsed ? "justify-center w-11 h-11 px-0" : "px-4 w-full"}
+                        ${isCollapsed ? "justify-center w-12 h-12 rounded-xl mx-auto px-0" : "px-4 rounded-r-xl w-full"}
                       `}
                     >
-                      <item.icon className={`transition-transform shrink-0 ${isActive ? "text-white" : "text-white/40"} ${isCollapsed ? "w-5 h-5" : "w-4 h-4"}`} />
+                      <item.icon className={`shrink-0 transition-all duration-200 ${isActive ? "text-[#ff5c00]" : "text-zinc-500 group-hover:text-white"} ${isCollapsed ? "w-6 h-6" : "w-4 h-4"}`} />
                       
                       {!isCollapsed && (
-                        <div className="flex items-center justify-between flex-1 min-w-0 animate-in fade-in duration-300">
-                          <span className="text-sm font-medium leading-none truncate">
+                        <div className="flex items-center justify-between flex-1 min-w-0">
+                          <span className="text-[13px] font-medium tracking-tight">
                             {item.label}
                           </span>
                           {hasSubItems && (
-                            <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
+                            <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isExpanded ? "rotate-180" : "opacity-40"}`} />
                           )}
                         </div>
                       )}
                     </Link>
 
                     {!isCollapsed && isExpanded && hasSubItems && (
-                      <div className="pl-12 mt-1.5 space-y-1.5 animate-in slide-in-from-top-1 duration-200">
+                      <div className="pl-12 mt-1 space-y-1 animate-in slide-in-from-top-2 duration-300">
                         {item.subItems?.map((sub) => {
                           const isSubActive = pathname === sub.href;
                           return (
                             <Link
                               key={sub.href}
                               href={sub.href}
-                              className={`flex items-center gap-3 py-2 text-sm font-medium transition-all relative outline-none
-                                ${isSubActive ? "text-white font-semibold" : "text-white/60 hover:text-white"}
+                              className={`flex items-center gap-3 py-2 text-[12px] font-medium transition-all relative
+                                ${isSubActive ? "text-white font-bold" : "text-zinc-500 hover:text-white"}
                               `}
                             >
                               {isSubActive && (
-                                <div className="absolute -left-3.5 w-1 h-1 rounded-full bg-white" />
+                                <div className="absolute -left-3.5 w-1 h-1 rounded-full bg-[#ff5c00]" />
                               )}
                               {sub.label}
                             </Link>
@@ -327,19 +326,18 @@ export default function Sidebar() {
       })}
       </nav>
 
-      {/* Footer Clean - Corrigido */}
-      <div className={`py-10 px-6 border-none text-center bg-transparent mt-auto flex flex-col items-center justify-center`}>
+      <div className={`py-8 px-6 border-t border-white/5 text-center mt-auto flex flex-col items-center justify-center`}>
         {!isCollapsed ? (
-          <div className="animate-in fade-in duration-500 w-full">
-            <p className="text-[10px] text-white/30 font-medium leading-relaxed tracking-wider mb-2">
+          <div className="animate-in fade-in duration-700 w-full">
+            <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest mb-1">
               © 2026 MoviEats
             </p>
-            <span className="flex items-center justify-center gap-2 text-[9px] font-medium text-white/20 tracking-wider">
-              Feito com <Heart className="w-3 h-3 text-white/20 fill-white/10" /> no Brasil
+            <span className="flex items-center justify-center gap-2 text-[9px] font-medium text-zinc-700">
+              Feito com <Heart className="w-3 h-3 fill-red-500/20 text-red-500" /> no Brasil
             </span>
           </div>
         ) : (
-          <Heart className="w-5 h-5 text-orange-600 fill-orange-600 animate-pulse" />
+          <Flame className="w-6 h-6 text-[#ff5c00] fill-[#ff5c00] animate-pulse opacity-50" />
         )}
       </div>
     </aside>
