@@ -180,14 +180,14 @@ export default function Sidebar() {
 
   return (
     <aside 
-      className={`bg-[#0f1115] border-r border-white/5 h-screen sticky top-0 flex flex-col z-50 overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out shadow-2xl
+      className={`bg-[#09090b] border-r border-zinc-900 h-screen sticky top-0 flex flex-col z-50 overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out
         ${isCollapsed ? "w-20" : "w-[270px]"}
       `}
     >
       {/* Top Branding & Toggle Button */}
       <div className={`px-6 py-10 flex items-center transition-all duration-300 ${isCollapsed ? "justify-center" : "justify-between gap-4"}`}>
         <div className="flex items-center gap-3 min-w-0">
-          <div className={`p-2 bg-[#1a1c20] border border-white/5 rounded-xl flex items-center justify-center shrink-0 w-11 h-11 shadow-premium transition-all duration-300`}>
+          <div className={`p-2 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-center shrink-0 w-11 h-11 shadow-2xl transition-all duration-300`}>
             {brand.logo ? (
               <img src={brand.logo} alt="Logo" className="w-full h-full object-cover rounded-md" />
             ) : (
@@ -199,8 +199,8 @@ export default function Sidebar() {
               <span className="text-sm font-bold tracking-tight text-white leading-tight truncate">
                 {brand.name}
               </span>
-              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-1">
-                {userRole === "Atendente" ? "Atendimento" : userRole === "Gerente" ? "Gestão Operacional" : "Admin Dashboard"}
+              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.15em] mt-1">
+                {userRole === "Atendente" ? "Atendimento" : userRole === "Gerente" ? "Gestão Operacional" : "Administrador"}
               </span>
             </div>
           )}
@@ -209,7 +209,7 @@ export default function Sidebar() {
         {!isCollapsed && (
           <button 
             onClick={toggleSidebar}
-            className="p-2 hover:bg-white/5 rounded-lg transition-all text-zinc-500 hover:text-white"
+            className="p-2 hover:bg-zinc-900 rounded-lg transition-all text-zinc-600 hover:text-white"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -220,14 +220,14 @@ export default function Sidebar() {
         <div className="flex justify-center mb-6">
           <button 
             onClick={toggleSidebar}
-            className="p-3 bg-[#ff5c00]/10 text-[#ff5c00] hover:bg-[#ff5c00] hover:text-white rounded-xl transition-all shadow-lg"
+            className="p-3 bg-[#ff5c00]/10 text-[#ff5c00] hover:bg-[#ff5c00] hover:text-white rounded-xl transition-all"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       )}
 
-      <nav className="flex-1 px-3 space-y-8 pt-2 pb-8 scrollbar-none">
+      <nav className="flex-1 px-4 space-y-8 pt-2 pb-8 scrollbar-none">
         {menuGroups
           .filter(group => {
             if (userRole === "ATENDENTE") {
@@ -251,9 +251,9 @@ export default function Sidebar() {
             if (visibleItems.length === 0) return null;
 
             return (
-              <div key={group.title} className="space-y-2">
+              <div key={group.title} className="space-y-3">
                 {!isCollapsed && (
-                  <h3 className="px-4 text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-3">
+                  <h3 className="px-3 text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em] mb-4">
                     {group.title}
                   </h3>
                 )}
@@ -274,19 +274,19 @@ export default function Sidebar() {
                           toggleSubmenu(item.label);
                         }
                       }}
-                      className={`flex items-center gap-3 py-3 transition-all duration-200 outline-none group
+                      className={`flex items-center gap-3 py-3 rounded-lg transition-all duration-200 outline-none group
                         ${isActive 
-                          ? "bg-gradient-to-r from-[#ff5c00]/10 to-transparent text-white font-semibold border-l-2 border-[#ff5c00]" 
-                          : "text-zinc-400 hover:bg-white/5 hover:text-white"
+                          ? "bg-[#ff5c00] text-white shadow-lg shadow-[#ff5c00]/20" 
+                          : "text-[#a1a1aa] hover:bg-[#27272a]"
                         } 
-                        ${isCollapsed ? "justify-center w-12 h-12 rounded-xl mx-auto px-0" : "px-4 rounded-r-xl w-full"}
+                        ${isCollapsed ? "justify-center w-12 h-12 mx-auto px-0" : "px-4 w-full"}
                       `}
                     >
-                      <item.icon className={`shrink-0 transition-all duration-200 ${isActive ? "text-[#ff5c00]" : "text-zinc-500 group-hover:text-white"} ${isCollapsed ? "w-6 h-6" : "w-4 h-4"}`} />
+                      <item.icon className={`shrink-0 transition-all duration-200 ${isActive ? "text-white" : "text-[#a1a1aa] group-hover:text-white"} ${isCollapsed ? "w-6 h-6" : "w-4 h-4"}`} />
                       
                       {!isCollapsed && (
                         <div className="flex items-center justify-between flex-1 min-w-0">
-                          <span className="text-[13px] font-medium tracking-tight">
+                          <span className="text-[13px] font-semibold tracking-tight">
                             {item.label}
                           </span>
                           {hasSubItems && (
@@ -304,13 +304,10 @@ export default function Sidebar() {
                             <Link
                               key={sub.href}
                               href={sub.href}
-                              className={`flex items-center gap-3 py-2 text-[12px] font-medium transition-all relative
-                                ${isSubActive ? "text-white font-bold" : "text-zinc-500 hover:text-white"}
+                              className={`flex items-center gap-3 py-2 text-[12px] font-semibold transition-all relative
+                                ${isSubActive ? "text-[#ff5c00] font-bold" : "text-[#a1a1aa] hover:text-white"}
                               `}
                             >
-                              {isSubActive && (
-                                <div className="absolute -left-3.5 w-1 h-1 rounded-full bg-[#ff5c00]" />
-                              )}
                               {sub.label}
                             </Link>
                           );
@@ -326,18 +323,18 @@ export default function Sidebar() {
       })}
       </nav>
 
-      <div className={`py-8 px-6 border-t border-white/5 text-center mt-auto flex flex-col items-center justify-center`}>
+      <div className={`py-8 px-6 border-t border-zinc-900 text-center mt-auto flex flex-col items-center justify-center`}>
         {!isCollapsed ? (
           <div className="animate-in fade-in duration-700 w-full">
-            <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest mb-1">
+            <p className="text-[10px] text-zinc-700 font-bold uppercase tracking-widest mb-1">
               © 2026 MoviEats
             </p>
-            <span className="flex items-center justify-center gap-2 text-[9px] font-medium text-zinc-700">
-              Feito com <Heart className="w-3 h-3 fill-red-500/20 text-red-500" /> no Brasil
+            <span className="flex items-center justify-center gap-2 text-[9px] font-bold text-zinc-800">
+              SISTEMA OPERACIONAL
             </span>
           </div>
         ) : (
-          <Flame className="w-6 h-6 text-[#ff5c00] fill-[#ff5c00] animate-pulse opacity-50" />
+          <Flame className="w-6 h-6 text-[#ff5c00] fill-[#ff5c00] opacity-50" />
         )}
       </div>
     </aside>

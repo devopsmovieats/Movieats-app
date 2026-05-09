@@ -222,7 +222,7 @@ export default function Home() {
           {metrics.map((m) => (
             <div 
               key={m.title} 
-              className="bg-[#1f2937]/80 backdrop-blur-sm border border-white/5 rounded-3xl p-8 flex flex-col justify-between h-[180px] transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] hover:bg-[#1f2937] cursor-pointer group"
+              className="bg-[#18181b] border border-white/5 rounded-3xl p-8 flex flex-col justify-between h-[180px] transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] cursor-pointer group"
             >
               <div className="flex justify-between items-start">
                 <div className={`p-3 rounded-xl ${m.bg} group-hover:scale-110 transition-transform`}>
@@ -244,7 +244,7 @@ export default function Home() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Sales Chart Section */}
-          <div className="lg:col-span-2 bg-[#1f2937]/80 backdrop-blur-sm border border-white/5 rounded-[32px] p-8 shadow-sm">
+          <div className="lg:col-span-2 bg-[#18181b] border border-white/5 rounded-[32px] p-8 shadow-sm">
             <div className="flex justify-between items-center mb-8">
               <div className="flex flex-col gap-1.5">
                 <h4 className="text-2xl font-headline font-bold text-white tracking-tight">Desempenho de Vendas</h4>
@@ -302,7 +302,7 @@ export default function Home() {
           </div>
 
           {/* Activity Logs Section */}
-          <div className="bg-[#1f2937]/80 backdrop-blur-sm border border-white/5 rounded-[32px] p-8 flex flex-col shadow-sm">
+          <div className="bg-[#18181b] border border-white/5 rounded-[32px] p-8 flex flex-col shadow-sm">
             <div className="flex justify-between items-center mb-8">
               <div className="flex flex-col gap-1.5">
                 <h4 className="text-2xl font-headline font-bold text-white tracking-tight">Logs de Atividade</h4>
