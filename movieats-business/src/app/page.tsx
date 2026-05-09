@@ -222,7 +222,7 @@ export default function Home() {
           {metrics.map((m) => (
             <div 
               key={m.title} 
-              className="bg-[#18181b] border border-white/5 rounded-3xl p-8 flex flex-col justify-between h-[180px] transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] cursor-pointer group"
+              className="bg-[#18181b] border border-white/5 rounded-sm p-8 flex flex-col justify-between h-[180px] transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] cursor-pointer group"
             >
               <div className="flex justify-between items-start">
                 <div className={`p-3 rounded-xl ${m.bg} group-hover:scale-110 transition-transform`}>
@@ -244,7 +244,7 @@ export default function Home() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Sales Chart Section */}
-          <div className="lg:col-span-2 bg-[#18181b] border border-white/5 rounded-[32px] p-8 shadow-sm">
+          <div className="lg:col-span-2 bg-[#18181b] border border-white/5 rounded-sm p-8 shadow-sm">
             <div className="flex justify-between items-center mb-8">
               <div className="flex flex-col gap-1.5">
                 <h4 className="text-2xl font-headline font-bold text-white tracking-tight">Desempenho de Vendas</h4>
@@ -302,7 +302,7 @@ export default function Home() {
           </div>
 
           {/* Activity Logs Section */}
-          <div className="bg-[#18181b] border border-white/5 rounded-[32px] p-8 flex flex-col shadow-sm">
+          <div className="bg-[#18181b] border border-white/5 rounded-sm p-8 flex flex-col shadow-sm">
             <div className="flex justify-between items-center mb-8">
               <div className="flex flex-col gap-1.5">
                 <h4 className="text-2xl font-headline font-bold text-white tracking-tight">Logs de Atividade</h4>
@@ -312,7 +312,7 @@ export default function Home() {
 
             <div className="flex-1 space-y-4">
               {logs.length > 0 ? logs.map((log) => (
-                <div key={log.id} className="flex items-center gap-4 p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-all group">
+                <div key={log.id} className="flex items-center gap-4 p-4 bg-white/5 border border-white/5 rounded-sm hover:bg-white/10 transition-all group">
                   <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0">
                     <User className="w-4 h-4 text-white/40" />
                   </div>

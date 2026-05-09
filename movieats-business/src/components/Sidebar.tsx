@@ -178,18 +178,17 @@ export default function Sidebar() {
     setExpandedMenus(prev => ({ ...prev, [label]: !prev[label] }));
   };
 
-  return (
     <aside 
-      className={`bg-[#09090b] border-r border-zinc-900 h-screen sticky top-0 flex flex-col z-50 overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out
+      className={`bg-[#000000] border-r border-zinc-900 h-screen sticky top-0 flex flex-col z-50 overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out
         ${isCollapsed ? "w-20" : "w-[270px]"}
       `}
     >
       {/* Top Branding & Toggle Button */}
       <div className={`px-6 py-10 flex items-center transition-all duration-300 ${isCollapsed ? "justify-center" : "justify-between gap-4"}`}>
         <div className="flex items-center gap-3 min-w-0">
-          <div className={`p-2 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-center shrink-0 w-11 h-11 shadow-2xl transition-all duration-300`}>
+          <div className={`p-2 bg-zinc-900 border border-zinc-800 rounded-sm flex items-center justify-center shrink-0 w-11 h-11 shadow-2xl transition-all duration-300`}>
             {brand.logo ? (
-              <img src={brand.logo} alt="Logo" className="w-full h-full object-cover rounded-md" />
+              <img src={brand.logo} alt="Logo" className="w-full h-full object-cover rounded-sm" />
             ) : (
               <Flame className="text-[#ff5c00] w-6 h-6 fill-[#ff5c00]" />
             )}
@@ -209,7 +208,7 @@ export default function Sidebar() {
         {!isCollapsed && (
           <button 
             onClick={toggleSidebar}
-            className="p-2 hover:bg-zinc-900 rounded-lg transition-all text-zinc-600 hover:text-white"
+            className="p-2 hover:bg-zinc-900 rounded-sm transition-all text-zinc-600 hover:text-white"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -220,7 +219,7 @@ export default function Sidebar() {
         <div className="flex justify-center mb-6">
           <button 
             onClick={toggleSidebar}
-            className="p-3 bg-[#ff5c00]/10 text-[#ff5c00] hover:bg-[#ff5c00] hover:text-white rounded-xl transition-all"
+            className="p-3 bg-[#ff5c00]/10 text-[#ff5c00] hover:bg-[#ff5c00] hover:text-white rounded-sm transition-all"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -262,7 +261,8 @@ export default function Sidebar() {
                   {visibleItems.map((item) => {
                     const isExpanded = !!expandedMenus[item.label];
                     const hasSubItems = !!item.subItems;
-                    const isActive = item.href ? pathname === item.href : item.subItems?.some(sub => pathname === sub.href);
+                    const isParentActive = item.href === pathname;
+                    const anySubActive = item.subItems?.some(sub => pathname === sub.href);
 
                 return (
                   <div key={item.label} className="w-full">
@@ -274,15 +274,15 @@ export default function Sidebar() {
                           toggleSubmenu(item.label);
                         }
                       }}
-                      className={`flex items-center gap-3 py-3 rounded-lg transition-all duration-200 outline-none group
-                        ${isActive 
-                          ? "bg-[#ff5c00] text-white shadow-lg shadow-[#ff5c00]/20" 
-                          : "text-[#a1a1aa] hover:bg-[#27272a]"
+                      className={`flex items-center gap-3 py-3 rounded-sm transition-all duration-200 outline-none group
+                        ${isParentActive 
+                          ? "bg-[#ff5c00] text-white" 
+                          : "text-white hover:bg-zinc-900"
                         } 
                         ${isCollapsed ? "justify-center w-12 h-12 mx-auto px-0" : "px-4 w-full"}
                       `}
                     >
-                      <item.icon className={`shrink-0 transition-all duration-200 ${isActive ? "text-white" : "text-[#a1a1aa] group-hover:text-white"} ${isCollapsed ? "w-6 h-6" : "w-4 h-4"}`} />
+                      <item.icon className={`shrink-0 transition-all duration-200 text-white ${isCollapsed ? "w-6 h-6" : "w-4 h-4"}`} />
                       
                       {!isCollapsed && (
                         <div className="flex items-center justify-between flex-1 min-w-0">
@@ -290,22 +290,22 @@ export default function Sidebar() {
                             {item.label}
                           </span>
                           {hasSubItems && (
-                            <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isExpanded ? "rotate-180" : "opacity-40"}`} />
+                            <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isExpanded ? "rotate-180 text-white" : "text-white/40"}`} />
                           )}
                         </div>
                       )}
                     </Link>
 
                     {!isCollapsed && isExpanded && hasSubItems && (
-                      <div className="pl-12 mt-1 space-y-1 animate-in slide-in-from-top-2 duration-300">
+                      <div className="mt-1 space-y-1 animate-in slide-in-from-top-2 duration-300">
                         {item.subItems?.map((sub) => {
                           const isSubActive = pathname === sub.href;
                           return (
                             <Link
                               key={sub.href}
                               href={sub.href}
-                              className={`flex items-center gap-3 py-2 text-[12px] font-semibold transition-all relative
-                                ${isSubActive ? "text-[#ff5c00] font-bold" : "text-[#a1a1aa] hover:text-white"}
+                              className={`flex items-center gap-3 py-2.5 px-10 text-[12px] font-semibold transition-all rounded-sm
+                                ${isSubActive ? "bg-[#ff5c00] text-white" : "text-white hover:bg-zinc-900"}
                               `}
                             >
                               {sub.label}
@@ -329,8 +329,8 @@ export default function Sidebar() {
             <p className="text-[10px] text-zinc-700 font-bold uppercase tracking-widest mb-1">
               © 2026 MoviEats
             </p>
-            <span className="flex items-center justify-center gap-2 text-[9px] font-bold text-zinc-800">
-              SISTEMA OPERACIONAL
+            <span className="flex items-center justify-center gap-2 text-[9px] font-bold text-zinc-800 uppercase tracking-widest">
+              Sistema Operacional
             </span>
           </div>
         ) : (
