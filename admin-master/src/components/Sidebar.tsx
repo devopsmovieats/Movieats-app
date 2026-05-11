@@ -16,7 +16,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/" },
+  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   { icon: Store, label: "Lojistas", href: "/lojistas" },
   { icon: BarChart3, label: "Analíticos", href: "/analiticos" },
   { icon: Users, label: "Leads", href: "/leads" },

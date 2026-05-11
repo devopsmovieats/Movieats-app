@@ -144,7 +144,7 @@ export default function LojistasPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {filteredLojistas.map((l) => (
+                {filteredLojistas?.length > 0 ? filteredLojistas.map((l) => (
                   <tr key={l.id} className="group hover:bg-white/[0.02] transition-colors">
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-4">
@@ -188,7 +188,13 @@ export default function LojistasPage() {
                       </button>
                     </td>
                   </tr>
-                ))}
+                )) : (
+                  <tr>
+                    <td colSpan={7} className="px-8 py-20 text-center text-muted-foreground font-medium">
+                      Nenhum lojista encontrado ou banco de dados vazio.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

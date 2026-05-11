@@ -79,7 +79,7 @@ export default function LoginPage() {
           icon: "success",
           title: "Login realizado com sucesso!",
         });
-        router.push("/");
+        router.push("/dashboard");
       }
     } catch (err) {
       console.error("Erro inesperado no login:", err);
