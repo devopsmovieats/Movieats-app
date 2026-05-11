@@ -42,6 +42,8 @@ const Modal = Swal.mixin({
   }
 });
 
+import { supabase } from "@/lib/supabase";
+
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -53,17 +55,38 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulação de delay para efeito visual premium
-    await new Promise(resolve => setTimeout(resolve, 1200));
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (email === "admin@movieats.com.br" && password === "admin123") {
-      Cookies.set("auth_token", "movieats-session-secret", { expires: 1 });
-      router.push("/");
-    } else {
+      if (error) {
+        console.error("Erro de login Supabase:", error.message, error);
+        setIsLoading(false);
+        Toast.fire({
+          icon: "error",
+          title: error.message === "Invalid login credentials" 
+            ? "E-mail ou senha incorretos" 
+            : "Erro ao tentar realizar o login",
+        });
+        return;
+      }
+
+      if (data?.session) {
+        Cookies.set("auth_token", data.session.access_token, { expires: 1 });
+        Toast.fire({
+          icon: "success",
+          title: "Login realizado com sucesso!",
+        });
+        router.push("/");
+      }
+    } catch (err) {
+      console.error("Erro inesperado no login:", err);
       setIsLoading(false);
       Toast.fire({
         icon: "error",
-        title: "E-mail ou senha incorretos",
+        title: "Erro inesperado ao conectar com o servidor",
       });
     }
   };
